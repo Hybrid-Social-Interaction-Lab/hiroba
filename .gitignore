@@ -1,0 +1,39 @@
+venv/
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Vercel
+.vercel
+
+# macOS
+.DS_Store
+
+# Logs
+logs/*.log
+*.log
+
+# Data
+data/
+
+# Build artifacts
+app.tar.gz
+
+# SSL certificates (development)
+*.pem
+server.key
+server.crt
+letsencrypt-*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+/.claude

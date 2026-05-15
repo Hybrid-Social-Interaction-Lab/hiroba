@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile
+    ports:
+      - "3000:3000"
+      - "3443:3443"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HTTPS_PORT=3443
+    volumes:
+      # Map entire source code for live reloading
+      - ../../:/app
+      # Prevent node_modules from being overwritten
+      - /app/node_modules
+      # Map public directory separately
+      - ../../public:/app/public
+      # Map lib directory separately
+      - ../../lib:/app/lib
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

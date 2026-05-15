@@ -1,0 +1,17 @@
+{
+  "Comment": "Create A record for avaatar-conference-ohararyo.com",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "avaatar-conference.ohararyo.com",
+        "Type": "A",
+        "AliasTarget": {
+          "DNSName": "vsdk-alb-1950753101.ap-northeast-1.elb.amazonaws.com",
+          "EvaluateTargetHealth": false,
+          "HostedZoneId": "Z14GRHDCWA56QT"
+        }
+      }
+    }
+  ]
+}

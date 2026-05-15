@@ -1,0 +1,334 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:ap-northeast-1:795732142950:generatedTemplate/085321e2-63da-491b-ad1b-e6e32a2324fc"
+Resources:
+  ElasticLoadBalancingV2TargetGroupTargetgroupmoderatoraialbtg2efde0ebb6b6d2c9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      IpAddressType: "ipv4"
+      HealthCheckIntervalSeconds: 30
+      Matcher:
+        HttpCode: "200"
+      HealthCheckPath: "/"
+      Port: 3000
+      Targets:
+      - AvailabilityZone: "ap-northeast-1d"
+        Port: 3000
+        Id: "172.31.19.117"
+      HealthCheckEnabled: true
+      ProtocolVersion: "HTTP1"
+      UnhealthyThresholdCount: 2
+      HealthCheckTimeoutSeconds: 5
+      Name: "moderator-ai-alb-tg"
+      VpcId: "vpc-0d91926ce2ed3b85b"
+      HealthyThresholdCount: 5
+      HealthCheckProtocol: "HTTP"
+      TargetGroupAttributes:
+      - Value: "lb_cookie"
+        Key: "stickiness.type"
+      - Value: "86400"
+        Key: "stickiness.app_cookie.duration_seconds"
+      - Value: "1"
+        Key: "target_group_health.dns_failover.minimum_healthy_targets.count"
+      - Value: "use_load_balancer_configuration"
+        Key: "load_balancing.cross_zone.enabled"
+      - Value: "86400"
+        Key: "stickiness.lb_cookie.duration_seconds"
+      - Value: "off"
+        Key: "target_group_health.dns_failover.minimum_healthy_targets.percentage"
+      - Value: "false"
+        Key: "stickiness.enabled"
+      - Value: "off"
+        Key: "target_group_health.unhealthy_state_routing.minimum_healthy_targets.percentage"
+      - Value: "0"
+        Key: "slow_start.duration_seconds"
+      - Value: "300"
+        Key: "deregistration_delay.timeout_seconds"
+      - Value: "1"
+        Key: "target_group_health.unhealthy_state_routing.minimum_healthy_targets.count"
+      - Value: "off"
+        Key: "load_balancing.algorithm.anomaly_mitigation"
+      - Value: ""
+        Key: "stickiness.app_cookie.cookie_name"
+      - Value: "round_robin"
+        Key: "load_balancing.algorithm.type"
+      TargetType: "ip"
+      HealthCheckPort: "traffic-port"
+      Protocol: "HTTP"
+      Tags: []
+  S3BucketModeratorailogbucket:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "moderator-ai-log-bucket"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+  ElasticLoadBalancingV2ListenerListenerappmoderatoraialb4d9d2985992c80bf42aea72a72cc84ad:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DeletionPolicy: "Retain"
+    Properties:
+      MutualAuthentication:
+        Mode: "off"
+      ListenerAttributes:
+      - Value: ""
+        Key: "routing.http.request.x_amzn_tls_cipher_suite.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_serial_number.header_name"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_origin.header_value"
+      - Value: ""
+        Key: "routing.http.response.content_security_policy.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_leaf.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_tls_version.header_name"
+      - Value: "true"
+        Key: "routing.http.response.server.enabled"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_frame_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_methods.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_issuer.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_validity.header_name"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_credentials.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_subject.header_name"
+      - Value: ""
+        Key: "routing.http.response.x_content_type_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_expose_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.strict_transport_security.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_max_age.header_value"
+      SslPolicy: "ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09"
+      LoadBalancerArn:
+        Ref: "ElasticLoadBalancingV2LoadBalancerLoadbalancerappmoderatoraialb4d9d2985992c80bf"
+      DefaultActions:
+      - Order: 1
+        TargetGroupArn:
+          Ref: "ElasticLoadBalancingV2TargetGroupTargetgroupmoderatoraialbtg2efde0ebb6b6d2c9"
+        Type: "forward"
+        ForwardConfig:
+          TargetGroupStickinessConfig:
+            Enabled: false
+            DurationSeconds: 3600
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: "ElasticLoadBalancingV2TargetGroupTargetgroupmoderatoraialbtg2efde0ebb6b6d2c9"
+            Weight: 1
+      Port: 443
+      Certificates:
+      - CertificateArn: "arn:aws:acm:ap-northeast-1:795732142950:certificate/362875d9-ffc6-4ada-943e-5048aff41627"
+      Protocol: "HTTPS"
+  EC2SecurityGroup:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "moderator-ai-task-sg"
+      GroupName: "moderator-ai-task-sg"
+      VpcId: "vpc-0d91926ce2ed3b85b"
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        FromPort: 3000
+        SourceSecurityGroupId: "sg-0ab234c05feb99667"
+        ToPort: 3000
+        SourceSecurityGroupOwnerId: "795732142950"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  DynamoDBTableVsdkappsettings:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::DynamoDB::Table"
+    DeletionPolicy: "Retain"
+    Properties:
+      SSESpecification:
+        SSEEnabled: false
+      TableName: "vsdk-app-settings"
+      AttributeDefinitions:
+      - AttributeType: "S"
+        AttributeName: "id"
+      ContributorInsightsSpecification:
+        Enabled: false
+      BillingMode: "PAY_PER_REQUEST"
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      KeySchema:
+      - KeyType: "HASH"
+        AttributeName: "id"
+      WarmThroughput:
+        ReadUnitsPerSecond: 12000
+        WriteUnitsPerSecond: 4000
+      DeletionProtectionEnabled: false
+      Tags: []
+      TimeToLiveSpecification:
+        Enabled: false
+  EC2SecurityGroupFU:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "moderator-ai-alb-sg"
+      GroupName: "moderator-ai-alb-sg"
+      VpcId: "vpc-0d91926ce2ed3b85b"
+      SecurityGroupIngress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "tcp"
+        FromPort: 80
+        ToPort: 80
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "tcp"
+        FromPort: 443
+        ToPort: 443
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  ElasticLoadBalancingV2LoadBalancerLoadbalancerappmoderatoraialb4d9d2985992c80bf:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    DeletionPolicy: "Retain"
+    Properties:
+      IpAddressType: "ipv4"
+      SecurityGroups:
+      - "sg-0ab234c05feb99667"
+      LoadBalancerAttributes:
+      - Value: ""
+        Key: "access_logs.s3.prefix"
+      - Value: "append"
+        Key: "routing.http.xff_header_processing.mode"
+      - Value: "true"
+        Key: "routing.http2.enabled"
+      - Value: "false"
+        Key: "waf.fail_open.enabled"
+      - Value: ""
+        Key: "connection_logs.s3.bucket"
+      - Value: "false"
+        Key: "access_logs.s3.enabled"
+      - Value: "false"
+        Key: "zonal_shift.config.enabled"
+      - Value: "defensive"
+        Key: "routing.http.desync_mitigation_mode"
+      - Value: ""
+        Key: "connection_logs.s3.prefix"
+      - Value: ""
+        Key: "health_check_logs.s3.prefix"
+      - Value: "false"
+        Key: "routing.http.x_amzn_tls_version_and_cipher_suite.enabled"
+      - Value: "false"
+        Key: "routing.http.preserve_host_header.enabled"
+      - Value: "true"
+        Key: "load_balancing.cross_zone.enabled"
+      - Value: "false"
+        Key: "health_check_logs.s3.enabled"
+      - Value: ""
+        Key: "health_check_logs.s3.bucket"
+      - Value: "false"
+        Key: "routing.http.xff_client_port.enabled"
+      - Value: ""
+        Key: "access_logs.s3.bucket"
+      - Value: "false"
+        Key: "deletion_protection.enabled"
+      - Value: "3600"
+        Key: "client_keep_alive.seconds"
+      - Value: "false"
+        Key: "routing.http.drop_invalid_header_fields.enabled"
+      - Value: "false"
+        Key: "connection_logs.s3.enabled"
+      - Value: "60"
+        Key: "idle_timeout.timeout_seconds"
+      Subnets:
+      - "subnet-026a9f716da2d5117"
+      - "subnet-046ba06b913b66bdd"
+      - "subnet-0f6c1438d955a3539"
+      Type: "application"
+      Scheme: "internet-facing"
+      EnablePrefixForIpv6SourceNat: "off"
+      Tags: []
+      Name: "moderator-ai-alb"
+      SubnetMappings:
+      - SubnetId: "subnet-046ba06b913b66bdd"
+      - SubnetId: "subnet-026a9f716da2d5117"
+      - SubnetId: "subnet-0f6c1438d955a3539"
+  ElasticLoadBalancingV2ListenerListenerappmoderatoraialb4d9d2985992c80bfde4a2487fe39376b:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DeletionPolicy: "Retain"
+    Properties:
+      ListenerAttributes:
+      - Value: "true"
+        Key: "routing.http.response.server.enabled"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_frame_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_methods.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_origin.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_credentials.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_content_type_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.content_security_policy.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_expose_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.strict_transport_security.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_max_age.header_value"
+      Protocol: "HTTP"
+      LoadBalancerArn:
+        Ref: "ElasticLoadBalancingV2LoadBalancerLoadbalancerappmoderatoraialb4d9d2985992c80bf"
+      DefaultActions:
+      - Order: 1
+        Type: "redirect"
+        RedirectConfig:
+          Path: "/#{path}"
+          Host: "#{host}"
+          Query: "#{query}"
+          Protocol: "HTTPS"
+          StatusCode: "HTTP_301"
+          Port: "443"
+      Port: 80
+  ECRRepositoryVsdkapp:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECR::Repository"
+    DeletionPolicy: "Retain"
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: false
+      RepositoryName: "vsdk-app"
+      EncryptionConfiguration:
+        EncryptionType: "AES256"
+      Tags: []
+      ImageTagMutability: "MUTABLE"

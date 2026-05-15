@@ -1,0 +1,18 @@
+{
+  "Comment": "Create ec2 subdomain for EC2 instance",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "ec2.avatar-conference.ohararyo.com",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "54.92.4.101"
+          }
+        ]
+      }
+    }
+  ]
+}

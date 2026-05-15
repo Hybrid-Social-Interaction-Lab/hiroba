@@ -1,0 +1,110 @@
+{
+    "clusters": [
+        {
+            "clusterArn": "arn:aws:ecs:ap-northeast-1:795732142950:cluster/moderator-ai-cluster",
+            "clusterName": "moderator-ai-cluster",
+            "configuration": {
+                "executeCommandConfiguration": {
+                    "logging": "DEFAULT"
+                }
+            },
+            "status": "ACTIVE",
+            "registeredContainerInstancesCount": 0,
+            "runningTasksCount": 1,
+            "pendingTasksCount": 0,
+            "activeServicesCount": 1,
+            "statistics": [
+                {
+                    "name": "runningEC2TasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "runningFargateTasksCount",
+                    "value": "1"
+                },
+                {
+                    "name": "pendingEC2TasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "pendingFargateTasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "runningExternalTasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "pendingExternalTasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "runningManagedInstancesTasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "pendingManagedInstancesTasksCount",
+                    "value": "0"
+                },
+                {
+                    "name": "activeEC2ServiceCount",
+                    "value": "1"
+                },
+                {
+                    "name": "activeFargateServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "drainingEC2ServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "drainingFargateServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "activeExternalServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "drainingExternalServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "activeManagedInstancesServiceCount",
+                    "value": "0"
+                },
+                {
+                    "name": "drainingManagedInstancesServiceCount",
+                    "value": "0"
+                }
+            ],
+            "tags": [
+                {
+                    "key": "aws:cloudformation:stack-id",
+                    "value": "arn:aws:cloudformation:ap-northeast-1:795732142950:stack/Infra-ECS-Cluster-moderator-ai-cluster-7bc74d90/ce4b2880-00c7-11f1-bf70-065eae1f7637"
+                },
+                {
+                    "key": "aws:cloudformation:stack-name",
+                    "value": "Infra-ECS-Cluster-moderator-ai-cluster-7bc74d90"
+                },
+                {
+                    "key": "aws:cloudformation:logical-id",
+                    "value": "ECSCluster"
+                }
+            ],
+            "settings": [
+                {
+                    "name": "containerInsights",
+                    "value": "disabled"
+                }
+            ],
+            "capacityProviders": [
+                "FARGATE",
+                "FARGATE_SPOT"
+            ],
+            "defaultCapacityProviderStrategy": []
+        }
+    ],
+    "failures": []
+}

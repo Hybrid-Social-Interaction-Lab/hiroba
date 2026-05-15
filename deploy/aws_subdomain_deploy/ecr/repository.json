@@ -1,0 +1,18 @@
+{
+    "repositories": [
+        {
+            "repositoryArn": "arn:aws:ecr:ap-northeast-1:795732142950:repository/vsdk-app",
+            "registryId": "795732142950",
+            "repositoryName": "vsdk-app",
+            "repositoryUri": "795732142950.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app",
+            "createdAt": "2026-02-03T05:15:57.252000+00:00",
+            "imageTagMutability": "MUTABLE",
+            "imageScanningConfiguration": {
+                "scanOnPush": false
+            },
+            "encryptionConfiguration": {
+                "encryptionType": "AES256"
+            }
+        }
+    ]
+}

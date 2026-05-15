@@ -1,0 +1,85 @@
+{
+    "Parameters": [
+        {
+            "Name": "/vsdk-app/AWS_ACCESS_KEY_ID",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgE4VRenVrkTv/JR5CmIMyqdAAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMayBRPiIIH3mHmEVMAgEQgC8+exbNjANn4lHpEJhDDjY0/M/5L1HOYqMIUweuxEokknnjUrR2V92rzwvWEDLnBg==",
+            "Version": 2,
+            "LastModifiedDate": "2026-02-10T08:12:58.594000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/AWS_ACCESS_KEY_ID",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/AWS_REGION",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgHWkPm9IlaFXVDqUSoitvD1AAAAbDBqBgkqhkiG9w0BBwagXTBbAgEAMFYGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMCimtt+RrBHuyzxnZAgEQgCmoGvDt/P0QLpYdtFYfeO3dH0GPJYDPIHZqNXmI2525kCsNmoQ4EvJ9Yw==",
+            "Version": 2,
+            "LastModifiedDate": "2026-02-10T08:13:45.543000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/AWS_REGION",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/AWS_SECRET_ACCESS_KEY",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgFYp6eZmo/N6Z3nIolgrgPtAAAAhzCBhAYJKoZIhvcNAQcGoHcwdQIBADBwBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJCMFwV00NDY4AxBuwIBEIBDw3eXBUDAym2hWR/Q2Q7ic0mdX70m9TeiJqSIT4727y8eCNJVWbVXG2zhyP1AGOb6ckJFig8zWPVDAgj/KGHO5SpezQ==",
+            "Version": 2,
+            "LastModifiedDate": "2026-02-10T08:13:25.065000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/AWS_SECRET_ACCESS_KEY",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/OPENAI_API_KEY",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgGFfSiqN2NFNvpaiB18fXpTAAAAwTCBvgYJKoZIhvcNAQcGoIGwMIGtAgEAMIGnBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDAeafo7uz94xA9T9ZgIBEIB65qWz2rJx0ZAq3DXDnKt5It97tWneAwZcsyQUuGcsE0hnZzcqegyw8WxurSZN2TWVY3ACzZyB4lPis7yyOVSqrP/89aldbsFwQSnahVj1OmerMUoap0CVP5SyZBEIPeFH7DoL+i6jyX4DtcwAck9OiVEsucQ6NFIQQr4=",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:51:18.257000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/OPENAI_API_KEY",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/SPEECHGEN_API_TOKEN",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgEZOoHkHr8U8wk/IJ/LytZuAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMSXeB8rIJdyoV/bJwAgEQgDvFzqLTHBcg7zv3lDAC7JB3vZLhQJcET4axUJmLOl171PqLy1u4QUkGYYMttARhbOi4HBvF+/FDIb5vPw==",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:53:09.494000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/SPEECHGEN_API_TOKEN",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/SPEECHGEN_EMAIL",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgF4euQ562tdiUn7cYIKe0dEAAAAejB4BgkqhkiG9w0BBwagazBpAgEAMGQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM8XkyuJN+n1o8PA29AgEQgDeGyUigAsx/cbUCA5e6p54Z7Jmv6qD1NJ5h2FZH9LwrVixy4cBWFsABaeyLL182FKyfejaESoJ8",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:53:19.470000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/SPEECHGEN_EMAIL",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/SPEECHGEN_NEUTRAL_VOICE",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgGuVogYPGs/QRgLL3GvwlMnAAAAYjBgBgkqhkiG9w0BBwagUzBRAgEAMEwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMllk1Dl89DHAPn6gfAgEQgB92GWO5NCRAFUHCH2/H4hawtprfc7/l3mqr2US0zpa8",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:53:26.555000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/SPEECHGEN_NEUTRAL_VOICE",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/ZOOM_VSDK_KEY",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgEbguMk7i9doTBFFpHDR5ycAAAAgzCBgAYJKoZIhvcNAQcGoHMwcQIBADBsBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDNBvmF32vfEnG8DZhQIBEIA/Xa54QumlN7uKI8dXayXuZJeIxOioSZ4boqwC3i6/ZM/Iw6SdM2KuGV66b+HVx6+h0Zxdy2S38kJnutDDjD18",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:49:35.224000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/ZOOM_VSDK_KEY",
+            "DataType": "text"
+        },
+        {
+            "Name": "/vsdk-app/ZOOM_VSDK_SECRET",
+            "Type": "SecureString",
+            "Value": "AQICAHguvDxeVRXTSIvVd/BtEWTrqkppuDwh3GDSu7b+hd15jgGrWlH9xpyAtUIdxY4HBMn/AAAAgzCBgAYJKoZIhvcNAQcGoHMwcQIBADBsBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDMfNsGWx7eC1asd+hAIBEIA/nojY7H6V31uAzEBbWSiR0L3FVc5tlG451DIx0BHeJHwEsblMhCK5mVQ4qY1Hu+elCTVgUzv3vIq/NM/EpfZ9",
+            "Version": 1,
+            "LastModifiedDate": "2026-02-03T06:50:22.206000+00:00",
+            "ARN": "arn:aws:ssm:ap-northeast-1:795732142950:parameter/vsdk-app/ZOOM_VSDK_SECRET",
+            "DataType": "text"
+        }
+    ]
+}

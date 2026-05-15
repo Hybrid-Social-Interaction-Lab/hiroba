@@ -1,0 +1,104 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The template used to create an ECS Service from the ECS Console.",
+  "Parameters": {
+    "ECSClusterName": {
+      "Type": "String",
+      "Default": "moderator-ai-cluster"
+    },
+    "ECSServiceName": {
+      "Type": "String",
+      "Default": "moderator-ai-service"
+    },
+    "SecurityGroupIDs": {
+      "Type": "CommaDelimitedList",
+      "Default": "sg-04536479e3ad52342"
+    },
+    "SubnetIDs": {
+      "Type": "CommaDelimitedList",
+      "Default": "subnet-026a9f716da2d5117,subnet-046ba06b913b66bdd,subnet-0f6c1438d955a3539"
+    },
+    "VpcID": {
+      "Type": "String",
+      "Default": "vpc-0d91926ce2ed3b85b"
+    },
+    "LoadBalancerName": {
+      "Type": "String",
+      "Default": "moderator-ai-alb"
+    }
+  },
+  "Resources": {
+    "ECSService": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": "moderator-ai-cluster",
+        "CapacityProviderStrategy": [
+          {
+            "CapacityProvider": "FARGATE",
+            "Base": 0,
+            "Weight": 1
+          }
+        ],
+        "TaskDefinition": "arn:aws:ecs:ap-northeast-1:795732142950:task-definition/moderator-ai-task:1",
+        "ServiceName": "moderator-ai-service",
+        "SchedulingStrategy": "REPLICA",
+        "DesiredCount": 1,
+        "AvailabilityZoneRebalancing": "ENABLED",
+        "LoadBalancers": [
+          {
+            "ContainerName": "moderator-ai-task",
+            "ContainerPort": 3000,
+            "LoadBalancerName": {
+              "Ref": "AWS::NoValue"
+            },
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9"
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": {
+              "Ref": "SecurityGroupIDs"
+            },
+            "Subnets": {
+              "Ref": "SubnetIDs"
+            }
+          }
+        },
+        "PlatformVersion": "LATEST",
+        "DeploymentConfiguration": {
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true
+          },
+          "Strategy": "ROLLING",
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "ServiceConnectConfiguration": {
+          "Enabled": false
+        },
+        "Tags": [],
+        "EnableECSManagedTags": true,
+        "EnableExecuteCommand": false
+      }
+    }
+  },
+  "Outputs": {
+    "ClusterName": {
+      "Description": "The cluster used to create the service.",
+      "Value": {
+        "Ref": "ECSClusterName"
+      }
+    },
+    "ECSService": {
+      "Description": "The created service.",
+      "Value": {
+        "Ref": "ECSService"
+      }
+    }
+  }
+}

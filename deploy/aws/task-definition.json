@@ -1,0 +1,55 @@
+{
+    "family": "vsdk-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "512",
+    "memory": "1024",
+    "executionRoleArn": "arn:aws:iam::118120622551:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "vsdk-container",
+            "image": "118120622551.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app:ssl",
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "protocol": "tcp"
+                },
+                {
+                    "containerPort": 3443,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                },
+                {
+                    "name": "PORT",
+                    "value": "3000"
+                },
+                {
+                    "name": "ZOOM_VSDK_KEY",
+                    "value": ""
+                },
+                {
+                    "name": "ZOOM_VSDK_SECRET",
+                    "value": ""
+                },
+                {
+                    "name": "OPENAI_API_KEY",
+                    "value": ""
+                }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/vsdk-task",
+                    "awslogs-region": "ap-northeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ]
+}

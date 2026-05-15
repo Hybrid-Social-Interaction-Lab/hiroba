@@ -1,0 +1,617 @@
+{
+    "services": [
+        {
+            "serviceArn": "arn:aws:ecs:ap-northeast-1:795732142950:service/moderator-ai-cluster/moderator-ai-service",
+            "serviceName": "moderator-ai-service",
+            "clusterArn": "arn:aws:ecs:ap-northeast-1:795732142950:cluster/moderator-ai-cluster",
+            "loadBalancers": [
+                {
+                    "targetGroupArn": "arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9",
+                    "containerName": "moderator-ai-task",
+                    "containerPort": 3000
+                }
+            ],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "capacityProviderStrategy": [
+                {
+                    "capacityProvider": "FARGATE",
+                    "weight": 1,
+                    "base": 0
+                }
+            ],
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:ap-northeast-1:795732142950:task-definition/moderator-ai-task:6",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": true,
+                    "rollback": true
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100,
+                "strategy": "ROLLING",
+                "bakeTimeInMinutes": 0
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/5589612340331493224",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:ap-northeast-1:795732142950:task-definition/moderator-ai-task:6",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2026-03-04T09:26:04.106000+00:00",
+                    "updatedAt": "2026-03-04T09:29:06.616000+00:00",
+                    "capacityProviderStrategy": [
+                        {
+                            "capacityProvider": "FARGATE",
+                            "weight": 1,
+                            "base": 0
+                        }
+                    ],
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-026a9f716da2d5117",
+                                "subnet-046ba06b913b66bdd",
+                                "subnet-0f6c1438d955a3539"
+                            ],
+                            "securityGroups": [
+                                "sg-04536479e3ad52342"
+                            ],
+                            "assignPublicIp": "ENABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/5589612340331493224 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::795732142950:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "785e2326-f3aa-445e-a12c-75987c465334",
+                    "createdAt": "2026-03-05T09:28:57.438000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "1908526c-8170-4998-9870-d3d0ac82932b",
+                    "createdAt": "2026-03-05T03:28:33.615000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "75dd7e15-ab47-46f6-967c-8f693c3686a6",
+                    "createdAt": "2026-03-04T21:28:16.218000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "34f4c063-22e0-446c-a06d-e53e897f579e",
+                    "createdAt": "2026-03-04T15:27:35.047000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "5b412d15-5951-45b1-ba45-50834b5251e3",
+                    "createdAt": "2026-03-04T09:29:06.622000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "798fc8f5-a447-41cd-b5f4-8b1889a81b31",
+                    "createdAt": "2026-03-04T09:29:06.621000+00:00",
+                    "message": "(service moderator-ai-service) (deployment ecs-svc/5589612340331493224) deployment completed."
+                },
+                {
+                    "id": "d8a1e8ca-f667-4835-856c-b44bdd665275",
+                    "createdAt": "2026-03-04T09:28:04.525000+00:00",
+                    "message": "(service moderator-ai-service, taskSet ecs-svc/6343607799471687777) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "3d64aafc-039b-4a2e-880d-abee1293f7c7",
+                    "createdAt": "2026-03-04T09:28:04.519000+00:00",
+                    "message": "(service moderator-ai-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "79edd0ed-0bb0-45bb-804e-7163011e7fed",
+                    "createdAt": "2026-03-04T09:27:54.078000+00:00",
+                    "message": "(service moderator-ai-service) has stopped 1 running tasks: (task fd141e2c95ef48bf873ddb88b4e0afa2)."
+                },
+                {
+                    "id": "accb3bed-c6f8-4743-833e-d81873cc32ce",
+                    "createdAt": "2026-03-04T09:27:02.705000+00:00",
+                    "message": "(service moderator-ai-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "8f2695e8-cba4-4134-bd9c-74522e783589",
+                    "createdAt": "2026-03-04T09:26:30.587000+00:00",
+                    "message": "(service moderator-ai-service) has started 1 tasks: (task 893fcac388a2489792cfb5acc38d7740)."
+                },
+                {
+                    "id": "8523c28a-e517-4b04-ba71-043a1fcaf2ed",
+                    "createdAt": "2026-03-04T07:44:33.572000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "77edcb3f-2c1a-482a-b3e0-7174cdd6c651",
+                    "createdAt": "2026-03-04T07:44:33.571000+00:00",
+                    "message": "(service moderator-ai-service) (deployment ecs-svc/6343607799471687777) deployment completed."
+                },
+                {
+                    "id": "7b8cbd53-5df4-4e0a-8eec-f2286b977950",
+                    "createdAt": "2026-03-04T07:43:11.652000+00:00",
+                    "message": "(service moderator-ai-service, taskSet ecs-svc/6616158059561687515) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "6680effc-fd15-403b-8948-aaf6811e1c3c",
+                    "createdAt": "2026-03-04T07:43:11.645000+00:00",
+                    "message": "(service moderator-ai-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "f387f184-b707-4963-bb24-924457a70991",
+                    "createdAt": "2026-03-04T07:43:01.334000+00:00",
+                    "message": "(service moderator-ai-service) has stopped 1 running tasks: (task 67228b01c2164007a53cd9af37774029)."
+                },
+                {
+                    "id": "112e96e4-91ec-4f2a-b209-40b4cfd83093",
+                    "createdAt": "2026-03-04T07:42:09.646000+00:00",
+                    "message": "(service moderator-ai-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "a147b9f5-3e51-4cd2-98e4-6ee475523881",
+                    "createdAt": "2026-03-04T07:41:29.135000+00:00",
+                    "message": "(service moderator-ai-service) has started 1 tasks: (task fd141e2c95ef48bf873ddb88b4e0afa2)."
+                },
+                {
+                    "id": "f518d1b5-3bbc-4cea-94f3-f6251380216e",
+                    "createdAt": "2026-03-04T04:38:04.437000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "f457f7ee-ab2c-4726-992a-2b65b5438295",
+                    "createdAt": "2026-03-03T22:37:54.827000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "03105ac8-477a-45d3-acb8-db187fed56d5",
+                    "createdAt": "2026-03-03T19:12:06.540000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "9eff7e93-4f25-4cb0-9743-3177feeecfb1",
+                    "createdAt": "2026-03-03T13:11:58.051000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "3e3a7144-c874-4cae-8948-ca8f9b321379",
+                    "createdAt": "2026-03-03T07:11:46.768000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "06434ca0-f923-4c1d-8957-793e6de80791",
+                    "createdAt": "2026-03-03T01:10:58.933000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "3d84b717-5d1a-4869-9ddd-320a905ecfeb",
+                    "createdAt": "2026-03-02T19:10:29.994000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "fe880db0-c1ea-48bb-a0b2-66d036f2bd09",
+                    "createdAt": "2026-03-02T13:10:08.776000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "e0068990-366f-41db-a743-aeb20fc63cf9",
+                    "createdAt": "2026-03-02T07:09:27.881000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "64e4d635-0af2-49eb-9a46-bf68c2b08a29",
+                    "createdAt": "2026-03-02T01:08:49.247000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "9a31ef8e-1e9e-483e-8f8a-e1d955df6559",
+                    "createdAt": "2026-03-01T19:08:28.053000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "41cf69db-a917-48e3-a759-ff612ea835ac",
+                    "createdAt": "2026-03-01T13:08:22.357000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "b50533a9-8663-4018-8704-4752ec7dc9dc",
+                    "createdAt": "2026-03-01T07:07:59.362000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "aca8a0cf-f64b-4b5d-99c2-cef22eb0ddc9",
+                    "createdAt": "2026-03-01T01:07:30.157000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "66e3b591-6d16-4f27-b0a5-2cdf6183a640",
+                    "createdAt": "2026-02-28T19:06:56.349000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "0270fc30-1d46-4079-9269-e15af0c1e748",
+                    "createdAt": "2026-02-28T13:06:31.518000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "422a53c0-81a5-45ed-8c35-2c3e3fb0aed7",
+                    "createdAt": "2026-02-28T07:06:10.295000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "0f07e286-a959-4329-a56c-d39bc96af2f1",
+                    "createdAt": "2026-02-28T01:05:50.292000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "912a2264-138d-4228-8747-06e158f25165",
+                    "createdAt": "2026-02-27T19:05:24.107000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "c2c7704e-af67-49cf-8fa4-87643900c737",
+                    "createdAt": "2026-02-27T15:34:30.283000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "f96ecf56-d9fb-43d5-9dae-071f678d9cdb",
+                    "createdAt": "2026-02-27T11:59:00.467000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "6bdc3af1-2489-4ba1-aa18-e11e259ec661",
+                    "createdAt": "2026-02-27T05:58:44.377000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "749bc3c9-47b4-43a8-8979-44853a465bd4",
+                    "createdAt": "2026-02-26T23:58:26.090000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "b45bcf6e-4562-4739-b88d-24679d3d6ae3",
+                    "createdAt": "2026-02-26T17:58:14.571000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "fca8bf6c-b451-4dbc-88c3-539126d5c26a",
+                    "createdAt": "2026-02-26T12:35:46.958000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "892f9487-dc09-4b78-b5c7-210a9bca53cf",
+                    "createdAt": "2026-02-26T06:35:00.982000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "247faa74-dc1c-4ad9-93e7-1fac87b61b81",
+                    "createdAt": "2026-02-26T00:34:56.542000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "bac402f4-2f54-49bf-87ce-12a4f3935397",
+                    "createdAt": "2026-02-25T18:34:27.230000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "90684fb7-8acb-40c5-8733-fb9724caf1cb",
+                    "createdAt": "2026-02-25T13:06:29.648000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "188e92d4-a41e-4f66-8b6e-16c415a0e008",
+                    "createdAt": "2026-02-25T07:05:53.446000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "a4f03765-b369-4066-8a0d-afe1de8a6264",
+                    "createdAt": "2026-02-25T01:05:46.476000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "b5a23c6c-c810-406b-885a-654d14f60cd8",
+                    "createdAt": "2026-02-24T19:05:28.718000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "952a3cb4-812d-400e-b289-ac4271df9bcd",
+                    "createdAt": "2026-02-24T14:38:50.348000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "b285a5f4-7422-4769-8c51-f384e03cb6c5",
+                    "createdAt": "2026-02-24T08:40:06.098000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "ea1bcdcb-924b-4259-a017-4ba55324a1f0",
+                    "createdAt": "2026-02-24T08:40:06.097000+00:00",
+                    "message": "(service moderator-ai-service) (deployment ecs-svc/6616158059561687515) deployment completed."
+                },
+                {
+                    "id": "30c1e369-5b87-4537-a603-b5bfb6b1a84a",
+                    "createdAt": "2026-02-24T08:39:04.691000+00:00",
+                    "message": "(service moderator-ai-service, taskSet ecs-svc/6550374730720576102) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "d35a30e6-412e-4d87-ba87-5a12d57023ff",
+                    "createdAt": "2026-02-24T08:39:04.687000+00:00",
+                    "message": "(service moderator-ai-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "0de8947e-716e-480c-8b15-e7efd6583f6b",
+                    "createdAt": "2026-02-24T08:38:53.592000+00:00",
+                    "message": "(service moderator-ai-service) has stopped 1 running tasks: (task 1c0df42d6cd64fc597e303e4653e48de)."
+                },
+                {
+                    "id": "6ff1141a-c4e4-4ef0-84b3-3e820704d0d0",
+                    "createdAt": "2026-02-24T08:38:03.503000+00:00",
+                    "message": "(service moderator-ai-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "29d6f598-ccd0-4ba3-ba99-650d1bee6349",
+                    "createdAt": "2026-02-24T08:37:22.552000+00:00",
+                    "message": "(service moderator-ai-service) has started 1 tasks: (task 67228b01c2164007a53cd9af37774029)."
+                },
+                {
+                    "id": "c6ec807a-fb5a-4b3d-91fa-e8abd4e4679f",
+                    "createdAt": "2026-02-24T02:38:59.908000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "1dc9abc6-a1e2-41c1-ab47-3ca13a8539a8",
+                    "createdAt": "2026-02-23T20:38:58.876000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "6bc1f69b-98c0-4911-a535-0d9bf8a630b9",
+                    "createdAt": "2026-02-23T15:51:13.775000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "9e562484-271b-43c1-9642-6584c694bfbc",
+                    "createdAt": "2026-02-23T09:50:57.101000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "3570f803-2c06-419e-88fb-affefccece99",
+                    "createdAt": "2026-02-23T03:50:13.011000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "4526d285-4401-42e4-9892-42c165cf43a8",
+                    "createdAt": "2026-02-22T21:50:03.365000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "a5f82a2e-bb38-4a83-b703-f673b230b53c",
+                    "createdAt": "2026-02-22T15:49:20.383000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "7fd10bdb-40fb-4289-a749-ed0dc682d9c3",
+                    "createdAt": "2026-02-22T09:48:57.105000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "96920ac5-229e-4fd9-89f1-b361183d6fe4",
+                    "createdAt": "2026-02-22T03:48:52.129000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "6e9a2b23-fa4c-41d7-a9d9-fd8f466cb9a2",
+                    "createdAt": "2026-02-21T21:48:16.947000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "1774cce3-da7a-4cc9-9d63-7fc36a8ae17c",
+                    "createdAt": "2026-02-21T15:47:39.700000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "d9e14ba5-6174-4ca3-a1eb-0d2e97266672",
+                    "createdAt": "2026-02-21T09:47:32.202000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "9ad72816-8200-4430-8fd7-5d884bd0d186",
+                    "createdAt": "2026-02-21T03:46:51.867000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "043f74c1-d50f-4325-b0dc-9ec9ae69efb0",
+                    "createdAt": "2026-02-20T21:46:05.806000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "cdc86699-0a2c-4dea-8586-a2903037c549",
+                    "createdAt": "2026-02-20T21:01:45.151000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "3e19ea10-d3b6-460b-beec-e97a657c4a93",
+                    "createdAt": "2026-02-20T15:01:04.799000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "e94f1314-c4a1-4e2a-996e-e6c83a9af42b",
+                    "createdAt": "2026-02-20T12:30:15.798000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "d83f3cd6-f7e1-4de6-942c-b238314d52a0",
+                    "createdAt": "2026-02-20T06:29:57.359000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "93f5e31e-5c94-41d1-babe-0316a168ab1a",
+                    "createdAt": "2026-02-20T00:29:32.380000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "f2e5cc8a-1e89-4b03-a4a8-e85b004bf60c",
+                    "createdAt": "2026-02-19T18:28:50.091000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "942712b6-35a0-4d97-bf38-9deb168f82fe",
+                    "createdAt": "2026-02-19T15:12:32.571000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "10303700-4bf0-4488-8783-1a7b8b7567cd",
+                    "createdAt": "2026-02-19T09:12:30.191000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "684e3f9d-9896-4194-9bd7-3ecf38a82465",
+                    "createdAt": "2026-02-19T03:12:17.300000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "6c984f84-4263-4920-98dc-7e3d016305b2",
+                    "createdAt": "2026-02-18T21:12:09.411000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "e5c660b0-99c7-40db-91b1-dd65f9b2d62e",
+                    "createdAt": "2026-02-18T19:16:57.454000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "8d4a6317-b6f7-4d0f-9c04-4081efec1bcb",
+                    "createdAt": "2026-02-18T13:16:23.877000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "8b743c9a-b534-4752-ade7-bdaeedbac617",
+                    "createdAt": "2026-02-18T07:16:11.183000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "6899a3ec-e3b2-4c27-8131-ca7e44adf502",
+                    "createdAt": "2026-02-18T01:15:51.798000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "f5ee3dde-eccb-479a-bee6-bbf543f3ee3b",
+                    "createdAt": "2026-02-17T19:15:36.676000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "666d09e9-b723-449c-bc3d-c60d7a7bca94",
+                    "createdAt": "2026-02-17T13:17:23.628000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "0e311039-69ab-4bec-ad4a-e638d92bcd69",
+                    "createdAt": "2026-02-17T13:17:23.627000+00:00",
+                    "message": "(service moderator-ai-service) (deployment ecs-svc/6550374730720576102) deployment completed."
+                },
+                {
+                    "id": "ab1d3b04-6a73-4414-ad4a-86e68d91e1de",
+                    "createdAt": "2026-02-17T13:16:23.633000+00:00",
+                    "message": "(service moderator-ai-service, taskSet ecs-svc/9349591432213454493) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "c9368a6c-29d6-46c2-84f1-2ea2c34eddc0",
+                    "createdAt": "2026-02-17T13:16:23.627000+00:00",
+                    "message": "(service moderator-ai-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "06dcda39-85e1-44e8-8261-8b20d4ce659d",
+                    "createdAt": "2026-02-17T13:16:13.586000+00:00",
+                    "message": "(service moderator-ai-service) has stopped 1 running tasks: (task a01914780f094d88a00ac091631f7793)."
+                },
+                {
+                    "id": "b88d8003-c6b9-4c39-ac49-394f48a01862",
+                    "createdAt": "2026-02-17T13:15:21.460000+00:00",
+                    "message": "(service moderator-ai-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "18f18e94-8ea1-45b5-9da1-12402b75589b",
+                    "createdAt": "2026-02-17T13:14:42.122000+00:00",
+                    "message": "(service moderator-ai-service) has started 1 tasks: (task 1c0df42d6cd64fc597e303e4653e48de)."
+                },
+                {
+                    "id": "50e622b6-35eb-481c-9103-cdd7abec1854",
+                    "createdAt": "2026-02-17T13:03:44.445000+00:00",
+                    "message": "(service moderator-ai-service) has reached a steady state."
+                },
+                {
+                    "id": "3cb16fb8-c8fd-4611-b898-065e2e0998a6",
+                    "createdAt": "2026-02-17T13:03:44.444000+00:00",
+                    "message": "(service moderator-ai-service) (deployment ecs-svc/9349591432213454493) deployment completed."
+                },
+                {
+                    "id": "f293f64e-9607-4c3a-a8bd-67bcab27cfd3",
+                    "createdAt": "2026-02-17T13:02:42.923000+00:00",
+                    "message": "(service moderator-ai-service, taskSet ecs-svc/6999412965272623199) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "ae1d0bbf-a796-441b-87a2-7630d151cee3",
+                    "createdAt": "2026-02-17T13:02:42.918000+00:00",
+                    "message": "(service moderator-ai-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                },
+                {
+                    "id": "724e81a4-990c-4d5a-9560-95464b5c9d9e",
+                    "createdAt": "2026-02-17T13:02:31.852000+00:00",
+                    "message": "(service moderator-ai-service) has stopped 1 running tasks: (task 2df231a2fb324f90a8c4210ea557b8bb)."
+                },
+                {
+                    "id": "a9ecc026-7249-48e8-9a75-4a34a57dae48",
+                    "createdAt": "2026-02-17T13:01:41.412000+00:00",
+                    "message": "(service moderator-ai-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:ap-northeast-1:795732142950:targetgroup/moderator-ai-alb-tg/2efde0ebb6b6d2c9)"
+                }
+            ],
+            "createdAt": "2026-02-03T08:12:25.650000+00:00",
+            "currentServiceRevisions": [
+                {
+                    "arn": "arn:aws:ecs:ap-northeast-1:795732142950:service-revision/moderator-ai-cluster/moderator-ai-service/5589612340331493224",
+                    "requestedTaskCount": 1,
+                    "runningTaskCount": 1,
+                    "pendingTaskCount": 0
+                }
+            ],
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-026a9f716da2d5117",
+                        "subnet-046ba06b913b66bdd",
+                        "subnet-0f6c1438d955a3539"
+                    ],
+                    "securityGroups": [
+                        "sg-04536479e3ad52342"
+                    ],
+                    "assignPublicIp": "ENABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 180,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::795732142950:root",
+            "enableECSManagedTags": true,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": false,
+            "availabilityZoneRebalancing": "ENABLED",
+            "resourceManagementType": "CUSTOMER"
+        }
+    ],
+    "failures": []
+}

@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hiroba</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Rubik', sans-serif;
+        background: #1c1c1c;
+      }
+
+      /* Agent Setting Controls - Client Mode Grayed Out */
+      .client-mode .agent-setting-control {
+        opacity: 0.7;
+        pointer-events: none;
+        background-color: #f8f9fa !important;
+      }
+
+      /* Don't override Bootstrap switch track colors in view-only modes.
+         (The switch inputs also carry .agent-setting-control.) */
+      .client-mode .form-check-input.agent-setting-control {
+        background-color: initial !important;
+      }
+
+      .client-mode .agent-setting-control:disabled {
+        opacity: 0.6;
+      }
+
+      /* Master Mode - Settings are editable */
+      .master-mode .agent-setting-control {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background-color: white !important;
+        cursor: pointer !important;
+      }
+
+      /* Sync Control Button - 常に操作可能 */
+      .client-mode .sync-control {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        background-color: initial !important;
+      }
+
+      /* チェックボックスの状態を視覚的に保持 */
+      .client-mode .agent-setting-control:checked {
+        opacity: 0.8;
+      }
+
+      /* 設定同期中のハイライト効果 */
+      .settings-sync-highlight {
+        background-color: #fff3cd !important;
+        border: 2px solid #ffc107 !important;
+        transition: all 0.3s ease;
+      }
+
+      .settings-sync-fade {
+        background-color: transparent !important;
+        border: 2px solid transparent !important;
+        transition: all 1s ease;
+      }
+
+      .input-forms {
+        width: 30%;
+        min-width: 380px;
+        height: 100vh;
+        float: left;
+        padding: 50px 15px 15px 15px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border-right: 1px solid #333;
+        transition: margin-left 0.3s ease, opacity 0.3s ease;
+        max-height: 100vh;
+        position: relative;
+      }
+
+      #settings-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #e0e0e0;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+        z-index: 10;
+      }
+
+      #settings-close-btn:hover {
+        color: #fff;
+      }
+
+      .input-forms .form-label {
+        color: #e0e0e0;
+      }
+
+      .input-forms .form-control,
+      .input-forms .form-select {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+      }
+
+      .input-forms .form-control:focus,
+      .input-forms .form-select:focus {
+        background-color: #2d2d2d;
+        border-color: #0066cc;
+        color: #e0e0e0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+      }
+
+      .input-forms .btn {
+        background-color: #3d3d3d;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      .input-forms .btn:hover {
+        background-color: #4d4d4d;
+        border-color: #666;
+      }
+
+      .input-forms .btn-primary {
+        background-color: #0066cc;
+        border-color: #0066cc;
+        color: #fff;
+      }
+
+      .input-forms .btn-primary:hover {
+        background-color: #0052a3;
+        border-color: #0052a3;
+      }
+
+      .input-forms .alert {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+
+      .input-forms .form-text {
+        color: #aaa;
+      }
+
+      .input-forms textarea {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+      }
+
+      .input-forms textarea:focus {
+        background-color: #2d2d2d;
+        border-color: #0066cc;
+        color: #e0e0e0;
+      }
+
+      /* Dark mode for bordered sections */
+      .input-forms > div[style*="border"] {
+        background-color: #2d2d2d !important;
+        border-color: #444 !important;
+        color: #e0e0e0;
+      }
+
+      .input-forms .mb-2[style*="border"],
+      .input-forms .mb-3[style*="border"] {
+        background-color: #2d2d2d !important;
+        border-color: #444 !important;
+      }
+
+      .input-forms .progress {
+        background-color: #1a1a1a;
+      }
+
+      .input-forms .form-check-label {
+        color: #e0e0e0;
+      }
+
+      .input-forms small {
+        color: #aaa;
+      }
+
+      .input-forms strong {
+        color: #e0e0e0;
+      }
+
+      .input-forms .badge {
+        background-color: #0066cc;
+      }
+
+      .input-forms.hidden {
+        display: none !important;
+      }
+
+      /* Host panel tabs */
+      .host-tabs {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 12px;
+        background: #111;
+        border-radius: 6px;
+        padding: 3px;
+      }
+      .host-tab-btn {
+        flex: 1;
+        padding: 5px 4px;
+        font-size: 11px;
+        font-weight: 500;
+        border: none;
+        border-radius: 4px;
+        background: transparent;
+        color: #888;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .host-tab-btn.active {
+        background: #2d2d2d;
+        color: #e0e0e0;
+      }
+      .host-tab-btn:hover:not(.active) {
+        color: #bbb;
+      }
+      .host-tab-pane {
+        display: none;
+      }
+      .host-tab-pane.active {
+        display: block;
+      }
+
+      /* Host panel section cards */
+      .host-card {
+        border: 1px solid #383838;
+        border-radius: 6px;
+        padding: 10px;
+        background: #252525;
+        margin-bottom: 10px;
+      }
+      .host-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+      .host-card-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #ccc;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .host-card .form-control,
+      .host-card .form-select {
+        background: #1a1a1a;
+        border-color: #444;
+        color: #e0e0e0;
+        font-size: 11px;
+      }
+      .host-card small {
+        color: #777;
+      }
+      .woz-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+        font-weight: 500;
+      }
+
+      .main {
+        width: 70%;
+        height: 100vh;
+        float: right;
+        padding: 0;
+        box-sizing: border-box;
+        transition: width 0.3s ease;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #1c1c1c;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .main.expanded {
+        width: 100% !important;
+      }
+      
+      /* 設定パネル切り替えボタンを固定位置に配置 */
+      #toggle-settings-fixed {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        display: none;
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      }
+      
+      #toggle-settings-fixed:hover {
+        background: rgba(0, 123, 255, 1);
+      }
+      
+      /* パネルが隠れている時に固定ボタンを表示 */
+      body:has(.input-forms.hidden) #toggle-settings-fixed {
+        display: block;
+      }
+      
+      /* Safari等でhas()がサポートされていない場合の代替 */
+      .panel-hidden #toggle-settings-fixed {
+        display: block;
+      }
+
+
+      #avatar-video-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px;
+        box-sizing: border-box;
+        width: 100%;
+        background: #1c1c1c;
+        flex: 1;
+        overflow-y: auto;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        /* extra bottom space so subtitles don't overlap last row */
+        padding-bottom: 48px;
+      }
+
+      #avatar-video-layout > div {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        overflow: hidden;
+        min-width: 0;
+        width: 480px;
+        height: 270px;
+        flex-shrink: 0;
+      }
+
+      .video-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: #222;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid transparent;
+        transition: border-color 0.3s ease;
+      }
+
+      .video-canvas.self-video {
+        border: 1px solid #007bff !important;
+      }
+
+      /* Speaking indicator - green outline for whoever is speaking */
+      .video-canvas.speaking {
+        border-color: #00e676 !important; /* Bright green */
+        border-width: 4px !important;
+        box-shadow: 0 0 20px rgba(0, 230, 118, 0.8) !important;
+        animation: pulse-border-green 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse-border-green {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(0, 230, 118, 0.8);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(0, 230, 118, 1);
+        }
+      }
+
+      .video-canvas.remote-video {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      .avatar-label {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        z-index: 10;
+        pointer-events: none;
+        display: none; /* デフォルトは非表示 */
+      }
+
+      /* Always-visible display name shown on avatar canvases */
+      .avatar-display-name {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        right: auto;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 3px 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 4px;
+        z-index: 15;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .user-display-label {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 3px 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 4px;
+        z-index: 15;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Make Bootstrap 5.0.2 switch thumb visible.
+         BS 5.0.2 hard-codes the thumb via background-image (no --bs-form-switch-bg var yet). */
+      .form-switch .form-check-input {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%236c757d'/%3e%3c/svg%3e") !important;
+      }
+
+      .form-switch .form-check-input:checked {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%236c757d'/%3e%3c/svg%3e") !important;
+      }
+
+      #call-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #242424;
+        height: 64px;
+        border-top: 1px solid #333;
+        z-index: 50;
+        flex-shrink: 0;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .toolbar-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: none;
+        border: none;
+        color: #e0e0e0;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s ease, opacity 0.2s ease;
+        padding: 8px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      #toolbar-settings {
+        padding: 8px 8px;
+      }
+
+      .toolbar-button .button-icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+        flex-shrink: 0;
+      }
+
+      .toolbar-button .button-label {
+        font-size: 13px;
+        color: #aaa;
+      }
+
+      .toolbar-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .toolbar-button.active {
+        color: #e0e0e0;
+      }
+
+      .toolbar-button.active .button-label {
+        color: #e0e0e0;
+      }
+
+      .toolbar-button:not(.active) .button-label {
+        opacity: 0.6;
+      }
+
+      .toolbar-button.danger {
+        background: rgba(196, 28, 59, 0.15);
+        color: #ff4757;
+      }
+
+      .toolbar-button.danger .button-label {
+        color: #ff4757;
+      }
+
+      .toolbar-button.danger:hover {
+        background: rgba(196, 28, 59, 0.3);
+      }
+
+      /* Version info panel - positioned in bottom-right of video area */
+      #version-info {
+        position: fixed;
+        bottom: 70px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 10px;
+        z-index: 40;
+        color: #999;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        min-width: 250px;
+      }
+
+      /* Dark mode for Bootstrap modals */
+      .modal-content {
+        background-color: #1e1e1e !important;
+        border-color: #444 !important;
+        color: #e0e0e0 !important;
+      }
+
+      .modal-header {
+        border-color: #444 !important;
+      }
+
+      .modal-footer {
+        border-color: #444 !important;
+      }
+
+      .modal-title {
+        color: #e0e0e0 !important;
+      }
+
+      .modal-body {
+        color: #e0e0e0 !important;
+      }
+
+      .modal-body .form-label,
+      .modal-body .form-text {
+        color: #e0e0e0 !important;
+      }
+
+      .modal-body .form-control,
+      .modal-body .form-select,
+      .modal-body textarea {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #e0e0e0;
+      }
+
+      .modal-body .form-control:focus,
+      .modal-body .form-select:focus,
+      .modal-body textarea:focus {
+        background-color: #2d2d2d;
+        border-color: #0066cc;
+        color: #e0e0e0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+      }
+
+      /* Dark mode for conversation log */
+      #conversation-log {
+        background-color: #2d2d2d !important;
+        border-color: #444 !important;
+        color: #e0e0e0;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #1c1c1c;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      /* Custom checkbox/radio styling for dark mode */
+      .input-forms .form-check-input {
+        background-color: #2d2d2d;
+        border-color: #555;
+      }
+
+      .input-forms .form-check-input:checked {
+        background-color: #0066cc;
+        border-color: #0066cc;
+      }
+
+      .input-forms .form-check-input:focus {
+        border-color: #0066cc;
+        box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.25);
+      }
+
+      /* Fix for conversion panel styling */
+      .input-forms #conversation-log {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        color: #e0e0e0;
+      }
+
+      /* Link styling in dark mode */
+      .input-forms a {
+        color: #66b3ff;
+      }
+
+      .input-forms a:hover {
+        color: #99ccff;
+      }
+
+      /* Rubik typography */
+      h1, h2, h3, h4, h5, h6,
+      .modal-title,
+      .toolbar-button,
+      .form-label,
+      .btn {
+        font-family: 'Rubik', sans-serif;
+      }
+
+      .form-label {
+        font-weight: 500;
+      }
+
+      .modal-title {
+        font-weight: 600;
+      }
+
+      /* Tooltip styling */
+      .tooltip {
+        z-index: 9999 !important;
+      }
+
+      .tooltip-inner {
+        background-color: #333;
+        border-radius: 4px;
+        padding: 8px 12px;
+        font-size: 12px;
+        color: #fff;
+        text-align: center;
+        max-width: 200px;
+      }
+    </style>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <!-- Three.js and Loaders -->
+    <!-- Load VRM library -->
+    <script src="https://unpkg.com/@pixiv/three-vrm@3.4.1/lib/three-vrm.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@0.408.0"></script>
+
+    <!-- Custom Modal System - moved to body in script load section below -->
+
+    <!-- Three.js ES Modules approach to avoid deprecation warnings -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.168.0/build/three.module.js",
+          "three/examples/jsm/loaders/FBXLoader.js": "https://unpkg.com/three@0.168.0/examples/jsm/loaders/FBXLoader.js",
+          "three/examples/jsm/loaders/GLTFLoader.js": "https://unpkg.com/three@0.168.0/examples/jsm/loaders/GLTFLoader.js",
+          "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@3.4.1/lib/three-vrm.module.js"
+        }
+      }
+    </script>
+
+    <!-- Global Three.js for legacy compatibility -->
+    <script src="https://unpkg.com/three@0.168.0/build/three.module.js" type="module">
+      // Make Three.js available globally for existing code
+      import * as THREE from 'three';
+      window.THREE = THREE;
+    </script>
+
+    <!-- Load FBXLoader globally -->
+    <script type="module">
+      import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+      import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+      import * as THREE from 'three';
+      import * as VRM from '@pixiv/three-vrm';
+
+      // Make loaders globally available using separate objects
+      window.FBXLoader = FBXLoader;
+      window.GLTFLoader = GLTFLoader;
+      window.THREE = THREE;
+      window.VRM = VRM;
+
+      // Create extended THREE object if needed
+      window.THREEExtended = {
+        ...THREE,
+        FBXLoader: FBXLoader,
+        GLTFLoader: GLTFLoader
+      };
+
+      console.log('[Loaders] FBXLoader, GLTFLoader, and VRM loaded via ES modules');
+
+      // avatar.js uses window.THREE which is set above — load it only after this module runs
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = './js/avatar.js';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      console.log('[Loaders] avatar.js loaded, FBXAvatarSystem:', !!window.FBXAvatarSystem);
+    </script>
+  </head>
+
+  <body>
+    <!-- Lobby Screen - Pre-join overlay -->
+    <div id="lobby-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="color: #e0e0e0; margin: 0; font-size: 48px; font-weight: 700; font-family: 'Rubik';">Hiroba</h1>
+        <p style="color: #888; margin: 8px 0 0 0; font-size: 22px; font-family: 'Rubik'; font-weight: 300;">広場</p>
+      </div>
+      <div style="display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; justify-content: center;">
+        <!-- Create New Session Box -->
+        <div style="background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; border: 1px solid #444;">
+          <h3 style="color: #e0e0e0; text-align: center; margin-bottom: 25px; font-size: 18px; font-weight: 600;">Create Session</h3>
+
+          <div class="mb-3">
+            <label for="lobby-create-session-name" class="form-label" style="color: #e0e0e0;">Session Name</label>
+            <input type="text" class="form-control" id="lobby-create-session-name" placeholder="Enter session name" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="lobby-create-password" class="form-label" style="color: #e0e0e0;">
+              Password <span style="color: #aaa; font-size: 12px;">(Optional)</span>
+              <button type="button" class="btn btn-link" style="padding: 0; margin-left: 4px; vertical-align: middle; border: none; background: none; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="If left empty, anyone can join this session without a password.">
+                <span data-lucide="info" style="color: #66b3ff; width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></span>
+              </button>
+            </label>
+            <input type="password" class="form-control" id="lobby-create-password" placeholder="Leave empty for an open session" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+          </div>
+
+          <div class="mb-3">
+            <label for="lobby-create-condition" class="form-label" style="color: #e0e0e0;">Condition</label>
+            <select class="form-control" id="lobby-create-condition" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+              <option value="">Loading conditions…</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="lobby-create-display-name" class="form-label" style="color: #e0e0e0;">Display Name <span style="color: #aaa; font-size: 12px;">(Optional)</span></label>
+            <input type="text" class="form-control" id="lobby-create-display-name" placeholder="Your name (optional)" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+          </div>
+
+          <button type="button" class="btn btn-primary w-100" id="lobby-create-btn" style="padding: 12px; font-size: 16px; font-weight: 600; margin-top: 20px;">Create & Join</button>
+        </div>
+
+        <!-- Join Existing Session Box -->
+        <div style="background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; border: 1px solid #444;">
+          <h3 style="color: #e0e0e0; text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 600;">Join Session</h3>
+
+          <div class="mb-3">
+            <label for="lobby-join-session-name" class="form-label" style="color: #e0e0e0;">Select Session</label>
+            <div style="position: relative;">
+              <select class="form-control" id="lobby-join-session-name" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px; cursor: pointer;">
+                <option value="">-- Choose a session --</option>
+              </select>
+            </div>
+            <small style="color: #aaa; margin-top: 5px; display: block;">Select from active sessions</small>
+          </div>
+
+          <div class="mb-3" id="join-password-wrapper">
+            <label for="lobby-join-password" class="form-label" style="color: #e0e0e0;">Password</label>
+            <input type="password" class="form-control" id="lobby-join-password" placeholder="Enter password" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <small id="join-password-helper" style="color: #aaa; margin-top: 5px; display: none;">This session is open — no password required</small>
+          </div>
+
+          <div class="mb-3">
+            <label for="lobby-join-display-name" class="form-label" style="color: #e0e0e0;">Display Name <span style="color: #aaa; font-size: 12px;">(Optional)</span></label>
+            <input type="text" class="form-control" id="lobby-join-display-name" placeholder="Your name (optional)" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+          </div>
+
+          <button type="button" class="btn btn-success w-100" id="lobby-join-btn" style="padding: 12px; font-size: 16px; font-weight: 600; margin-top: 20px;">Join Session</button>
+        </div>
+      </div>
+
+      <!-- Info Section Below Cards -->
+      <div style="margin-top: 60px; text-align: center; max-width: 800px;">
+        <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin-bottom: 20px; font-family: 'Rubik';">
+          Hiroba is an AI-powered video conferencing system with intelligent avatars, real-time transcription, and advanced conversation management. Create or join sessions to experience seamless collaboration with AI-enhanced moderation and interaction.
+        </p>
+
+        <div style="display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 20px;">
+          <!-- GitHub Link -->
+          <a href="https://github.com/aztkp/moderator-ai" target="_blank" rel="noopener noreferrer"
+             style="display: inline-flex; align-items: center; gap: 8px; color: #66b3ff; text-decoration: none; font-family: 'Rubik'; transition: color 0.2s ease;"
+             onmouseover="this.style.color='#99ccff'" onmouseout="this.style.color='#66b3ff'">
+            <i data-lucide="github" style="width: 20px; height: 20px;"></i>
+            <span style="font-weight: 500;">GitHub Repository</span>
+          </a>
+
+          <!-- Lab Link -->
+          <div style="color: #888; font-size: 14px; font-family: 'Rubik';">
+            <a href="https://www.hybrid-social-interaction-lab.com/" target="_blank" rel="noopener noreferrer"
+               style="color: #66b3ff; text-decoration: none; transition: color 0.2s ease;"
+               onmouseover="this.style.color='#99ccff'" onmouseout="this.style.color='#66b3ff'">
+              Hybrid Social Interaction Lab
+            </a>
+            <span style="color: #666; margin-left: 4px;">— University of Tsukuba, Japan</span>
+          </div>
+
+          <!-- Contact Email -->
+          <div style="color: #888; font-size: 14px; font-family: 'Rubik';">
+            <span style="color: #aaa;">Contact:</span>
+            <a href="mailto:chilanyang@slis.tsukuba.ac.jp" style="color: #66b3ff; text-decoration: none; margin-left: 4px; transition: color 0.2s ease;"
+               onmouseover="this.style.color='#99ccff'" onmouseout="this.style.color='#66b3ff'">
+              chilanyang@slis.tsukuba.ac.jp
+            </a>
+          </div>
+        </div>
+
+        <p style="color: #666; font-size: 12px; margin-top: 20px; font-family: 'Rubik';">
+          © 2026 Hiroba. All rights reserved.
+        </p>
+      </div>
+    </div>
+
+    <!-- Hidden inputs for backward compatibility with existing JS -->
+    <input type="hidden" id="session_topic" value="">
+    <input type="hidden" id="session_pwd" value="">
+
+    <div class="input-forms" id="input-forms" style="display: none;">
+      <!-- Close button -->
+      <button type="button" id="settings-close-btn" title="Close Settings Panel">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+
+      <!-- Panel header -->
+      <div style="margin-bottom: 12px;">
+        <div style="font-size: 13px; font-weight: 600; color: #ccc; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+          <i data-lucide="monitor" style="width: 15px; height: 15px;"></i>Session Host Panel
+          <span id="session-status" style="margin-left: auto; font-size: 11px; font-weight: 400; color: #888;">
+            <i data-lucide="tv" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>0/2 participants
+          </span>
+        </div>
+        <div id="session-condition-banner" style="display: none; font-size: 11px; color: #aaa; background: #1e2a1e; border: 1px solid #2d4a2d; border-radius: 4px; padding: 4px 8px; margin-bottom: 6px; align-items: center; gap: 5px;">
+          <i data-lucide="tag" style="width: 11px; height: 11px; flex-shrink: 0; color: #5a9e5a;"></i>
+          <span>Condition: <strong id="session-condition-label" style="color: #8fcf8f;">—</strong></span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <div style="flex: 1;">
+            <input type="text" class="form-control form-control-sm" id="user_name" value="" required placeholder="Your display name">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="host-tabs" id="host-panel-tabs">
+        <button class="host-tab-btn active" data-tab="agent">
+          <i data-lucide="bot" style="width: 12px; height: 12px;"></i>Agent
+        </button>
+        <button class="host-tab-btn" data-tab="woz">
+          <i data-lucide="wand-2" style="width: 12px; height: 12px;"></i>WoZ
+          <span id="woz-queue-badge" style="display:none;background:#4a9eff;color:#000;font-size:9px;font-weight:700;border-radius:8px;padding:1px 5px;margin-left:3px;"></span>
+        </button>
+        <button class="host-tab-btn" data-tab="participants">
+          <i data-lucide="users" style="width: 12px; height: 12px;"></i>Participants
+        </button>
+        <button class="host-tab-btn" data-tab="conversation">
+          <i data-lucide="bar-chart-2" style="width: 12px; height: 12px;"></i>Log
+        </button>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- TAB: Agent Control                              -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <div class="host-tab-pane active" id="tab-agent">
+
+        <!-- Host visibility -->
+        <div class="host-card host-only">
+          <div class="host-card-header">
+            <span class="host-card-title"><i data-lucide="eye-off" style="width: 13px; height: 13px;"></i>Host Visibility</span>
+            <div class="form-check form-switch" style="margin: 0;">
+              <input class="form-check-input" type="checkbox" id="master-video-visibility-toggle-public" checked>
+            </div>
+          </div>
+          <small>When off, you are completely hidden — participants cannot see or hear you, and you do not appear in their participant list.</small>
+        </div>
+
+        <!-- Agent Settings Panel -->
+        <div class="master-only-setting" id="agent-settings-panel">
+
+          <!-- Panel header with sync button -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; font-weight: 600; color: #4a9eff;">
+              <i data-lucide="bot" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Agent Behaviour
+              <span id="host-indicator" style="display: none; color: #6c757d; font-size: 11px;"> · view only</span>
+              <span id="client-indicator" style="display: none; color: #6c757d; font-size: 11px;"> · view only</span>
+            </span>
+            <button type="button" id="sync-settings-btn" class="btn btn-sm btn-outline-info sync-control"
+                    style="font-size: 10px; padding: 2px 6px; display: none;" title="Sync settings from host">
+              <i data-lucide="refresh-cw" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i> Sync
+            </button>
+          </div>
+
+          <!-- Live Agent Status -->
+          <div class="host-card" id="agent-status-card">
+            <div class="host-card-header">
+              <span class="host-card-title"><i data-lucide="activity" style="width: 13px; height: 13px;"></i>Live Agents</span>
+              <span id="agent-status-count" style="font-size: 10px; color: #666;">—</span>
+            </div>
+            <div id="agent-status-list" style="font-size: 11px; color: #777;">Loading…</div>
+          </div>
+
+          <!-- Silence Detection -->
+          <div class="host-card">
+            <div class="host-card-header">
+              <span class="host-card-title"><i data-lucide="volume-x" style="width: 13px; height: 13px;"></i>Silence Detection</span>
+              <div class="form-check form-switch" style="margin: 0;">
+                <input class="form-check-input agent-setting-control" type="checkbox" id="silence-detection-toggle" checked>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: #888; margin-bottom: 4px;">
+              Next response in: <span id="silence-countdown" style="font-weight: bold; color: #dc3545;">10</span>s
+            </div>
+            <div class="progress" style="height: 3px; background: #111; margin-bottom: 8px;">
+              <div class="progress-bar bg-danger" id="silence-progress" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label style="font-size: 11px; color: #888; white-space: nowrap; margin: 0;">Threshold (s):</label>
+              <input type="number" id="silence-threshold-input" class="form-control form-control-sm agent-setting-control"
+                     value="10" min="5" max="1000" step="5" disabled style="width: 80px; font-size: 11px;">
+              <button type="button" id="apply-silence-threshold" class="btn btn-sm btn-outline-secondary agent-setting-control"
+                      style="font-size: 10px; padding: 2px 6px;" disabled>Apply</button>
+            </div>
+            <!-- Hidden fields preserved for JS compatibility -->
+            <div id="silence-speech-fields" style="display: none;">
+              <input type="text" class="form-control form-control-sm mb-1 silence-speech-input agent-setting-control"
+                     value="Sorry, do you have any questions?" disabled style="font-size: 10px;">
+              <input type="text" class="form-control form-control-sm mb-1 silence-speech-input agent-setting-control"
+                     value="Is there anything I can help clarify?" disabled style="font-size: 10px;">
+              <input type="text" class="form-control form-control-sm mb-1 silence-speech-input agent-setting-control"
+                     value="Please feel free to share your thoughts." disabled style="font-size: 10px;">
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary agent-setting-control" id="silence-add-field" style="display: none;" disabled></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary agent-setting-control" id="silence-remove-field" style="display: none;" disabled></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary agent-setting-control" id="silence-update-btn" style="display: none;" disabled></button>
+          </div>
+
+          <!-- Name Detection — hidden, DOM nodes preserved for JS compatibility -->
+          <div style="display:none;">
+            <input class="form-check-input agent-setting-control" type="checkbox" id="name-detection-toggle" checked>
+            <input type="text" id="agent-keywords" class="form-control" value="agent,assistant,AI,bot" disabled>
+            <button type="button" id="keywords-update-btn" disabled></button>
+            <span id="name-detection-last"></span>
+          </div>
+
+          <!-- Periodic Speech -->
+          <div class="host-card">
+            <div class="host-card-header">
+              <span class="host-card-title"><i data-lucide="timer" style="width: 13px; height: 13px;"></i>Periodic Speech</span>
+              <div class="form-check form-switch" style="margin: 0;">
+                <input class="form-check-input agent-setting-control" type="checkbox" id="periodic-speech-toggle" checked>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: #888; margin-bottom: 4px;">
+              Next in: <span id="periodic-countdown" style="font-weight: bold; color: #4a9eff;">180</span>s
+            </div>
+            <div class="progress" style="height: 3px; background: #111; margin-bottom: 8px;">
+              <div class="progress-bar bg-primary" id="periodic-progress" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <label style="font-size: 11px; color: #888; white-space: nowrap; margin: 0;">Interval (s):</label>
+              <input type="number" id="periodic-interval-input" class="form-control form-control-sm agent-setting-control"
+                     value="180" min="30" max="600" step="30" disabled style="width: 80px; font-size: 11px;">
+              <button type="button" id="apply-periodic-interval" class="btn btn-sm btn-outline-secondary agent-setting-control"
+                      style="font-size: 10px; padding: 2px 6px;" disabled>Apply</button>
+            </div>
+          </div>
+
+        </div><!-- /agent-settings-panel -->
+
+        <!-- Hidden ai-style textarea preserved for JS compatibility -->
+        <textarea class="form-control agent-setting-control" id="ai-style" rows="3" style="display: none;">Please follow the instructions and join conversation. Respond in a friendly, professional, and informative manner. Keep responses concise but engaging. Avoid being overly casual or formal.</textarea>
+        <!-- Hidden indicators preserved for JS compatibility -->
+        <span id="ai-style-host-indicator" style="display: none;"></span>
+        <span id="ai-style-client-indicator" style="display: none;"></span>
+
+      </div><!-- /tab-agent -->
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- TAB: Wizard-of-Oz Controls                      -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <div class="host-tab-pane" id="tab-woz">
+
+        <div class="master-only-setting">
+
+          <!-- Speech queue -->
+          <div class="host-card" id="woz-queue-card" style="margin-bottom:8px;">
+            <div class="host-card-header" style="margin-bottom:4px;">
+              <span class="host-card-title"><i data-lucide="list" style="width:13px;height:13px;"></i>Speech Queue</span>
+              <button onclick="window.wozSpeechQueue=[];updateWozQueueDisplay()"
+                style="background:none;border:none;color:#555;cursor:pointer;font-size:10px;padding:0;" title="Clear queue">Clear</button>
+            </div>
+            <div id="woz-queue-list" style="display:none;"></div>
+            <div id="woz-queue-empty" style="font-size:10px;color:#444;">Queue is empty</div>
+          </div>
+
+          <!-- Per-bot manual controls -->
+          <div id="woz-bot-controls">
+            <div style="font-size: 11px; color: #555; text-align: center; padding: 12px 0;">No agents loaded</div>
+          </div>
+
+          <!-- Hidden legacy button preserved for JS compatibility -->
+          <div style="display:none;">
+            <button type="button" id="manual-generate-btn" class="btn btn-sm btn-outline-warning agent-setting-control woz-btn" disabled></button>
+          </div>
+
+          <!-- Hidden prompt editor buttons preserved for JS compatibility -->
+          <div style="display:none;">
+            <button type="button" id="open-ai-style-modal"></button>
+            <button type="button" id="open-condition-prompt-modal"></button>
+            <button type="button" id="open-periodic-prompt-modal"></button>
+          </div>
+
+        </div>
+
+      </div><!-- /tab-woz -->
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- TAB: Participants                               -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <div class="host-tab-pane" id="tab-participants">
+
+        <!-- Session Invite Info -->
+        <div class="host-card master-only-setting" style="margin-bottom: 10px;">
+          <div class="host-card-header">
+            <span class="host-card-title"><i data-lucide="link" style="width: 13px; height: 13px;"></i>Session Invite</span>
+          </div>
+          <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Share this link with participants:</div>
+          <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 10px;">
+            <input type="text" id="session-invite-link" readonly style="flex:1; background:#1a1a1a; border:1px solid #333; color:#ccc; font-size:10px; padding:4px 6px; border-radius:4px; cursor:pointer;" onclick="this.select()" placeholder="Join the session first">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="copySessionInviteLink()" style="font-size:10px; padding:3px 7px; white-space:nowrap;">
+              <i data-lucide="copy" style="width:11px; height:11px; display:inline-block; vertical-align:middle;"></i>
+            </button>
+          </div>
+
+          <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Session password:</div>
+          <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 8px;">
+            <input type="text" id="session-password-display" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#e0e0e0; font-size:11px; padding:4px 6px; border-radius:4px;" placeholder="No password set">
+            <button type="button" class="btn btn-sm btn-outline-primary agent-setting-control" onclick="updateSessionPassword()" style="font-size:10px; padding:3px 7px; white-space:nowrap;">Set</button>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid #2a2a2a;">
+            <span style="font-size: 11px; color: #aaa;"><i data-lucide="door-open" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:3px;"></i>Allow new participants to join</span>
+            <div class="form-check form-switch" style="margin:0;">
+              <input class="form-check-input agent-setting-control" type="checkbox" id="join-enabled-toggle" checked>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participants List -->
+        <div class="host-card" style="margin-bottom: 10px;">
+          <div class="host-card-header">
+            <span class="host-card-title"><i data-lucide="users" style="width: 13px; height: 13px;"></i>Connected Participants</span>
+          </div>
+          <div id="participant-buttons" style="font-size: 12px; color: #777; min-height: 40px;">
+            <p class="text-muted" style="font-size: 12px; margin: 0;">No remote participants yet</p>
+          </div>
+        </div>
+
+        <div class="host-card master-only-setting">
+          <div class="host-card-header">
+            <span class="host-card-title"><i data-lucide="shield" style="width: 13px; height: 13px;"></i>Session Control</span>
+          </div>
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-sm btn-outline-danger agent-setting-control" id="clear-participants-btn" disabled>
+              <i data-lucide="user-x" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>Clear All Participants
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /tab-participants -->
+
+      <!-- ═══════════════════════════════════════════════ -->
+      <!-- TAB: Conversation Log                           -->
+      <!-- ═══════════════════════════════════════════════ -->
+      <div class="host-tab-pane" id="tab-conversation">
+
+        <div class="host-card">
+          <div class="host-card-header">
+            <span class="host-card-title"><i data-lucide="bar-chart-2" style="width: 13px; height: 13px;"></i>Conversation History</span>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary" type="button" id="conversation-menu-btn" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 11px; padding: 2px 8px;">⋮</button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="conversation-menu-btn">
+                <li><button class="dropdown-item" id="toggle-view-mode" type="button"><i data-lucide="clipboard" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Table</button></li>
+                <li><button class="dropdown-item" id="download-csv" type="button"><i data-lucide="save" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Export CSV</button></li>
+                <li><button class="dropdown-item" id="expand-conversation" type="button">⬌ Expand</button></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button class="dropdown-item text-danger" id="clear-conversation" type="button"><i data-lucide="trash-2" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Clear</button></li>
+              </ul>
+            </div>
+          </div>
+          <div id="conversation-log" style="height: 420px; overflow-y: auto; overflow-x: auto; border: 1px solid #383838; border-radius: 4px; padding: 8px; background-color: #161616; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4; white-space: nowrap;"></div>
+        </div>
+
+      </div><!-- /tab-conversation -->
+
+
+    </div>
+
+    <div class="main" id="main" style="display: none;">
+      <!-- パネルが隠れている時に表示される固定ボタン -->
+      <button type="button" id="toggle-settings-fixed" title="Show Settings Panel">
+        <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+      </button>
+      <div id="video-area-wrapper" style="position: relative; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div id="avatar-video-layout">
+          <!-- Avatar canvases are injected here dynamically based on condition config -->
+          <div id="avatar-canvases-container" style="display: contents;"></div>
+          <!-- Remote Users Container - Dynamically populated by JS -->
+          <div id="remote-users-container" style="display: contents;"></div>
+          <div style="position: relative;">
+            <video id="self-video-videotag" class="video-canvas self-video" autoplay muted playsinline></video>
+            <div class="avatar-display-name" id="self-user-label">You</div>
+            <div id="self-video-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; font-size: 14px; text-align: center; pointer-events: none; display: none;">
+              Video Off
+            </div>
+          </div>
+        </div>
+        <!-- Live subtitle bar -->
+        <div id="call-subtitle" style="display: none; position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; z-index: 100; max-width: 80%;">
+          <div id="call-subtitle-inner" style="display: inline-block; background: rgba(0,0,0,0.65); border-radius: 6px; padding: 6px 14px; backdrop-filter: blur(4px);">
+            <div id="call-subtitle-speaker" style="font-size: 11px; color: #aaa; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 2px;"></div>
+            <div id="call-subtitle-text" style="font-size: 13px; color: #f0f0f0; line-height: 1.4;"></div>
+          </div>
+        </div>
+      </div>
+      <div id="call-toolbar">
+        <div class="toolbar-group">
+          <button class="toolbar-button" id="toolbar-settings" title="Settings">
+            <i data-lucide="settings" class="button-icon"></i>
+          </button>
+          <button class="toolbar-button active" id="toolbar-mic" title="Mute/Unmute (M)">
+            <i data-lucide="mic" class="button-icon"></i>
+            <span class="button-label">Mute</span>
+          </button>
+          <button class="toolbar-button active" id="toolbar-camera" title="Start/Stop Video (V)">
+            <i data-lucide="video" class="button-icon"></i>
+            <span class="button-label">Video</span>
+          </button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; color: #aaa; font-size: 13px;">
+          <span id="toolbar-session-name" style="background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 4px; color: #e0e0e0; font-weight: 500; font-family: 'Rubik';">Hiroba</span>
+        </div>
+        <button class="toolbar-button danger" id="toolbar-leave" title="Leave Call">
+          <i data-lucide="phone" class="button-icon"></i>
+          <span class="button-label">Leave</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Zoom SDK -->
+    <script src="https://source.zoom.us/videosdk/zoom-video-1.12.10.min.js"></script>
+    <script src="./js/modal-system.js"></script>
+    <script src="./js/confirm-helper.js"></script>
+    <script src="./js/agent-behavior.js"></script>
+    <script src="./js/logger.js"></script>
+    <script src="./js/globals.js"></script>
+    <script src="./js/video.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/lobby.js"></script>
+    <script src="./js/session.js"></script>
+    <script src="./js/participants.js"></script>
+    <script src="./js/conversation.js"></script>
+    <script src="./js/sync.js"></script>
+    <script src="./js/index.js"></script>
+
+    <!-- New Avatar System - Load in proper dependency order -->
+    <!-- DISABLED: Using FBX Avatar System Instead -->
+    <!-- <script type="module" src="./js/avatar.js"></script>
+    <script type="module">
+      // Wait for avatar.js to load and export VRMAvatar, then load other systems
+      await new Promise(resolve => {
+        const checkVRMAvatar = () => {
+          if (window.VRMAvatar) {
+            resolve();
+          } else {
+            setTimeout(checkVRMAvatar, 50);
+          }
+        };
+        checkVRMAvatar();
+      });
+
+      // Now load the renderer and behavior scripts
+      await import('./js/avatar-renderer.js');
+      await import('./js/agent-behavior.js');
+      await import('./js/avatar-system.js');
+
+      console.log('[Avatar System] All modules loaded in correct order');
+    </script> -->
+
+    <!-- FBX Avatar Integration - Error-Isolated Avatar System -->
+    <!-- DISABLED: Using Simple FBX Avatar System Instead -->
+    <!-- <script src="./js/avatar-manager.js"></script> -->
+
+
+
+    <script>
+    // Agent status panel — polls FBXAvatarSystem.avatars for live state
+    function refreshAgentStatusPanel() {
+      const list = document.getElementById('agent-status-list');
+      const count = document.getElementById('agent-status-count');
+      if (!list) return;
+
+      const avatars = window.FBXAvatarSystem && window.FBXAvatarSystem.avatars;
+      if (!avatars || avatars.length === 0) {
+        list.innerHTML = '<span style="color:#555;">No agents loaded</span>';
+        if (count) count.textContent = '0 agents';
+        return;
+      }
+
+      if (count) count.textContent = `${avatars.length} agent${avatars.length !== 1 ? 's' : ''}`;
+
+      list.innerHTML = avatars.map((avatar, i) => {
+        const isSpeaking = avatar.isSpeaking;
+        const dotColor = isSpeaking ? '#28a745' : '#555';
+        const status = isSpeaking ? 'Speaking' : 'Idle';
+        const name = (avatar.config && avatar.config.name) || `Agent ${i + 1}`;
+        return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #333;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${dotColor};flex-shrink:0;"></span>
+          <span style="flex:1;color:#ccc;">${name}</span>
+          <span style="color:${dotColor};font-size:10px;">${status}</span>
+        </div>`;
+      }).join('');
+
+      refreshWozBotControls(avatars);
+    }
+
+    function refreshWozBotControls(avatars) {
+      const container = document.getElementById('woz-bot-controls');
+      if (!container) return;
+
+      if (!avatars || avatars.length === 0) {
+        container.innerHTML = '<div style="font-size:11px;color:#555;text-align:center;padding:12px 0;">No agents loaded</div>';
+        return;
+      }
+
+      const presets = (window.wozPresetLines || []);
+      const presetsOptions = presets.map((line, i) =>
+        `<option value="${line.replace(/"/g, '&quot;')}">${line}</option>`
+      ).join('');
+
+      // Only re-render if agent list changed (avoid losing input focus)
+      const existingNames = Array.from(container.querySelectorAll('[data-bot-name]')).map(el => el.dataset.botName);
+      const currentNames = avatars.map((a, i) => (a.config && a.config.name) || `Agent ${i + 1}`);
+      const changed = existingNames.join(',') !== currentNames.join(',');
+
+      if (changed) {
+        container.innerHTML = currentNames.map(name => {
+          const safeId = name.replace(/[^a-zA-Z0-9]/g, '_');
+          return `
+          <div class="host-card" data-bot-name="${name}" style="margin-bottom:8px;">
+            <div class="host-card-header" style="margin-bottom:6px;">
+              <span class="host-card-title" style="font-size:11px;">
+                <i data-lucide="bot" style="width:12px;height:12px;"></i> ${name}
+              </span>
+            </div>
+            <button type="button"
+              class="btn btn-sm btn-outline-warning woz-bot-btn w-100"
+              style="font-size:10px;margin-bottom:6px;"
+              onclick="if(typeof triggerManualGenerateResponseForBot==='function') triggerManualGenerateResponseForBot('${name}')">
+              <i data-lucide="zap" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px;"></i>AI Trigger
+            </button>
+            <select id="woz-preset-${safeId}" class="form-select form-select-sm woz-bot-btn"
+              style="font-size:10px;background:#1a1a1a;color:#ccc;border-color:#333;margin-bottom:4px;">
+              <option value="">— select a preset line —</option>
+              ${presetsOptions}
+            </select>
+            <button type="button"
+              class="btn btn-sm btn-outline-secondary woz-bot-btn w-100"
+              style="font-size:10px;margin-bottom:6px;"
+              onclick="(function(){var v=document.getElementById('woz-preset-${safeId}').value;if(v&&typeof sayTextAsBot==='function')sayTextAsBot('${name}',v);})()">
+              Say Preset
+            </button>
+            <div style="display:flex;gap:4px;">
+              <input type="text" id="woz-custom-${safeId}" class="form-control form-control-sm woz-bot-btn"
+                placeholder="Custom line…" style="font-size:10px;background:#1a1a1a;color:#ccc;border-color:#333;flex:1;"
+                onkeydown="if(event.key==='Enter'){var v=this.value;if(v&&typeof sayTextAsBot==='function'){sayTextAsBot('${name}',v);this.value='';}}">
+              <button type="button"
+                class="btn btn-sm btn-outline-info woz-bot-btn"
+                style="font-size:10px;white-space:nowrap;"
+                onclick="(function(){var inp=document.getElementById('woz-custom-${safeId}');if(inp&&inp.value&&typeof sayTextAsBot==='function'){sayTextAsBot('${name}',inp.value);inp.value='';}})()">Say</button>
+            </div>
+          </div>`;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    // Refresh every second while panel is open
+    setInterval(refreshAgentStatusPanel, 1000);
+
+    // Conversation history and view mode
+    window.simpleChatHistory = [];  // Initialize conversation history globally
+    let conversationViewMode = 'chat'; // 'table' or 'chat' - default to chat view
+
+    // Host panel tab switching
+    function setupHostPanelTabs() {
+      const tabs = document.querySelectorAll('.host-tab-btn');
+      const panes = document.querySelectorAll('.host-tab-pane');
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.tab;
+          tabs.forEach(b => b.classList.remove('active'));
+          panes.forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          const pane = document.getElementById('tab-' + target);
+          if (pane) pane.classList.add('active');
+          if (window.lucide) lucide.createIcons();
+        });
+      });
+
+      // Clear participants button
+      const clearBtn = document.getElementById('clear-participants-btn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (!confirm('Remove all remote participants from local view? This does not disconnect them from the session.')) return;
+          if (typeof broadcastMessage === 'function') {
+            broadcastMessage({ type: 'PARTICIPANTS_CLEARED', masterId: 'host' });
+          }
+          if (typeof handleParticipantsCleared === 'function') {
+            handleParticipantsCleared({ masterId: 'host' });
+          }
+        });
+      }
+    }
+    document.addEventListener('DOMContentLoaded', setupHostPanelTabs);
+
+    // Session invite link helpers
+    function updateSessionInviteLink() {
+      const topicEl = document.getElementById('session_topic');
+      const linkEl = document.getElementById('session-invite-link');
+      if (!linkEl) return;
+      const topic = topicEl ? topicEl.value.trim() : '';
+      if (!topic) { linkEl.value = ''; return; }
+      const url = new URL(window.location.href);
+      url.searchParams.set('session', topic);
+      linkEl.value = url.toString();
+    }
+
+    function copySessionInviteLink() {
+      const linkEl = document.getElementById('session-invite-link');
+      if (!linkEl || !linkEl.value) return;
+      navigator.clipboard.writeText(linkEl.value).then(() => {
+        const btn = linkEl.nextElementSibling;
+        const orig = btn.innerHTML;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.innerHTML = orig; if (window.lucide) lucide.createIcons(); }, 1500);
+      });
+    }
+    window.copySessionInviteLink = copySessionInviteLink;
+
+    function updateSessionPassword() {
+      const pwdEl = document.getElementById('session-password-display');
+      const topicEl = document.getElementById('session_topic');
+      if (!pwdEl || !topicEl) return;
+      const newPwd = pwdEl.value.trim();
+      const sessionId = topicEl.value.trim();
+      if (!sessionId) { alert('You must be in a session to change the password.'); return; }
+      sendWebSocketMessage({
+        type: 'UPDATE_SESSION_PASSWORD',
+        sessionId,
+        password: newPwd || null,
+        masterId: client?.getCurrentUserInfo?.()?.userId || 'host',
+        masterName: client?.getCurrentUserInfo?.()?.displayName || 'host',
+        timestamp: new Date().toISOString()
+      });
+    }
+    window.updateSessionPassword = updateSessionPassword;
+
+    // join-enabled toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const joinToggle = document.getElementById('join-enabled-toggle');
+      if (joinToggle) {
+        joinToggle.addEventListener('change', () => {
+          const topicEl = document.getElementById('session_topic');
+          const sessionId = topicEl ? topicEl.value.trim() : '';
+          if (!sessionId) return;
+          sendWebSocketMessage({
+            type: 'TOGGLE_JOIN_ENABLED',
+            sessionId,
+            enabled: joinToggle.checked,
+            masterId: client?.getCurrentUserInfo?.()?.userId || 'host',
+            masterName: client?.getCurrentUserInfo?.()?.displayName || 'host',
+            timestamp: new Date().toISOString()
+          });
+        });
+      }
+
+      // Populate invite link when session_topic changes
+      const topicEl = document.getElementById('session_topic');
+      if (topicEl) {
+        topicEl.addEventListener('change', updateSessionInviteLink);
+        topicEl.addEventListener('input', updateSessionInviteLink);
+        new MutationObserver(updateSessionInviteLink).observe(topicEl, { attributes: true, attributeFilter: ['value'] });
+      }
+    });
+
+    // Kick participant
+    function kickParticipant(userId, displayName) {
+      if (!confirm(`Kick "${displayName}" from the session?`)) return;
+      const topicEl = document.getElementById('session_topic');
+      const sessionId = topicEl ? topicEl.value.trim() : '';
+      sendWebSocketMessage({
+        type: 'KICK_PARTICIPANT',
+        sessionId,
+        targetUserId: userId,
+        targetDisplayName: displayName,
+        masterId: client?.getCurrentUserInfo?.()?.userId || 'host',
+        masterName: client?.getCurrentUserInfo?.()?.displayName || 'host',
+        timestamp: new Date().toISOString()
+      });
+    }
+    window.kickParticipant = kickParticipant;
+
+    // Rename participant
+    function renameParticipant(userId, displayName) {
+      const newName = prompt(`Rename "${displayName}" to:`, displayName);
+      if (!newName || newName.trim() === '' || newName.trim() === displayName) return;
+      const topicEl = document.getElementById('session_topic');
+      const sessionId = topicEl ? topicEl.value.trim() : '';
+      sendWebSocketMessage({
+        type: 'RENAME_PARTICIPANT',
+        sessionId,
+        targetUserId: userId,
+        oldDisplayName: displayName,
+        newDisplayName: newName.trim(),
+        masterId: client?.getCurrentUserInfo?.()?.userId || 'host',
+        masterName: client?.getCurrentUserInfo?.()?.displayName || 'host',
+        timestamp: new Date().toISOString()
+      });
+    }
+    window.renameParticipant = renameParticipant;
+
+    // Conversation panel expand functionality
+    function setupConversationExpand() {
+      const expandButton = document.getElementById('expand-conversation');
+      const conversationContainer = document.querySelector('#conversation-log').parentElement;
+      let isExpanded = false;
+      
+      if (expandButton && conversationContainer) {
+        expandButton.addEventListener('click', function() {
+          if (isExpanded) {
+            // Collapse to normal size
+            conversationContainer.style.position = 'static';
+            conversationContainer.style.zIndex = 'auto';
+            conversationContainer.style.width = 'auto';
+            conversationContainer.style.height = 'auto';
+            conversationContainer.style.top = 'auto';
+            conversationContainer.style.left = 'auto';
+            document.getElementById('conversation-log').style.height = '350px';
+            expandButton.textContent = '⬌ Expand';
+            isExpanded = false;
+          } else {
+            // Expand to overlay mode
+            conversationContainer.style.position = 'fixed';
+            conversationContainer.style.zIndex = '9999';
+            conversationContainer.style.width = '80%';
+            conversationContainer.style.height = '80%';
+            conversationContainer.style.top = '10%';
+            conversationContainer.style.left = '10%';
+            conversationContainer.style.backgroundColor = '#f8fff8';
+            conversationContainer.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)';
+            document.getElementById('conversation-log').style.height = 'calc(100% - 60px)';
+            expandButton.textContent = '⬌ Collapse';
+            isExpanded = true;
+          }
+        });
+      }
+    }
+
+    // Clear conversation functionality
+    function setupClearConversation() {
+      const clearButton = document.getElementById('clear-conversation');
+
+      if (clearButton) {
+        clearButton.addEventListener('click', function() {
+          if (confirm('Are you sure you want to clear all conversation history?')) {
+            // Clear both possible history variables
+            if (window.simpleChatHistory) {
+              window.simpleChatHistory = [];
+            }
+            if (window.conversationHistory) {
+              window.conversationHistory = [];
+            }
+
+            // Clear the display
+            const conversationLog = document.getElementById('conversation-log');
+            if (conversationLog) {
+              conversationLog.innerHTML = '';
+            }
+
+            console.log('[Conversation] History cleared');
+          }
+        });
+      }
+    }
+
+    // ========== CSV Field Configuration ==========
+    // CSVのフィールド定義を設定として切り出し
+    const CSV_FIELD_CONFIG = [
+      {
+        name: 'Timestamp',
+        extractor: (conv) => {
+          // Convert timestamp to ISO format if needed
+          try {
+            if (conv.timestamp && !conv.timestamp.includes('Z')) {
+              const today = new Date().toISOString().split('T')[0];
+              return `${today}T${conv.timestamp}Z`;
+            }
+            return conv.timestamp || new Date().toISOString();
+          } catch (e) {
+            return new Date().toISOString();
+          }
+        }
+      },
+      {
+        name: 'Speaker ID',
+        extractor: (conv) => {
+          if (conv.type === 'user') {
+            // Return user ID or display name
+            return conv.userId || conv.speaker || 'Unknown';
+          } else if (conv.type === 'agent' || conv.type === 'agent_initiated' || conv.type === 'ai_response') {
+            return 'Agent';
+          } else {
+            return 'System';
+          }
+        }
+      },
+      {
+        name: 'Utterance',
+        extractor: (conv) => {
+          // Escape quotes for CSV
+          return `"${(conv.message || '').replace(/"/g, '""')}"`;
+        }
+      },
+      {
+        name: 'Word Count',
+        extractor: (conv) => {
+          return conv.message ? conv.message.split(' ').length : 0;
+        }
+      },
+      {
+        name: 'Trigger Event',
+        extractor: (conv) => {
+          // Map speech types to standard event names
+          const triggerMap = {
+            'silence': 'silence_detection',
+            'periodic': 'periodic_speech',
+            'name': 'name_mentioned'
+          };
+          const speechType = conv.speechType || conv.triggerEvent || '';
+          // Return mapped value, or empty string if not mapped (filters out 'chat' etc.)
+          return triggerMap[speechType] || '';
+        }
+      },
+      {
+        name: 'Agent Type',
+        extractor: (conv) => {
+          if (conv.type === 'user') return 'Human';
+          if (conv.type === 'agent' || conv.type === 'agent_initiated' || conv.type === 'ai_response') return 'Agent';
+          return ''; // System types excluded
+        }
+      },
+      {
+        name: 'Silence Before Speaking',
+        extractor: (conv) => {
+          // Return the silence timer value before speaking started
+          if (typeof conv.silenceBeforeSpeaking === 'number') {
+            const value = conv.silenceBeforeSpeaking.toFixed(1);
+            console.log(`[CSV] Silence value for conv ${conv.id}: ${value} (raw: ${conv.silenceBeforeSpeaking}, type: ${conv.type}, speechType: ${conv.speechType})`);
+            return value;
+          }
+          console.log(`[CSV] No silence value for conv ${conv.id}: silenceBeforeSpeaking=${conv.silenceBeforeSpeaking}, type: ${conv.type}`);
+          return conv.silenceBeforeSpeaking || '';
+        }
+      }
+    ];
+
+    // CSV download functionality
+    function downloadCSV() {
+      // Use simpleChatHistory if available, otherwise fallback to conversationHistory
+      const history = window.simpleChatHistory || window.conversationHistory || [];
+
+      if (history.length === 0) {
+        alert('No conversation data to download');
+        return;
+      }
+
+      const filteredHistory = history.filter(conv => conv.type !== 'system');
+
+      // Generate CSV header from field config
+      const headers = CSV_FIELD_CONFIG.map(field => field.name);
+      let csvContent = headers.join(',') + '\n';
+
+      // Generate CSV rows using field extractors
+      filteredHistory.forEach(conv => {
+        const row = CSV_FIELD_CONFIG.map(field => field.extractor(conv));
+        csvContent += row.join(',') + '\n';
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        const condition = (() => {
+          const params = new URLSearchParams(window.location.search);
+          const id = (params.get('condition') || '').trim();
+          return id || null;
+        })();
+        const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+        link.setAttribute('download', `conversation_log_${ts}${condition ? `_${condition}` : ''}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Update display based on view mode
+    function updateSimpleChatDisplay() {
+      if (conversationViewMode === 'table') {
+        updateTableView();
+      } else {
+        updateChatView();
+      }
+    }
+
+    // Table view display
+    function updateTableView() {
+      const conversationLog = document.getElementById('conversation-log');
+
+      if (conversationLog) {
+        conversationLog.style.whiteSpace = 'nowrap';
+        conversationLog.style.fontFamily = "'Courier New', monospace";
+
+        let html = '';
+
+        // Header row (matching CSV fields)
+        html += `
+          <div style="background: #e9ecef; font-weight: bold; padding: 5px; border-bottom: 2px solid #28a745; position: sticky; top: 0; z-index: 10;">
+            <span style="display: inline-block; width: 140px;">Timestamp</span>
+            <span style="display: inline-block; width: 150px;">Speaker ID</span>
+            <span style="display: inline-block; width: 350px;">Utterance</span>
+            <span style="display: inline-block; width: 80px;">Word Count</span>
+            <span style="display: inline-block; width: 150px;">Trigger Event</span>
+            <span style="display: inline-block; width: 100px;">Agent Type</span>
+            <span style="display: inline-block; width: 120px;">Silence Before</span>
+          </div>
+        `;
+
+        // Use simpleChatHistory if available, otherwise fallback to conversationHistory
+        const history = window.simpleChatHistory || window.conversationHistory || [];
+
+        const filteredHistory = history.filter(conv => conv.type !== 'system');
+
+        filteredHistory.forEach((conv, index) => {
+          const bgColor = index % 2 === 0 ? '#ffffff' : '#f8f9fa';
+
+          // Use CSV_FIELD_CONFIG extractors for consistency
+          const timestamp = CSV_FIELD_CONFIG[0].extractor(conv);
+          const speakerId = CSV_FIELD_CONFIG[1].extractor(conv);
+          const utterance = conv.message || '';
+          const wordCount = CSV_FIELD_CONFIG[3].extractor(conv);
+          const triggerEvent = CSV_FIELD_CONFIG[4].extractor(conv);
+          const agentType = CSV_FIELD_CONFIG[5].extractor(conv);
+          const silenceBefore = CSV_FIELD_CONFIG[6].extractor(conv);
+
+          html += `
+            <div style="background: ${bgColor}; padding: 3px 5px; border-bottom: 1px solid #dee2e6; font-size: 10px;">
+              <span style="display: inline-block; width: 140px; color: #6c757d;">${timestamp.substring(0, 19)}Z</span>
+              <span style="display: inline-block; width: 150px; font-weight: bold;">${speakerId}</span>
+              <span style="display: inline-block; width: 350px; color: #495057;">"${escapeHtml(utterance)}"</span>
+              <span style="display: inline-block; width: 80px; text-align: center;">${wordCount}</span>
+              <span style="display: inline-block; width: 150px; color: #6f42c1;">${triggerEvent}</span>
+              <span style="display: inline-block; width: 100px; font-weight: bold; color: #28a745;">${agentType}</span>
+              <span style="display: inline-block; width: 120px; text-align: center; color: #007bff;">${silenceBefore}</span>
+            </div>
+          `;
+        });
+
+        conversationLog.innerHTML = html;
+        conversationLog.scrollTop = conversationLog.scrollHeight;
+      }
+    }
+
+    // Chat view display
+    function updateChatView() {
+      const conversationLog = document.getElementById('conversation-log');
+
+      if (conversationLog) {
+        conversationLog.style.whiteSpace = 'normal';
+        conversationLog.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+        let html = '';
+
+        // Use simpleChatHistory if available, otherwise fallback to conversationHistory
+        const history = window.simpleChatHistory || window.conversationHistory || [];
+
+        const filteredHistory = history.filter(conv => conv.type !== 'system');
+
+        filteredHistory.forEach(conv => {
+          let colorClass, bgClass, iconClass, speechTypeDisplay = '';
+
+          switch (conv.type) {
+            case 'user':
+              colorClass = 'text-primary';
+              bgClass = 'bg-light';
+              iconClass = '<i data-lucide="user" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>';
+              break;
+            case 'agent':
+              colorClass = 'text-success';
+              bgClass = 'bg-success-subtle';
+              iconClass = '<i data-lucide="bot" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>';
+              // 発話種類の表示を追加
+              if (conv.speechType) {
+                const typeIcons = {
+                  silence: '<i data-lucide="volume-x" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>',
+                  periodic: '<i data-lucide="clock" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>',
+                  name: '<i data-lucide="ear" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>',
+                  chat: '<i data-lucide="message-circle" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>'
+                };
+                const typeIcon = typeIcons[conv.speechType] || '<i data-lucide="help-circle" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>';
+                speechTypeDisplay = ` <small class="badge bg-success">${typeIcon} ${conv.speechType}</small>`;
+              }
+              break;
+            case 'system':
+              colorClass = 'text-warning';
+              bgClass = 'bg-warning-subtle';
+              iconClass = '<i data-lucide="settings" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>';
+              break;
+            default:
+              colorClass = 'text-secondary';
+              bgClass = 'bg-light';
+              iconClass = '<i data-lucide="message-circle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>';
+          }
+
+          html += `
+            <div class="mb-2 p-2 border-start border-3 ${colorClass} ${bgClass}" style="border-radius: 5px;">
+              <small class="fw-bold">${iconClass} ${conv.speaker}${speechTypeDisplay}</small>
+              <small class="text-muted float-end">${conv.timestamp}</small><br>
+              <span style="margin-left: 15px;">${escapeHtml(conv.message)}</span>
+            </div>
+          `;
+        });
+        conversationLog.innerHTML = html;
+        conversationLog.scrollTop = conversationLog.scrollHeight;
+      }
+    }
+
+    // View mode toggle functionality
+    function setupViewModeToggle() {
+      const toggleButton = document.getElementById('toggle-view-mode');
+
+      if (toggleButton) {
+        toggleButton.addEventListener('click', function() {
+          if (conversationViewMode === 'table') {
+            conversationViewMode = 'chat';
+            toggleButton.innerHTML = '<i data-lucide="message-circle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Chat';
+          } else {
+            conversationViewMode = 'table';
+            toggleButton.innerHTML = '<i data-lucide="clipboard" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>Table';
+          }
+          if (window.lucide) lucide.createIcons();
+          updateSimpleChatDisplay();
+        });
+      }
+    }
+    
+    // CSV download setup
+    function setupCSVDownload() {
+      const downloadButton = document.getElementById('download-csv');
+
+      if (downloadButton) {
+        downloadButton.addEventListener('click', downloadCSV);
+      }
+    }
+
+    // Toolbar button setup
+    function setupToolbarButtons() {
+      const micBtn = document.getElementById('toolbar-mic');
+      const cameraBtn = document.getElementById('toolbar-camera');
+      const settingsBtn = document.getElementById('toolbar-settings');
+      const leaveBtn = document.getElementById('toolbar-leave');
+
+      if (micBtn) {
+        micBtn.addEventListener('click', async function() {
+          const success = await window.toggleToolbarMic();
+          if (!success) return;
+
+          this.classList.toggle('active');
+          const icon = this.querySelector('[data-lucide]');
+          const label = this.querySelector('.button-label');
+          if (this.classList.contains('active')) {
+            icon.setAttribute('data-lucide', 'mic');
+            label.textContent = 'Mute';
+          } else {
+            icon.setAttribute('data-lucide', 'mic-off');
+            label.textContent = 'Unmute';
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      if (cameraBtn) {
+        cameraBtn.addEventListener('click', async function() {
+          const success = await window.toggleToolbarCamera();
+          if (!success) return;
+
+          this.classList.toggle('active');
+          const icon = this.querySelector('[data-lucide]');
+          const label = this.querySelector('.button-label');
+          if (this.classList.contains('active')) {
+            icon.setAttribute('data-lucide', 'video');
+            label.textContent = 'Video';
+          } else {
+            icon.setAttribute('data-lucide', 'video-off');
+            label.textContent = 'Start';
+          }
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', function() {
+          const panel = document.getElementById('input-forms');
+          if (panel) {
+            panel.classList.toggle('hidden');
+            const main = document.getElementById('main');
+            if (main) {
+              main.classList.toggle('expanded');
+            }
+          }
+        });
+      }
+
+      if (leaveBtn) {
+        leaveBtn.addEventListener('click', function() {
+          if (typeof confirmLeaveSession === 'function') {
+            confirmLeaveSession();
+          }
+        });
+      }
+    }
+
+    // Initialize conversation and debug mode features
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setupConversationExpand();
+        setupClearConversation();
+        setupViewModeToggle();
+        setupCSVDownload();
+        setupToolbarButtons();
+        displayVersionInfo();
+        // Initialize Lucide icons
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      });
+    } else {
+      setupConversationExpand();
+      setupClearConversation();
+      setupViewModeToggle();
+      setupCSVDownload();
+      setupToolbarButtons();
+      displayVersionInfo();
+      // Initialize Lucide icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // Display deployment version information
+    function displayVersionInfo() {
+      fetch('/api/version')
+        .then(response => response.json())
+        .then(data => {
+          const versionInfo = document.getElementById('version-info');
+          if (versionInfo && data) {
+            versionInfo.innerHTML = `
+              <small class="text-muted">
+                <i data-lucide="clipboard" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>Task: ${data.taskFamily || 'unknown'}:${data.taskRevision || '1'} |
+                <i data-lucide="tag" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>Image: ${data.imageTag || 'latest'} |
+                <i data-lucide="clock" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>${data.deployTime || new Date().toISOString()}
+              </small>
+            `;
+          }
+        })
+        .catch(error => {
+          console.log('[Version] Could not fetch version info:', error);
+          const versionInfo = document.getElementById('version-info');
+          if (versionInfo) {
+            versionInfo.innerHTML = `
+              <small class="text-muted">
+                <i data-lucide="clipboard" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Local Development | <i data-lucide="clock" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> ${new Date().toISOString()}
+              </small>
+            `;
+          }
+        });
+    }
+    </script>
+
+    <script>
+    // ── Lobby: load conditions and wire buttons ───────────────────────────
+    (function() {
+      const conditionSelect = document.getElementById('lobby-create-condition')
+
+      // Load conditions into the dropdown
+      fetch('/api/conditions')
+        .then(r => r.ok ? r.json() : [])
+        .then(conditions => {
+          conditionSelect.innerHTML = ''
+          const conditionWrapper = conditionSelect.closest('.mb-3')
+          if (conditions.length === 0) {
+            if (conditionWrapper) conditionWrapper.style.display = 'none'
+            return
+          }
+          if (conditionWrapper) conditionWrapper.style.display = ''
+          conditions.forEach(c => {
+            const opt = document.createElement('option')
+            opt.value = c.id
+            opt.textContent = c.name
+            conditionSelect.appendChild(opt)
+          })
+          // Pre-select condition from URL if arriving back from somewhere
+          const urlCondition = new URLSearchParams(window.location.search).get('condition')
+          if (urlCondition) conditionSelect.value = urlCondition
+          // Preload all FBX models so they're cached when the session starts
+          const allModelPaths = [...new Set(conditions.flatMap(c => (c.agents || []).map(a => a.avatarModel).filter(Boolean)))]
+          if (window.FBXAvatarSystem) window.FBXAvatarSystem.preloadModels(allModelPaths)
+        })
+        .catch(() => {
+          conditionSelect.innerHTML = '<option value="">Failed to load conditions</option>'
+          const conditionWrapper = conditionSelect.closest('.mb-3')
+          if (conditionWrapper) conditionWrapper.style.display = 'none'
+        })
+
+      // Also populate the join session dropdown
+      fetch('/api/sessions')
+        .then(r => r.ok ? r.json() : [])
+        .then(sessions => {
+          const joinSelect = document.getElementById('lobby-join-session-name')
+          if (!joinSelect) return
+          joinSelect.innerHTML = '<option value="">-- Choose a session --</option>'
+          sessions.forEach(s => {
+            const opt = document.createElement('option')
+            opt.value = s.sessionId || s.topic
+            opt.textContent = s.topic || s.sessionId
+            joinSelect.appendChild(opt)
+          })
+        })
+        .catch(() => {})
+
+      // Create & Join
+      document.getElementById('lobby-create-btn').addEventListener('click', function() {
+        const sessionName = document.getElementById('lobby-create-session-name').value.trim()
+        const password    = document.getElementById('lobby-create-password').value
+        const displayName = document.getElementById('lobby-create-display-name').value.trim()
+        const conditionId = conditionSelect.value
+
+        if (!sessionName) {
+          alert('Please enter a session name.')
+          return
+        }
+        const conditionWrapper = conditionSelect.closest('.mb-3')
+        const conditionRequired = conditionWrapper && conditionWrapper.style.display !== 'none'
+        if (conditionRequired && !conditionId) {
+          alert('Please select a condition.')
+          return
+        }
+
+        // Stamp condition into URL so getConditionFromPathname() picks it up
+        const params = new URLSearchParams(window.location.search)
+        if (conditionId) params.set('condition', conditionId)
+        else params.delete('condition')
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`)
+
+        // Delegate to lobby.js which properly shows #main and calls joinSession()
+        if (typeof joinWithSession === 'function') {
+          joinWithSession(sessionName, password || null, displayName || 'Host')
+        }
+      })
+
+      // Join existing session (no condition — inherits from the existing session)
+      document.getElementById('lobby-join-btn').addEventListener('click', function() {
+        const joinSelect  = document.getElementById('lobby-join-session-name')
+        const sessionName = joinSelect ? joinSelect.value : ''
+        const password    = document.getElementById('lobby-join-password').value
+        const displayName = document.getElementById('lobby-join-display-name').value.trim()
+
+        if (!sessionName) {
+          alert('Please select a session to join.')
+          return
+        }
+
+        if (typeof joinWithSession === 'function') {
+          joinWithSession(sessionName, password || null, displayName || 'Guest')
+        }
+      })
+    })()
+    </script>
+
+    <!-- Version Information Footer -->
+    <div id="version-info">
+      <small>Loading version...</small>
+    </div>
+  </body>
+</html>

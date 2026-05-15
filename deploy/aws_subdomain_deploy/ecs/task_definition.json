@@ -1,0 +1,190 @@
+{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:ap-northeast-1:795732142950:task-definition/moderator-ai-task:6",
+        "containerDefinitions": [
+            {
+                "name": "moderator-ai-task",
+                "image": "795732142950.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app:latest",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 3000,
+                        "hostPort": 3000,
+                        "protocol": "tcp",
+                        "name": "moderator-ai-task-3000-tcp",
+                        "appProtocol": "http"
+                    },
+                    {
+                        "containerPort": 3443,
+                        "hostPort": 3443,
+                        "protocol": "tcp",
+                        "name": "moderator-ai-task-3443-tcp",
+                        "appProtocol": "http"
+                    }
+                ],
+                "essential": true,
+                "environment": [
+                    {
+                        "name": "PORT",
+                        "value": "3000"
+                    },
+                    {
+                        "name": "SETTINGS_DDB_CONSISTENT_READ",
+                        "value": "true"
+                    },
+                    {
+                        "name": "HTTPS_PORT",
+                        "value": "3443"
+                    },
+                    {
+                        "name": "SESSION_LOG_S3_BUCKET",
+                        "value": "moderator-ai-log-bucket"
+                    },
+                    {
+                        "name": "SETTINGS_DDB_PK_NAME",
+                        "value": "id"
+                    },
+                    {
+                        "name": "SETTINGS_DDB_PK_VALUE",
+                        "value": "global"
+                    },
+                    {
+                        "name": "SESSION_LOG_S3_PREFIX",
+                        "value": "logs/sessions"
+                    },
+                    {
+                        "name": "SETTINGS_DDB_TABLE",
+                        "value": "vsdk-app-settings"
+                    },
+                    {
+                        "name": "SESSION_LOG_UPLOAD_BACKEND",
+                        "value": "s3"
+                    },
+                    {
+                        "name": "SESSION_LOG_UPLOAD_ONLY_IF_AWS",
+                        "value": "true"
+                    },
+                    {
+                        "name": "SERVER_LOG_TO_FILE",
+                        "value": "false"
+                    },
+                    {
+                        "name": "SETTINGS_BACKEND",
+                        "value": "dynamodb"
+                    },
+                    {
+                        "name": "NODE_ENV",
+                        "value": "production"
+                    }
+                ],
+                "environmentFiles": [],
+                "mountPoints": [],
+                "volumesFrom": [],
+                "secrets": [
+                    {
+                        "name": "AWS_ACCESS_KEY_ID",
+                        "valueFrom": "/vsdk-app/AWS_ACCESS_KEY_ID"
+                    },
+                    {
+                        "name": "AWS_REGION",
+                        "valueFrom": "/vsdk-app/AWS_REGION"
+                    },
+                    {
+                        "name": "AWS_SECRET_ACCESS_KEY",
+                        "valueFrom": "/vsdk-app/AWS_SECRET_ACCESS_KEY"
+                    },
+                    {
+                        "name": "OPENAI_API_KEY",
+                        "valueFrom": "/vsdk-app/OPENAI_API_KEY"
+                    },
+                    {
+                        "name": "SPEECHGEN_API_TOKEN",
+                        "valueFrom": "/vsdk-app/SPEECHGEN_API_TOKEN"
+                    },
+                    {
+                        "name": "SPEECHGEN_EMAIL",
+                        "valueFrom": "/vsdk-app/SPEECHGEN_EMAIL"
+                    },
+                    {
+                        "name": "SPEECHGEN_NEUTRAL_VOICE",
+                        "valueFrom": "/vsdk-app/SPEECHGEN_NEUTRAL_VOICE"
+                    },
+                    {
+                        "name": "ZOOM_VSDK_KEY",
+                        "valueFrom": "/vsdk-app/ZOOM_VSDK_KEY"
+                    },
+                    {
+                        "name": "ZOOM_VSDK_SECRET",
+                        "valueFrom": "/vsdk-app/ZOOM_VSDK_SECRET"
+                    }
+                ],
+                "ulimits": [],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/",
+                        "awslogs-create-group": "true",
+                        "awslogs-region": "ap-northeast-1",
+                        "awslogs-stream-prefix": "ecs"
+                    },
+                    "secretOptions": []
+                },
+                "systemControls": []
+            }
+        ],
+        "family": "moderator-ai-task",
+        "executionRoleArn": "arn:aws:iam::795732142950:role/ecsTaskExecutionRole",
+        "networkMode": "awsvpc",
+        "revision": 6,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            },
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.ecr-auth"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            },
+            {
+                "name": "ecs.capability.execution-role-ecr-pull"
+            },
+            {
+                "name": "ecs.capability.secrets.ssm.environment-variables"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            },
+            {
+                "name": "ecs.capability.task-eni"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EC2",
+            "MANAGED_INSTANCES",
+            "FARGATE"
+        ],
+        "runtimePlatform": {
+            "cpuArchitecture": "X86_64",
+            "operatingSystemFamily": "LINUX"
+        },
+        "requiresCompatibilities": [
+            "FARGATE"
+        ],
+        "cpu": "512",
+        "memory": "1024",
+        "registeredAt": "2026-02-10T11:29:25.948000+00:00",
+        "registeredBy": "arn:aws:iam::795732142950:root",
+        "enableFaultInjection": false
+    },
+    "tags": []
+}

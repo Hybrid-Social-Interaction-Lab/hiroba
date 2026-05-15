@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #1c1c1c;
+      font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    /* ── Auth screen ── */
+    #auth-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .auth-brand h1 {
+      color: #e0e0e0;
+      margin: 0;
+      font-size: 48px;
+      font-weight: 700;
+      font-family: 'Rubik', sans-serif;
+    }
+    .auth-brand p {
+      color: #888;
+      margin: 8px 0 0 0;
+      font-size: 22px;
+      font-family: 'Rubik', sans-serif;
+      font-weight: 300;
+    }
+    .auth-card {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+    }
+    .auth-card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: #e0e0e0;
+      text-align: center;
+    }
+    .auth-card .form-label {
+      color: #e0e0e0 !important;
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      margin-bottom: 6px !important;
+      display: block !important;
+    }
+    .auth-card .form-control {
+      background-color: #2d2d2d !important;
+      border: 1px solid #444 !important;
+      border-radius: 8px !important;
+      color: #e0e0e0 !important;
+      padding: 10px 13px !important;
+      font-size: 14px !important;
+      width: 100% !important;
+      outline: none !important;
+      margin-bottom: 16px !important;
+      font-family: inherit !important;
+    }
+    .auth-card .form-control:focus {
+      border-color: #667eea !important;
+      box-shadow: none !important;
+    }
+    .auth-card .btn-unlock {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.2s;
+      font-family: inherit;
+    }
+    .auth-card .btn-unlock:hover { opacity: 0.85; }
+    .keep-logged-in {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .keep-logged-in input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #667eea;
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .keep-logged-in label {
+      color: #aaa !important;
+      font-size: 13px !important;
+      cursor: pointer;
+      margin: 0 !important;
+      font-weight: 400 !important;
+    }
+
+    /* ── Main layout ── */
+    #admin-screen { display: none; }
+    .topbar {
+      background: #111;
+      border-bottom: 1px solid #333;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar h1 { font-size: 18px; font-weight: 700; color: #fff; margin: 0; }
+    .topbar a { color: #667eea; font-size: 13px; text-decoration: none; }
+    .topbar a:hover { text-decoration: underline; }
+
+    .container-main {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    /* ── Sections ── */
+    .section {
+      background: #2a2a2a;
+      border: 1px solid #3a3a3a;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+    .section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #3a3a3a;
+    }
+
+    /* ── Form controls ── */
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #888;
+      margin-bottom: 5px;
+      display: block;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+      background: #1c1c1c;
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #e0e0e0;
+      padding: 9px 13px;
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+      margin-bottom: 14px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #667eea; }
+    select option { background: #2a2a2a; }
+    textarea { resize: vertical; }
+
+    /* ── Buttons ── */
+    .btn-primary-custom {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary-custom:hover { opacity: 0.85; }
+    .chip {
+      display: inline-block;
+      background: #2a2a3a;
+      border: 1px solid #4a4a6a;
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-family: monospace;
+      color: #a0a0ff;
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip:hover { background: #3a3a5a; border-color: #7070cc; }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #aaa;
+      padding: 9px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: #667eea; color: #667eea; }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid #7f1d1d;
+      border-radius: 8px;
+      color: #f87171;
+      padding: 7px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-danger:hover { background: #7f1d1d33; }
+
+    /* ── Condition cards ── */
+    .condition-card {
+      background: #1c1c1c;
+      border: 1px solid #3a3a3a;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .condition-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .condition-card-header .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .condition-card-header .id-badge {
+      font-size: 11px;
+      background: #333;
+      color: #aaa;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+      font-family: monospace;
+    }
+    .condition-card-actions { display: flex; gap: 8px; }
+    .condition-meta {
+      font-size: 12px;
+      color: #666;
+    }
+    .condition-meta span { margin-right: 14px; }
+
+    /* ── Inline edit form ── */
+    .edit-form {
+      display: none;
+      margin-top: 16px;
+      border-top: 1px solid #333;
+      padding-top: 16px;
+    }
+    .edit-form.open { display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* ── New condition form ── */
+    #new-condition-form {
+      display: none;
+      background: #1c1c1c;
+      border: 1px dashed #444;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    #new-condition-form.open { display: block; }
+
+    /* ── Condition background picker ── */
+    .bg-picker {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .bg-picker-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      object-fit: cover;
+      transition: border-color 0.15s;
+    }
+    .bg-picker-thumb.selected { border-color: #667eea; }
+    @media (max-width: 600px) { .bg-picker { grid-template-columns: repeat(3, 1fr); } }
+
+    /* ── Agent sub-list ── */
+    .agents-list { margin: 10px 0; }
+    .agent-row {
+      background: #252525;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .agent-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .agent-row-header .agent-name { font-size: 13px; font-weight: 600; color: #e0e0e0; }
+    .agent-row-header .agent-model { font-size: 11px; color: #666; margin-left: 8px; }
+    .agent-row-actions { display: flex; gap: 6px; }
+    .agent-edit-form { display: none; margin-top: 12px; border-top: 1px solid #333; padding-top: 12px; }
+    .agent-edit-form.open { display: block; }
+    .btn-sm { font-size: 11px; padding: 4px 10px; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #333;
+      color: #e0e0e0;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    #toast.success { border-left: 3px solid #4ade80; }
+    #toast.error { border-left: 3px solid #f87171; }
+
+    /* ── Error in form ── */
+    .form-error { font-size: 12px; color: #f87171; margin-bottom: 10px; display: none; }
+
+    /* ── Model select helper ── */
+    .model-select-wrap { position: relative; }
+    .model-select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-60%);
+      color: #666;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth screen -->
+<div id="auth-screen">
+  <div class="auth-brand">
+    <h1>Hiroba</h1>
+    <p>広場</p>
+  </div>
+  <div class="auth-card">
+    <h2>Admin Access</h2>
+    <label for="admin-password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="admin-password" placeholder="Enter admin password" autocomplete="current-password">
+    <div id="auth-error" class="form-error">Incorrect password.</div>
+    <div class="keep-logged-in">
+      <input type="checkbox" id="keep-logged-in">
+      <label for="keep-logged-in">Keep me logged in</label>
+    </div>
+    <button class="btn-unlock" onclick="checkPassword()">Unlock</button>
+  </div>
+</div>
+
+<!-- Admin screen -->
+<div id="admin-screen">
+  <div class="topbar">
+    <h1>Admin</h1>
+    <a href="/">← Back to lobby</a>
+  </div>
+
+  <div class="container-main">
+
+    <!-- ── Conditions ── -->
+    <div class="section">
+      <h2>Conditions</h2>
+
+      <div id="conditions-list">
+        <p style="color:#666; font-size:13px" id="conditions-loading">Loading…</p>
+      </div>
+
+      <div id="new-condition-form">
+        <div class="form-row">
+          <div>
+            <label>ID <span style="color:#555">(URL-safe, no spaces)</span></label>
+            <input type="text" id="new-id" placeholder="e.g. condition-a">
+          </div>
+          <div>
+            <label>Display Name</label>
+            <input type="text" id="new-name" placeholder="e.g. Condition A">
+          </div>
+        </div>
+        <div id="new-condition-error" class="form-error"></div>
+        <div style="display:flex; gap:10px">
+          <button class="btn-primary-custom" onclick="saveNewCondition()">Create Condition</button>
+          <button class="btn-ghost" onclick="toggleNewForm(false)">Cancel</button>
+        </div>
+      </div>
+
+      <button class="btn-ghost" id="add-condition-btn" onclick="toggleNewForm(true)">+ Add Condition</button>
+    </div>
+
+    <!-- ── Prompt Template ── -->
+    <div class="section">
+      <h2>Prompt Template</h2>
+      <label>Global system prompt template sent to all agents. Use the variables below to inject dynamic values. <code>%bot_prompt%</code> is the per-agent prompt defined under each condition.</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px;">
+        <span class="chip" onclick="insertVariable('%agent_name%')">%agent_name%</span>
+        <span class="chip" onclick="insertVariable('%bot_prompt%')">%bot_prompt%</span>
+        <span class="chip" onclick="insertVariable('%conversation_history%')">%conversation_history%</span>
+        <span class="chip" onclick="insertVariable('%date%')">%date%</span>
+        <span class="chip" onclick="insertVariable('%time%')">%time%</span>
+        <span class="chip" onclick="insertVariable('%user_list%')">%user_list%</span>
+        <span class="chip" onclick="insertVariable('%condition_name%')">%condition_name%</span>
+      </div>
+      <textarea id="prompt-template" rows="7" placeholder="e.g. You are %agent_name%. %bot_prompt%&#10;&#10;Participants: %user_list%&#10;Conversation so far:&#10;%conversation_history%"></textarea>
+      <button class="btn-primary-custom" onclick="savePromptTemplate()">Save</button>
+    </div>
+
+    <!-- ── AI Style (legacy, hidden — kept for backward compatibility) ── -->
+    <div style="display:none">
+      <textarea id="ai-style"></textarea>
+    </div>
+
+    <!-- ── Periodic Speech ── -->
+    <div class="section">
+      <h2>Periodic Speech</h2>
+      <div class="form-row">
+        <div>
+          <label>Interval (seconds)</label>
+          <input type="number" id="periodic-interval" min="30" max="600" placeholder="180">
+        </div>
+        <div>
+          <label>Enabled</label>
+          <select id="periodic-enabled">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Bot Selection</label>
+          <select id="periodic-bot-mode" onchange="togglePeriodicBotName()">
+            <option value="random">Random bot</option>
+            <option value="specific">Specific bot</option>
+          </select>
+        </div>
+        <div id="periodic-bot-name-wrap">
+          <label>Bot Name</label>
+          <select id="periodic-bot-name"></select>
+        </div>
+      </div>
+      <label>Prompt injected when periodic speech triggers</label>
+      <textarea id="periodic-prompt" rows="3"></textarea>
+      <button class="btn-primary-custom" onclick="savePeriodicSettings()">Save</button>
+    </div>
+
+    <!-- ── Silence Detection ── -->
+    <div class="section">
+      <h2>Silence Detection</h2>
+      <div class="form-row">
+        <div>
+          <label>Threshold (seconds)</label>
+          <input type="number" id="silence-threshold" min="5" max="1000" placeholder="10">
+        </div>
+        <div>
+          <label>Enabled</label>
+          <select id="silence-enabled">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Bot Selection</label>
+          <select id="silence-bot-mode" onchange="toggleSilenceBotName()">
+            <option value="random">Random bot</option>
+            <option value="specific">Specific bot</option>
+          </select>
+        </div>
+        <div id="silence-bot-name-wrap">
+          <label>Bot Name</label>
+          <select id="silence-bot-name"></select>
+        </div>
+      </div>
+      <button class="btn-primary-custom" onclick="saveSilenceSettings()">Save</button>
+    </div>
+
+    <!-- ── LLM ── -->
+    <div class="section">
+      <h2>Language Model</h2>
+      <div class="form-row">
+        <div>
+          <label>Model</label>
+          <input type="text" id="llm-model" placeholder="gpt-3.5-turbo">
+        </div>
+        <div>
+          <label>Max Tokens</label>
+          <input type="number" id="llm-max-tokens" min="50" max="2000" placeholder="150">
+        </div>
+      </div>
+      <div style="max-width:200px">
+        <label>Temperature (0–2)</label>
+        <input type="number" id="llm-temperature" min="0" max="2" step="0.1" placeholder="0.7">
+      </div>
+      <button class="btn-primary-custom" onclick="saveLlmSettings()">Save</button>
+    </div>
+
+  </div><!-- /container-main -->
+</div><!-- /admin-screen -->
+
+<div id="toast"></div>
+
+<script>
+  // ── Password gate ────────────────────────────────────────
+  const ADMIN_PASSWORD = window.__ADMIN_PASSWORD__ || 'admin'
+  const STORAGE_KEY = 'admin_authenticated'
+
+  function unlockAdmin() {
+    document.getElementById('auth-screen').style.display = 'none'
+    document.getElementById('admin-screen').style.display = 'block'
+    init()
+  }
+
+  function checkPassword() {
+    const input = document.getElementById('admin-password').value
+    const authError = document.getElementById('auth-error')
+    if (input === ADMIN_PASSWORD) {
+      if (document.getElementById('keep-logged-in').checked) {
+        localStorage.setItem(STORAGE_KEY, '1')
+      }
+      unlockAdmin()
+    } else {
+      authError.style.display = 'block'
+    }
+  }
+
+  // Auto-unlock if previously authenticated
+  if (localStorage.getItem(STORAGE_KEY) === '1') {
+    unlockAdmin()
+  }
+
+  document.getElementById('admin-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPassword()
+  })
+
+  // ── Toast ────────────────────────────────────────────────
+  let toastTimer = null
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast')
+    el.textContent = msg
+    el.className = `show ${type}`
+    clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => { el.className = '' }, 2800)
+  }
+
+  // ── Available models ─────────────────────────────────────
+  const AVATAR_MODELS = [
+    '/models/female.fbx',
+    '/models/female_old.fbx',
+    '/models/male.fbx',
+    '/models/man_new_idle.fbx',
+    '/models/man_new_idle2.fbx',
+    '/models/neutral.fbx',
+  ]
+
+  function populateModelSelect(selectEl, currentValue) {
+    selectEl.innerHTML = ''
+    AVATAR_MODELS.forEach(m => {
+      const opt = document.createElement('option')
+      opt.value = m
+      opt.textContent = m.split('/').pop()
+      if (m === currentValue) opt.selected = true
+      selectEl.appendChild(opt)
+    })
+  }
+
+  // ── State ────────────────────────────────────────────────
+  let settings = {}
+  let conditions = []
+
+  const CONDITION_BACKGROUNDS = Array.from({ length: 6 }, (_, i) =>
+    `avatar_backgrounds/avatar_background_${i + 1}.jpg`
+  )
+
+  function populateBgPicker(container, hiddenInputId, currentValue) {
+    container.innerHTML = ''
+    CONDITION_BACKGROUNDS.forEach(bg => {
+      const img = document.createElement('img')
+      img.src = `/${bg}`
+      img.className = 'bg-picker-thumb' + (bg === currentValue ? ' selected' : '')
+      img.title = bg.split('/').pop()
+      img.addEventListener('click', () => {
+        container.querySelectorAll('.bg-picker-thumb').forEach(el => el.classList.remove('selected'))
+        img.classList.add('selected')
+        document.getElementById(hiddenInputId).value = bg
+      })
+      container.appendChild(img)
+    })
+  }
+
+  async function init() {
+    await loadAll()
+  }
+
+  async function loadAll() {
+    try {
+      const [sRes, cRes] = await Promise.all([
+        fetch('/api/settings'),
+        fetch('/api/conditions')
+      ])
+      settings = await sRes.json()
+      conditions = await cRes.json()
+      renderSettings()
+      renderConditions()
+    } catch (err) {
+      toast('Failed to load settings', 'error')
+      console.error(err)
+    }
+  }
+
+  // ── Render settings fields ───────────────────────────────
+  function renderSettings() {
+    document.getElementById('ai-style').value = settings.aiStyle || ''
+    document.getElementById('prompt-template').value = settings.promptTemplate || 'You are %agent_name%. Today is %date% and the current time is %time%.\n\n%bot_prompt%\n\nParticipants in this call: %user_list%.\n\nRecent conversation:\n%conversation_history%'
+    document.getElementById('periodic-interval').value = (settings.periodicSpeech && settings.periodicSpeech.interval) || 180
+    document.getElementById('periodic-enabled').value = String((settings.periodicSpeech && settings.periodicSpeech.enabled) !== false)
+    document.getElementById('periodic-prompt').value = settings.periodicSpeechPrompt || ''
+    document.getElementById('silence-threshold').value = (settings.silenceDetection && settings.silenceDetection.threshold) || 10
+    document.getElementById('silence-enabled').value = String((settings.silenceDetection && settings.silenceDetection.enabled) !== false)
+    populateBotDropdowns()
+    const periodicBotSel = (settings.periodicSpeech && settings.periodicSpeech.botSelection) || {}
+    document.getElementById('periodic-bot-mode').value = periodicBotSel.mode || 'random'
+    if (periodicBotSel.botName) document.getElementById('periodic-bot-name').value = periodicBotSel.botName
+    togglePeriodicBotName()
+    const silenceBotSel = (settings.silenceDetection && settings.silenceDetection.botSelection) || {}
+    document.getElementById('silence-bot-mode').value = silenceBotSel.mode || 'random'
+    if (silenceBotSel.botName) document.getElementById('silence-bot-name').value = silenceBotSel.botName
+    toggleSilenceBotName()
+    document.getElementById('llm-model').value = (settings.llm && settings.llm.model) || 'gpt-3.5-turbo'
+    document.getElementById('llm-max-tokens').value = (settings.llm && settings.llm.maxTokens) || 150
+    document.getElementById('llm-temperature').value = (settings.llm && settings.llm.temperature !== undefined) ? settings.llm.temperature : 0.7
+  }
+
+  // ── Render conditions ────────────────────────────────────
+  function renderConditions() {
+    populateBotDropdowns()
+    const list = document.getElementById('conditions-list')
+    document.getElementById('conditions-loading').style.display = 'none'
+    list.querySelectorAll('.condition-card').forEach(el => el.remove())
+
+    if (conditions.length === 0) {
+      list.insertAdjacentHTML('beforeend', '<p style="color:#666;font-size:13px">No conditions yet. Add one below.</p>')
+      return
+    }
+
+    conditions.forEach(c => {
+      const agents = Array.isArray(c.agents) ? c.agents : []
+      const agentsSummary = agents.length === 0
+        ? '<span style="color:#555;font-size:12px">No agents</span>'
+        : agents.map(a => `<span style="font-size:12px;color:#aaa">${escHtml(a.name)}</span>`).join('<span style="color:#555"> · </span>')
+
+      const card = document.createElement('div')
+      card.className = 'condition-card'
+      card.id = `card-${c.id}`
+      card.innerHTML = `
+        <div class="condition-card-header">
+          <div>
+            <span class="name">${escHtml(c.name)}</span>
+            <span class="id-badge">${escHtml(c.id)}</span>
+          </div>
+          <div class="condition-card-actions">
+            <button class="btn-ghost" style="font-size:12px;padding:6px 12px" onclick="toggleConditionEdit('${escHtml(c.id)}')">Edit</button>
+            <button class="btn-danger" onclick="deleteCondition('${escHtml(c.id)}')">Delete</button>
+          </div>
+        </div>
+        <div style="margin-bottom:8px">${agentsSummary}</div>
+
+        <div class="edit-form" id="edit-form-${escHtml(c.id)}">
+          <div class="form-row" style="margin-bottom:10px">
+            <div>
+              <label>Display Name</label>
+              <input type="text" id="edit-name-${escHtml(c.id)}" value="${escHtml(c.name)}">
+            </div>
+
+          </div>
+          <div class="form-error" id="edit-cond-error-${escHtml(c.id)}"></div>
+          <div style="display:flex;gap:10px;margin-bottom:20px">
+            <button class="btn-primary-custom" onclick="saveConditionMeta('${escHtml(c.id)}')">Save</button>
+            <button class="btn-ghost" onclick="toggleConditionEdit('${escHtml(c.id)}')">Cancel</button>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label style="margin:0;font-size:13px;color:#ccc">Agents</label>
+            <button class="btn-ghost btn-sm" onclick="openAddAgent('${escHtml(c.id)}')">+ Add Agent</button>
+          </div>
+          <div class="agents-list" id="agents-list-${escHtml(c.id)}"></div>
+        </div>
+      `
+      list.appendChild(card)
+      renderAgents(c.id, agents)
+    })
+  }
+
+  function renderAgents(conditionId, agents) {
+    const container = document.getElementById(`agents-list-${conditionId}`)
+    if (!container) return
+    container.innerHTML = ''
+
+    if (agents.length === 0) {
+      container.innerHTML = '<p style="color:#555;font-size:12px;margin:4px 0 10px">No agents yet.</p>'
+    }
+
+    agents.forEach((agent, idx) => {
+      const row = document.createElement('div')
+      row.className = 'agent-row'
+      row.id = `agent-row-${conditionId}-${idx}`
+      row.innerHTML = `
+        <div class="agent-row-header">
+          <div>
+            <span class="agent-name">${escHtml(agent.name)}</span>
+            <span class="agent-model">${escHtml((agent.avatarModel || '').split('/').pop())}</span>
+            <span class="agent-model" style="color:#9ca3af">${escHtml(agent.gender && agent.gender !== 'auto' ? agent.gender : 'auto')}</span>
+          </div>
+          <div class="agent-row-actions">
+            <button class="btn-ghost btn-sm" onclick="toggleAgentEdit('${escHtml(conditionId)}', ${idx})">Edit</button>
+            <button class="btn-danger btn-sm" onclick="removeAgent('${escHtml(conditionId)}', ${idx})">Remove</button>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#555">Keywords: ${agent.triggerKeywords && agent.triggerKeywords.length > 0 ? escHtml(agent.triggerKeywords.join(', ')) : '<span style="color:#4ade80">always responds</span>'}</div>
+        <div class="agent-edit-form" id="agent-edit-${escHtml(conditionId)}-${idx}">
+          <div class="form-row">
+            <div>
+              <label>Name</label>
+              <input type="text" id="ae-name-${escHtml(conditionId)}-${idx}" value="${escHtml(agent.name || '')}">
+            </div>
+            <div>
+              <label>Avatar Model</label>
+              <div class="model-select-wrap">
+                <select id="ae-model-${escHtml(conditionId)}-${idx}"></select>
+              </div>
+            </div>
+            <div>
+              <label>Voice Gender</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select id="ae-gender-${escHtml(conditionId)}-${idx}" style="flex:1">
+                  <option value="auto"${(!agent.gender || agent.gender === 'auto') ? ' selected' : ''}>Auto (from model)</option>
+                  <option value="female"${agent.gender === 'female' ? ' selected' : ''}>Female</option>
+                  <option value="male"${agent.gender === 'male' ? ' selected' : ''}>Male</option>
+                  <option value="neutral"${agent.gender === 'neutral' ? ' selected' : ''}>Neutral</option>
+                </select>
+                <button class="btn-ghost btn-sm" type="button"
+                  onclick="testAgentVoice('ae-name-${escHtml(conditionId)}-${idx}','ae-gender-${escHtml(conditionId)}-${idx}',this)"
+                  title="Test voice">&#9654; Test</button>
+              </div>
+            </div>
+          </div>
+          <label>AI System Prompt</label>
+          <textarea id="ae-prompt-${escHtml(conditionId)}-${idx}" rows="4">${escHtml(agent.prompt || '')}</textarea>
+          <label>Trigger Keywords <span style="color:#555">(comma-separated; leave empty to respond to every message)</span></label>
+          <input type="text" id="ae-keywords-${escHtml(conditionId)}-${idx}" value="${escHtml((agent.triggerKeywords || []).join(', '))}">
+          <div class="form-error" id="ae-error-${escHtml(conditionId)}-${idx}"></div>
+          <div style="display:flex;gap:10px">
+            <button class="btn-primary-custom" onclick="saveAgent('${escHtml(conditionId)}', ${idx})">Save Agent</button>
+            <button class="btn-ghost" onclick="toggleAgentEdit('${escHtml(conditionId)}', ${idx})">Cancel</button>
+          </div>
+        </div>
+      `
+      container.appendChild(row)
+      populateModelSelect(document.getElementById(`ae-model-${conditionId}-${idx}`), agent.avatarModel)
+    })
+
+    // Add-agent form (hidden by default)
+    const addForm = document.createElement('div')
+    addForm.id = `add-agent-form-${conditionId}`
+    addForm.className = 'agent-row'
+    addForm.style.display = 'none'
+    addForm.innerHTML = `
+      <div style="font-size:13px;font-weight:600;color:#ccc;margin-bottom:10px">New Agent</div>
+      <div class="form-row">
+        <div>
+          <label>Name</label>
+          <input type="text" id="na-name-${escHtml(conditionId)}" placeholder="e.g. Alex">
+        </div>
+        <div>
+          <label>Avatar Model</label>
+          <div class="model-select-wrap">
+            <select id="na-model-${escHtml(conditionId)}"></select>
+          </div>
+        </div>
+        <div>
+          <label>Voice Gender</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select id="na-gender-${escHtml(conditionId)}" style="flex:1">
+              <option value="auto" selected>Auto (from model)</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="neutral">Neutral</option>
+            </select>
+            <button class="btn-ghost btn-sm" type="button"
+              onclick="testAgentVoice('na-name-${escHtml(conditionId)}','na-gender-${escHtml(conditionId)}',this)"
+              title="Test voice">&#9654; Test</button>
+          </div>
+        </div>
+      </div>
+      <label>AI System Prompt</label>
+      <textarea id="na-prompt-${escHtml(conditionId)}" rows="4" placeholder="Describe how this agent should behave…"></textarea>
+      <label>Trigger Keywords <span style="color:#555">(comma-separated; leave empty to respond to every message)</span></label>
+      <input type="text" id="na-keywords-${escHtml(conditionId)}" placeholder="e.g. alex, assistant — or leave blank to always respond">
+      <div class="form-error" id="na-error-${escHtml(conditionId)}"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-primary-custom" onclick="addNewAgent('${escHtml(conditionId)}')">Add Agent</button>
+        <button class="btn-ghost" onclick="closeAddAgent('${escHtml(conditionId)}')">Cancel</button>
+      </div>
+    `
+    container.appendChild(addForm)
+    populateModelSelect(document.getElementById(`na-model-${conditionId}`))
+  }
+
+  function toggleConditionEdit(id) {
+    const form = document.getElementById(`edit-form-${id}`)
+    form.classList.toggle('open')
+  }
+
+  function toggleAgentEdit(conditionId, idx) {
+    const form = document.getElementById(`agent-edit-${conditionId}-${idx}`)
+    form.classList.toggle('open')
+  }
+
+  function openAddAgent(conditionId) {
+    document.getElementById(`add-agent-form-${conditionId}`).style.display = 'block'
+  }
+
+  function closeAddAgent(conditionId) {
+    const form = document.getElementById(`add-agent-form-${conditionId}`)
+    form.style.display = 'none'
+    ;['na-name-','na-prompt-','na-keywords-'].forEach(p => {
+      const el = document.getElementById(`${p}${conditionId}`)
+      if (el) el.value = ''
+    })
+  }
+
+  function toggleNewForm(open) {
+    const form = document.getElementById('new-condition-form')
+    if (open) {
+      form.classList.add('open')
+      document.getElementById('new-id').focus()
+    } else {
+      form.classList.remove('open')
+      ;['new-id','new-name'].forEach(id => { document.getElementById(id).value = '' })
+      document.getElementById('new-condition-error').style.display = 'none'
+    }
+  }
+
+  // ── Condition CRUD ───────────────────────────────────────
+  async function saveNewCondition() {
+    const id = document.getElementById('new-id').value.trim()
+    const name = document.getElementById('new-name').value.trim()
+    const errEl = document.getElementById('new-condition-error')
+
+    const idPattern = /^[a-z0-9_-]+$/
+    if (!id || !name) {
+      errEl.textContent = 'ID and name are required.'
+      errEl.style.display = 'block'
+      return
+    }
+    if (!idPattern.test(id)) {
+      errEl.textContent = 'ID must be lowercase letters, numbers, hyphens, or underscores only.'
+      errEl.style.display = 'block'
+      return
+    }
+    errEl.style.display = 'none'
+
+    try {
+      const res = await fetch('/api/conditions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, name, agents: [] })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+      conditions.push(data)
+      renderConditions()
+      toggleNewForm(false)
+      toast('Condition created — open it to add agents')
+    } catch (err) {
+      errEl.textContent = err.message
+      errEl.style.display = 'block'
+    }
+  }
+
+  async function saveConditionMeta(id) {
+    const name = document.getElementById(`edit-name-${id}`).value.trim()
+    const errEl = document.getElementById(`edit-cond-error-${id}`)
+
+    if (!name) {
+      errEl.textContent = 'Name is required.'
+      errEl.style.display = 'block'
+      return
+    }
+    errEl.style.display = 'none'
+
+    const c = conditions.find(c => c.id === id)
+    await patchCondition(id, { name, agents: c ? c.agents : [] }, errEl)
+  }
+
+  async function saveAgent(conditionId, idx) {
+    const name = document.getElementById(`ae-name-${conditionId}-${idx}`).value.trim()
+    const avatarModel = document.getElementById(`ae-model-${conditionId}-${idx}`).value
+    const gender = document.getElementById(`ae-gender-${conditionId}-${idx}`)?.value || 'auto'
+    const prompt = document.getElementById(`ae-prompt-${conditionId}-${idx}`).value.trim()
+    const keywords = document.getElementById(`ae-keywords-${conditionId}-${idx}`).value
+    const errEl = document.getElementById(`ae-error-${conditionId}-${idx}`)
+
+    if (!name || !prompt) {
+      errEl.textContent = 'Name and prompt are required.'
+      errEl.style.display = 'block'
+      return
+    }
+    errEl.style.display = 'none'
+
+    const c = conditions.find(c => c.id === conditionId)
+    if (!c) return
+    const agents = [...(c.agents || [])]
+    agents[idx] = { name, avatarModel, gender, prompt, triggerKeywords: parseKeywords(keywords) }
+    await patchCondition(conditionId, { agents }, errEl)
+  }
+
+  async function addNewAgent(conditionId) {
+    const nameEl = document.getElementById(`na-name-${conditionId}`)
+    const avatarEl = document.getElementById(`na-model-${conditionId}`)
+    const promptEl = document.getElementById(`na-prompt-${conditionId}`)
+    const keywordsEl = document.getElementById(`na-keywords-${conditionId}`)
+    const errEl = document.getElementById(`na-error-${conditionId}`)
+
+    if (!nameEl || !promptEl) {
+      toast('Form elements missing — try refreshing', 'error')
+      return
+    }
+
+    const name = nameEl.value.trim()
+    const avatarModel = avatarEl ? avatarEl.value : ''
+    const genderEl = document.getElementById(`na-gender-${conditionId}`)
+    const gender = genderEl ? genderEl.value : 'auto'
+    const prompt = promptEl.value.trim()
+    const keywords = keywordsEl ? keywordsEl.value : ''
+
+    if (!name || !prompt) {
+      errEl.textContent = 'Name and prompt are required.'
+      errEl.style.display = 'block'
+      return
+    }
+    errEl.style.display = 'none'
+
+    const c = conditions.find(c => c.id === conditionId)
+    if (!c) {
+      toast('Condition not found — try refreshing', 'error')
+      return
+    }
+    const agents = [...(c.agents || []), { name, avatarModel, gender, prompt, triggerKeywords: parseKeywords(keywords) }]
+    await patchCondition(conditionId, { agents }, errEl)
+  }
+
+  // Ranked preferred voice name fragments per gender for browser TTS fallback.
+  // Checked case-insensitively against SpeechSynthesisVoice.name.
+  const BROWSER_VOICE_PREFS = {
+    female: ['Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona', 'Victoria', 'Allison', 'Ava', 'Susan', 'Zoe', 'female'],
+    male:   ['Daniel', 'Alex', 'Fred', 'Tom', 'Oliver', 'Rishi', 'Aaron', 'Gordon', 'male'],
+    neutral:['Samantha', 'Karen', 'Daniel', 'Alex']
+  }
+
+  function pickBrowserVoice(gender) {
+    const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'))
+    if (!voices.length) return null
+    const prefs = BROWSER_VOICE_PREFS[gender] || BROWSER_VOICE_PREFS.female
+    for (const pref of prefs) {
+      const match = voices.find(v => v.name.toLowerCase().includes(pref.toLowerCase()))
+      if (match) return match
+    }
+    // Heuristic: voices whose name contains 'female'/'male' tag
+    if (gender === 'male') {
+      const m = voices.find(v => /\bmale\b/i.test(v.name) && !/female/i.test(v.name))
+      if (m) return m
+    }
+    return voices[0]
+  }
+
+  function browserSpeak(text, gender) {
+    return new Promise(resolve => {
+      const utt = new SpeechSynthesisUtterance(text)
+      const voice = pickBrowserVoice(gender)
+      if (voice) utt.voice = voice
+      if (gender === 'male') { utt.pitch = 0.75; utt.rate = 0.95 }
+      else if (gender === 'neutral') { utt.pitch = 1.1; utt.rate = 1.0 }
+      else { utt.pitch = 1.2; utt.rate = 1.0 }
+      utt.onend = resolve
+      utt.onerror = resolve
+      speechSynthesis.speak(utt)
+    })
+  }
+
+  async function testAgentVoice(nameInputId, genderSelectId, btnEl) {
+    const name = document.getElementById(nameInputId)?.value.trim() || 'Agent'
+    const gender = document.getElementById(genderSelectId)?.value || 'auto'
+    const resolvedGender = gender === 'auto' ? 'female' : gender
+    const text = `Hello, my name is ${name}`
+
+    const orig = btnEl.textContent
+    btnEl.textContent = '…'
+    btnEl.disabled = true
+
+    try {
+      const res = await fetch('/api/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, gender: resolvedGender })
+      })
+      const data = await res.json()
+      if (!data.success || (!data.usePolly && !data.useSpeechGen)) {
+        await browserSpeak(text, resolvedGender)
+      } else if (data.audioData) {
+        const bytes = atob(data.audioData)
+        const buf = new Uint8Array(bytes.length)
+        for (let i = 0; i < bytes.length; i++) buf[i] = bytes.charCodeAt(i)
+        const blob = new Blob([buf], { type: 'audio/mpeg' })
+        const url = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audio.onended = () => URL.revokeObjectURL(url)
+        await audio.play()
+      }
+    } catch (err) {
+      toast('Voice test failed: ' + err.message, 'error')
+    } finally {
+      btnEl.textContent = orig
+      btnEl.disabled = false
+    }
+  }
+
+  async function removeAgent(conditionId, idx) {
+    if (!confirm('Remove this agent?')) return
+    const c = conditions.find(c => c.id === conditionId)
+    if (!c) return
+    const agents = (c.agents || []).filter((_, i) => i !== idx)
+    await patchCondition(conditionId, { agents })
+  }
+
+  function parseKeywords(str) {
+    return str.split(',').map(k => k.trim()).filter(Boolean)
+  }
+
+  async function patchCondition(id, patch, errEl) {
+    const c = conditions.find(c => c.id === id)
+    if (!c) return
+    const body = { name: c.name, background: c.background, agents: c.agents, ...patch }
+    try {
+      const res = await fetch(`/api/conditions/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+      const idx = conditions.findIndex(c => c.id === id)
+      if (idx >= 0) conditions[idx] = data
+      renderConditions()
+      // Re-open the edit form after re-render and scroll agents list into view
+      const form = document.getElementById(`edit-form-${id}`)
+      if (form) {
+        form.classList.add('open')
+        const agentsList = document.getElementById(`agents-list-${id}`)
+        if (agentsList) agentsList.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
+      toast('Agent saved')
+    } catch (err) {
+      if (errEl) { errEl.textContent = err.message; errEl.style.display = 'block' }
+      else toast(err.message, 'error')
+    }
+  }
+
+  async function deleteCondition(id) {
+    if (!confirm(`Delete condition "${id}"?`)) return
+    try {
+      const res = await fetch(`/api/conditions/${encodeURIComponent(id)}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+      conditions = conditions.filter(c => c.id !== id)
+      renderConditions()
+      toast('Condition deleted')
+    } catch (err) {
+      toast(err.message, 'error')
+    }
+  }
+
+  // ── Settings saves ───────────────────────────────────────
+  async function patchSettings(patch) {
+    const updated = { ...settings, ...patch }
+    const res = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    })
+    if (!res.ok) {
+      const d = await res.json()
+      throw new Error(d.error || `HTTP ${res.status}`)
+    }
+    settings = await res.json()
+  }
+
+  async function saveAiStyle() {
+    try {
+      await patchSettings({ aiStyle: document.getElementById('ai-style').value.trim() })
+      toast('AI style saved')
+    } catch (err) { toast(err.message, 'error') }
+  }
+
+  async function savePromptTemplate() {
+    try {
+      await patchSettings({ promptTemplate: document.getElementById('prompt-template').value })
+      toast('Prompt template saved')
+    } catch (err) { toast(err.message, 'error') }
+  }
+
+  function insertVariable(variable) {
+    const ta = document.getElementById('prompt-template')
+    if (!ta) return
+    const start = ta.selectionStart
+    const end = ta.selectionEnd
+    ta.value = ta.value.slice(0, start) + variable + ta.value.slice(end)
+    ta.selectionStart = ta.selectionEnd = start + variable.length
+    ta.focus()
+  }
+
+  async function savePeriodicSettings() {
+    try {
+      const periodicBotMode = document.getElementById('periodic-bot-mode').value
+      const periodicBotName = periodicBotMode === 'specific' ? document.getElementById('periodic-bot-name').value : null
+      await patchSettings({
+        periodicSpeech: {
+          ...(settings.periodicSpeech || {}),
+          interval: Number(document.getElementById('periodic-interval').value),
+          enabled: document.getElementById('periodic-enabled').value === 'true',
+          botSelection: { mode: periodicBotMode, botName: periodicBotName }
+        },
+        periodicSpeechPrompt: document.getElementById('periodic-prompt').value.trim()
+      })
+      toast('Periodic speech saved')
+    } catch (err) { toast(err.message, 'error') }
+  }
+
+  async function saveSilenceSettings() {
+    try {
+      const silenceBotMode = document.getElementById('silence-bot-mode').value
+      const silenceBotName = silenceBotMode === 'specific' ? document.getElementById('silence-bot-name').value : null
+      await patchSettings({
+        silenceDetection: {
+          ...(settings.silenceDetection || {}),
+          threshold: Number(document.getElementById('silence-threshold').value),
+          enabled: document.getElementById('silence-enabled').value === 'true',
+          botSelection: { mode: silenceBotMode, botName: silenceBotName }
+        }
+      })
+      toast('Silence detection saved')
+    } catch (err) { toast(err.message, 'error') }
+  }
+
+  function populateBotDropdowns() {
+    const allAgents = []
+    ;(conditions || []).forEach(c => {
+      ;(c.agents || []).forEach(a => {
+        if (a.name && !allAgents.includes(a.name)) allAgents.push(a.name)
+      })
+    })
+    ;['periodic-bot-name', 'silence-bot-name'].forEach(id => {
+      const sel = document.getElementById(id)
+      if (!sel) return
+      const current = sel.value
+      sel.innerHTML = allAgents.map(n => `<option value="${escHtml(n)}">${escHtml(n)}</option>`).join('')
+      if (current && allAgents.includes(current)) sel.value = current
+    })
+  }
+
+  function togglePeriodicBotName() {
+    const wrap = document.getElementById('periodic-bot-name-wrap')
+    if (wrap) wrap.style.display = document.getElementById('periodic-bot-mode').value === 'specific' ? '' : 'none'
+  }
+
+  function toggleSilenceBotName() {
+    const wrap = document.getElementById('silence-bot-name-wrap')
+    if (wrap) wrap.style.display = document.getElementById('silence-bot-mode').value === 'specific' ? '' : 'none'
+  }
+
+  async function saveLlmSettings() {
+    try {
+      await patchSettings({
+        llm: {
+          model: document.getElementById('llm-model').value.trim(),
+          maxTokens: Number(document.getElementById('llm-max-tokens').value),
+          temperature: Number(document.getElementById('llm-temperature').value)
+        }
+      })
+      toast('LLM settings saved')
+    } catch (err) { toast(err.message, 'error') }
+  }
+
+  // ── Utils ────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+  }
+</script>
+</body>
+</html>

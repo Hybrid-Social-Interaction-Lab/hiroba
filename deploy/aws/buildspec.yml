@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 118120622551.dkr.ecr.ap-northeast-1.amazonaws.com
+      - REPOSITORY_URI=118120622551.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=videoframe-fix-${COMMIT_HASH}-$(date +%Y%m%d-%H%M%S)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image with VideoFrame fixes...
+      - docker build --platform linux/amd64 -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"vsdk-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - echo "Image built and pushed successfully:"
+      - echo "  Tag: $IMAGE_TAG"
+      - echo "  URI: $REPOSITORY_URI:$IMAGE_TAG"
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    - videoframe-fix-task-definition.json

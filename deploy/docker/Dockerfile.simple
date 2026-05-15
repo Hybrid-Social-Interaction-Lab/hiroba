@@ -1,0 +1,27 @@
+# 軽量テスト用Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# package.jsonのみをコピー
+COPY package*.json ./
+
+# 本番依存関係のみをインストール
+RUN npm ci --only=production
+
+# サーバーファイルと基本アセットのみをコピー
+COPY index.js .
+COPY public/index.html ./public/
+COPY public/js/ ./public/js/
+
+# SSL証明書をコピー（存在する場合）
+COPY server.key server.crt ./
+
+# VRMファイルは除外（軽量化のため）
+# COPY public/models/ ./public/models/
+
+EXPOSE 3000 3443
+
+ENV NODE_ENV=production
+
+CMD ["node", "index.js"]
