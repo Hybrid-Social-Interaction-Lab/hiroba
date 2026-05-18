@@ -1,6 +1,6 @@
 # AWS EC2 Deploy (Docker Compose + Caddy)
 
-Deploy hiroba on a single AWS EC2 instance with automatic HTTPS via
+Deploy HIROBA on a single AWS EC2 instance with automatic HTTPS via
 Caddy + Let's Encrypt. Same Docker Compose stack as
 [Sakura VPS](SAKURA-DEPLOY.md) — only the provisioning differs.
 
@@ -100,7 +100,7 @@ ssh -i hiroba-key.pem ubuntu@<Elastic IP>
 sudo tail -f /var/log/user-data.log
 ```
 
-Wait for `=== hiroba user-data done ===`. The first run takes 2–3 minutes
+Wait for `=== HIROBA user-data done ===`. The first run takes 2–3 minutes
 (apt + Docker install + first compose build).
 
 ---
