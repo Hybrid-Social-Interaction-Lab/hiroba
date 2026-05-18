@@ -1,0 +1,80 @@
+# Production deploy with Caddy in front (auto Let's Encrypt HTTPS).
+# Works on any Docker host: AWS EC2, Sakura VPS, on-prem.
+#
+# Prerequisite: a public DNS A record for ${DOMAIN} pointing at this host.
+#
+# Run:
+#   docker compose -f deploy/docker/docker-compose.caddy.yml \
+#     --env-file .env.production up -d
+#
+# The `app` service is only reachable through Caddy on the compose network;
+# nothing else is exposed to the host.
+
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: deploy/docker/Dockerfile
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      ZOOM_VSDK_KEY: ${ZOOM_VSDK_KEY}
+      ZOOM_VSDK_SECRET: ${ZOOM_VSDK_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-1}
+      SPEECHGEN_API_TOKEN: ${SPEECHGEN_API_TOKEN:-}
+      SPEECHGEN_EMAIL: ${SPEECHGEN_EMAIL:-}
+      SPEECHGEN_NEUTRAL_VOICE: ${SPEECHGEN_NEUTRAL_VOICE:-Blue}
+      SERVER_LOG_TO_FILE: ${SERVER_LOG_TO_FILE:-false}
+      SETTINGS_BACKEND: ${SETTINGS_BACKEND:-file}
+      SETTINGS_DDB_TABLE: ${SETTINGS_DDB_TABLE:-}
+      SETTINGS_DDB_REGION: ${SETTINGS_DDB_REGION:-}
+      SESSION_LOG_UPLOAD_BACKEND: ${SESSION_LOG_UPLOAD_BACKEND:-file}
+      SESSION_LOG_UPLOAD_ONLY_IF_AWS: ${SESSION_LOG_UPLOAD_ONLY_IF_AWS:-false}
+      SESSION_LOG_S3_BUCKET: ${SESSION_LOG_S3_BUCKET:-}
+      SESSION_LOG_S3_PREFIX: ${SESSION_LOG_S3_PREFIX:-logs/sessions}
+    volumes:
+      - ../../data:/app/data
+      - ../../logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy_data:
+  caddy_config:
