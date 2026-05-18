@@ -1,4 +1,9 @@
-# Simple Deployment (ECS without ALB, IP-based)
+# Simple Deployment (ECS without ALB, IP-based) — Legacy
+
+> **Superseded.** For cheap single-instance deploys, use
+> [AWS EC2 + Caddy](../AWS-EC2-CADDY-DEPLOY.md) (similar cost, gets you real
+> HTTPS and a stable IP). This document is kept for reference because the
+> ECS CLI snippets are still useful when troubleshooting Fargate.
 
 Deploy the application using Amazon ECS Fargate with direct IP access, without an Application Load Balancer. This approach is cost-effective but comes with trade-offs.
 

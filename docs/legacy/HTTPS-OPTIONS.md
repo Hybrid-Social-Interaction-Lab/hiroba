@@ -1,4 +1,10 @@
-# Free HTTPS Options
+# Free HTTPS Options — Legacy
+
+> **Superseded.** Our standard HTTPS story is now Caddy + Let's Encrypt
+> baked into [`docker-compose.caddy.yml`](../../deploy/docker/docker-compose.caddy.yml).
+> See [Sakura VPS](../SAKURA-DEPLOY.md) or [AWS EC2 + Caddy](../AWS-EC2-CADDY-DEPLOY.md).
+> Kept here as an escape hatch when Let's Encrypt is rate-limited or you
+> have no public DNS.
 
 If you don't have a custom domain or want a quick free SSL certificate, here are three approaches:
 
