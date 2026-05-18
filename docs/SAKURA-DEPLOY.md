@@ -1,6 +1,6 @@
 # Sakura VPS Deploy (Docker Compose + Caddy)
 
-Deploy hiroba on a Sakura VPS with automatic HTTPS via Caddy + Let's Encrypt.
+Deploy HIROBA on a Sakura VPS with automatic HTTPS via Caddy + Let's Encrypt.
 This is the recommended path for lab handoff: a single VPS, a single
 `docker compose up -d` command, and no AWS managed services required.
 
@@ -121,7 +121,7 @@ sudo bash ec2-user-data.sh
 sudo tail -f /var/log/user-data.log
 ```
 
-Wait for `=== hiroba user-data done ===` in the log (typically 2–3 minutes
+Wait for `=== HIROBA user-data done ===` in the log (typically 2–3 minutes
 for the first build).
 
 ---

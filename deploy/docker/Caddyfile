@@ -1,4 +1,4 @@
-# Caddy reverse proxy for hiroba.
+# Caddy reverse proxy for HIROBA.
 #
 # Variables come from the compose env (.env.production):
 #   DOMAIN       — public hostname (must have an A record pointing here first)
