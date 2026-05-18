@@ -1,4 +1,4 @@
-# Hiroba (広場)
+# HIROBA (広場)
 
 A video conferencing system built with Zoom Video SDK, featuring AI avatars, real-time transcription, speech synthesis, and a Master Control Panel for managing agent behavior during sessions.
 
@@ -44,14 +44,10 @@ The production stack is **Docker Compose + Caddy** (automatic HTTPS via
 Let's Encrypt). It runs identically on Sakura VPS, AWS EC2, or any Docker
 host with a public IP and a domain.
 
-We document two paths optimized for lab handoff:
+Two paths are documented below — pick whichever fits:
 
-| | **Sakura VPS** (Path A) | **AWS EC2** (Path B) |
-|---|---|---|
-| Monthly cost | ¥1,738 (2GB Tokyo) ≈ $11 | ~$17 (t4g.small + EIP + 20GB) |
-| Billing | JPY, fixed | USD |
-| Provisioning | Sakura control panel + paste a script | One shell command (`ec2-deploy.sh`) |
-| Best for | Japan-billed labs, simplest setup | Labs already using AWS (DynamoDB/S3/Polly) |
+- **Path A: Sakura VPS**
+- **Path B: AWS EC2**
 
 Need rolling deploys or multi-AZ redundancy? Use the
 [Fargate + ALB path](docs/AWS-DEPLOYMENT-SUBDOMAIN.md) instead — single-instance
@@ -83,7 +79,7 @@ Optional: `OPENAI_API_KEY`, `AWS_*` (for Polly), `SPEECHGEN_*`.
 
 **1. Create the VPS.** Sign in to [Sakura VPS](https://secure.sakura.ad.jp/vps/) and create a new instance:
 
-- Plan: **2GB** (¥1,738/月, recommended) — or 1GB (¥880/月, demo only; app's prod limit is 1GB so concurrent sessions risk OOM)
+- Plan: **2GB** (recommended) — or 1GB (demo only; app's prod limit is 1GB so concurrent sessions risk OOM)
 - Region: **東京**
 - OS: **Ubuntu 22.04 LTS amd64**
 - Register your SSH public key
@@ -135,7 +131,7 @@ sudo bash ec2-user-data.sh
 sudo tail -f /var/log/user-data.log
 ```
 
-Wait for `=== hiroba user-data done ===` (typically 2–3 minutes).
+Wait for `=== HIROBA user-data done ===` (typically 2–3 minutes).
 
 **5. Verify.** From your local machine:
 
@@ -162,7 +158,7 @@ permissions for EC2 + Elastic IPs.
 bash deploy/scripts/ec2-deploy.sh
 ```
 
-Defaults: `t4g.small` (ARM, ~$13/mo) + Ubuntu 22.04 LTS + 20GB gp3 + Elastic IP.
+Defaults: `t4g.small` (ARM) + Ubuntu 22.04 LTS + 20GB gp3 + Elastic IP.
 Use `--amd64` for `t3.small` if you prefer x86_64. Other knobs: `AWS_REGION`,
 `KEY_NAME`, `REPO_URL`, `REPO_REF`, `ADMIN_CIDR` (SSH source — defaults to your current public IP).
 
@@ -191,7 +187,7 @@ ssh -i hiroba-key.pem ubuntu@<Elastic IP>
 sudo tail -f /var/log/user-data.log
 ```
 
-Wait for `=== hiroba user-data done ===`.
+Wait for `=== HIROBA user-data done ===`.
 
 **4. Verify.**
 

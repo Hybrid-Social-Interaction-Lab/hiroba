@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Provision a single EC2 instance running the Caddy-fronted hiroba stack.
+# Provision a single EC2 instance running the Caddy-fronted HIROBA stack.
 #
 # Defaults: t4g.small (ARM, ~$15/mo), Ubuntu 22.04 LTS latest, Tokyo region.
 # Use `--amd64` for x86_64 (t3.small). Override anything via env vars below.
@@ -59,7 +59,7 @@ if [ -z "$ADMIN_CIDR" ]; then
 	ADMIN_CIDR="${MY_IP}/32"
 fi
 
-echo "=== hiroba EC2 deploy ==="
+echo "=== HIROBA EC2 deploy ==="
 echo "  Region:        $AWS_REGION"
 echo "  Instance type: $INSTANCE_TYPE ($ARCH)"
 echo "  SSH from:      $ADMIN_CIDR"
@@ -92,7 +92,7 @@ if [ -z "$SG_ID" ] || [ "$SG_ID" = "None" ]; then
 	SG_ID="$(aws ec2 create-security-group \
 		--region "$AWS_REGION" \
 		--group-name "$SG_NAME" \
-		--description "hiroba (Caddy + Docker Compose)" \
+		--description "HIROBA (Caddy + Docker Compose)" \
 		--query 'GroupId' --output text)"
 	echo "    created $SG_ID"
 fi
