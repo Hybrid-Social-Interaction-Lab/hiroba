@@ -1,6 +1,6 @@
 # Deploy Overview — Which Path to Pick
 
-hiroba can run on any Docker host. We document three production paths,
+HIROBA can run on any Docker host. We document three production paths,
 optimized for different needs.
 
 ## TL;DR
@@ -53,7 +53,7 @@ network. Caddy publishes 80/443 (HTTP/2 + HTTP/3) and handles cert issuance
 + renewal automatically.
 
 If you can run that command on any Docker host with a domain pointed at it,
-you can run hiroba there. Bare-metal lab machines, on-prem servers,
+you can run HIROBA there. Bare-metal lab machines, on-prem servers,
 Hetzner / DigitalOcean / etc. all work — the two documented guides
 (Sakura, EC2) are just the ones we've actually tested.
 

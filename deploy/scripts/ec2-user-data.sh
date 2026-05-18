@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cloud-init / user-data for hiroba on Ubuntu 22.04 LTS.
+# Cloud-init / user-data for HIROBA on Ubuntu 22.04 LTS.
 #
 # Used by:
 #   - deploy/scripts/ec2-deploy.sh (AWS EC2)
@@ -17,7 +17,7 @@
 set -euo pipefail
 
 exec > >(tee -a /var/log/user-data.log) 2>&1
-echo "=== hiroba user-data start: $(date -u +%FT%TZ) ==="
+echo "=== HIROBA user-data start: $(date -u +%FT%TZ) ==="
 
 REPO_URL="__REPO_URL__"
 REPO_REF="__REPO_REF__"
@@ -93,7 +93,7 @@ docker compose -f deploy/docker/docker-compose.caddy.yml \
 	--env-file .env.production \
 	up -d --build
 
-echo "=== hiroba user-data done: $(date -u +%FT%TZ) ==="
+echo "=== HIROBA user-data done: $(date -u +%FT%TZ) ==="
 echo "Verify with:"
 echo "  docker compose -f $APP_DIR/deploy/docker/docker-compose.caddy.yml ps"
 echo "  docker logs \$(docker compose -f $APP_DIR/deploy/docker/docker-compose.caddy.yml ps -q caddy) 2>&1 | tail -50"
