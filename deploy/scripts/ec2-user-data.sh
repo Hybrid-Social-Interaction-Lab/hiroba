@@ -1,63 +1,99 @@
 #!/bin/bash
-set -e
+# Cloud-init / user-data for hiroba on Ubuntu 22.04 LTS.
+#
+# Used by:
+#   - deploy/scripts/ec2-deploy.sh (AWS EC2)
+#   - Sakura VPS control panel "startup script" field
+#
+# The wrapper script substitutes two placeholders before submitting:
+#   __REPO_URL__        — git clone URL (e.g., https://github.com/<org>/hiroba.git)
+#   __REPO_REF__        — branch / tag / commit to check out (default: main)
+#   __ENV_FILE_BASE64__ — base64-encoded contents of the operator's
+#                         .env.production file
+#
+# This script must stay idempotent and self-contained so it can later be
+# embedded verbatim in a CloudFormation `Fn::Sub UserData`.
 
-# ログ出力
-exec > >(tee /var/log/user-data.log)
-exec 2>&1
+set -euo pipefail
 
-echo "=== Starting EC2 User Data Script ==="
+exec > >(tee -a /var/log/user-data.log) 2>&1
+echo "=== hiroba user-data start: $(date -u +%FT%TZ) ==="
 
-# システムアップデート
-yum update -y
+REPO_URL="__REPO_URL__"
+REPO_REF="__REPO_REF__"
+ENV_FILE_BASE64="__ENV_FILE_BASE64__"
+APP_DIR="/opt/hiroba"
 
-# 必要なパッケージをインストール
-yum install -y docker git
+# --- 1. System packages ---------------------------------------------------
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y \
+	ca-certificates \
+	curl \
+	git \
+	gnupg \
+	ufw
 
-# Dockerを起動
-systemctl start docker
-systemctl enable docker
-usermod -a -G docker ec2-user
+# --- 2. Docker Engine + Compose plugin (official repo) --------------------
+install -m 0755 -d /etc/apt/keyrings
+if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+		| gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	chmod a+r /etc/apt/keyrings/docker.gpg
+fi
 
-# AWS CLIの設定（既にインストール済み）
-echo "Configuring AWS CLI..."
+UBUNTU_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable" \
+	> /etc/apt/sources.list.d/docker.list
 
-# ECRにログイン
-aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 118120622551.dkr.ecr.ap-northeast-1.amazonaws.com
+apt-get update -y
+apt-get install -y \
+	docker-ce \
+	docker-ce-cli \
+	containerd.io \
+	docker-buildx-plugin \
+	docker-compose-plugin
 
-# 環境変数ファイルを作成
-mkdir -p /home/ec2-user/app
-cat > /home/ec2-user/app/.env << 'ENVEOF'
-NODE_ENV=production
-PORT=3000
-HTTPS_PORT=3443
-AWS_REGION=ap-northeast-1
-ZOOM_VSDK_KEY=
-ZOOM_VSDK_SECRET=
-OPENAI_API_KEY=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-ENVEOF
+systemctl enable --now docker
 
-# ECRから最新のイメージをプル
-echo "Pulling latest Docker image from ECR..."
-docker pull 118120622551.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app:latest
+# --- 3. Host firewall (ufw) -----------------------------------------------
+# Sakura also applies its control-panel packet filter — open 80/443 there too.
+ufw --force reset
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow 443/udp
+ufw --force enable
 
-# 既存のコンテナを停止・削除（存在する場合）
-docker stop vsdk-app 2>/dev/null || true
-docker rm vsdk-app 2>/dev/null || true
+# --- 4. Clone / update the app --------------------------------------------
+if [ ! -d "$APP_DIR/.git" ]; then
+	git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$APP_DIR"
+else
+	git -C "$APP_DIR" fetch --depth 1 origin "$REPO_REF"
+	git -C "$APP_DIR" checkout "$REPO_REF"
+	git -C "$APP_DIR" reset --hard "origin/$REPO_REF" || true
+fi
 
-# Dockerコンテナを起動
-echo "Starting Docker container..."
-docker run -d \
-  --name vsdk-app \
-  --restart unless-stopped \
-  -p 80:3000 \
-  -p 443:3443 \
-  --env-file /home/ec2-user/app/.env \
-  118120622551.dkr.ecr.ap-northeast-1.amazonaws.com/vsdk-app:latest
+# --- 5. Materialize .env.production ---------------------------------------
+echo "$ENV_FILE_BASE64" | base64 -d > "$APP_DIR/.env.production"
+chmod 600 "$APP_DIR/.env.production"
 
-# 所有権を修正
-chown -R ec2-user:ec2-user /home/ec2-user/app
+# --- 6. Prepare host volumes for app uid 1001 -----------------------------
+# Dockerfile runs the app as uid:gid 1001:1001. Pre-create the bind-mount
+# targets so the container can write to them.
+mkdir -p "$APP_DIR/data" "$APP_DIR/logs"
+chown -R 1001:1001 "$APP_DIR/data" "$APP_DIR/logs"
 
-echo "=== EC2 User Data Script Completed ==="
-echo "Application is now running on port 80 (mapped to 3000)"
+# --- 7. Build + start the stack ------------------------------------------
+cd "$APP_DIR"
+docker compose -f deploy/docker/docker-compose.caddy.yml \
+	--env-file .env.production \
+	up -d --build
+
+echo "=== hiroba user-data done: $(date -u +%FT%TZ) ==="
+echo "Verify with:"
+echo "  docker compose -f $APP_DIR/deploy/docker/docker-compose.caddy.yml ps"
+echo "  docker logs \$(docker compose -f $APP_DIR/deploy/docker/docker-compose.caddy.yml ps -q caddy) 2>&1 | tail -50"

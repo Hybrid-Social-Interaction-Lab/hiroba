@@ -1,0 +1,33 @@
+# Caddy reverse proxy for hiroba.
+#
+# Variables come from the compose env (.env.production):
+#   DOMAIN       — public hostname (must have an A record pointing here first)
+#   ACME_EMAIL   — Let's Encrypt registration email
+#
+# Caddy automatically requests and renews a Let's Encrypt cert for {$DOMAIN}.
+# Certs persist in the `caddy_data` named volume — keep it across restarts to
+# avoid hitting ACME rate limits.
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Forward everything (HTTP + WebSocket upgrade) to the app container.
+	reverse_proxy app:3000
+
+	# Allow large uploads (session log exports, model files).
+	request_body {
+		max_size 50MB
+	}
+}
+
+# Uncomment for offline lab testing without a public domain:
+# Replace the block above with the following and trust Caddy's local CA.
+#
+# :443 {
+# 	tls internal
+# 	reverse_proxy app:3000
+# }
