@@ -18,6 +18,17 @@ RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
       npm ci --only=production; \
     fi
 
+# Dev stage — all dependencies (including devDependencies) so the source
+# volume mount gets a complete node_modules from the image layer.
+FROM node:18-alpine AS dev
+RUN apk add --no-cache curl python3 make g++
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+EXPOSE 3000 3443
+CMD ["npm", "start"]
+
 # Production stage
 FROM node:18-alpine AS production
 

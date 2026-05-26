@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Researcher Guide · HIROBA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.408.0"></script>
+  <style>
+    :root {
+      --bg: #1c1c1c;
+      --bg-elev-1: #1e1e1e;
+      --bg-elev-2: #252525;
+      --bg-elev-3: #2a2a2a;
+      --border: #333;
+      --border-soft: #2a2a2a;
+      --text: #e0e0e0;
+      --text-dim: #aaa;
+      --text-muted: #888;
+      --accent: #66b3ff;
+      --accent-hover: #99ccff;
+      --accent-soft: #667eea;
+      --accent-grad-end: #764ba2;
+      --code-bg: #161616;
+      --warning: #f0b429;
+      --danger: #f87171;
+      --success: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* ─── Top bar ─── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 17, 17, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .topbar-brand .brand-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elev-3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .topbar-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .topbar-links a {
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-links a:hover { color: var(--text); }
+    .topbar-links .icon { width: 15px; height: 15px; }
+
+    /* ─── Layout ─── */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 220px;
+      max-width: 1280px;
+      margin: 0 auto;
+      gap: 40px;
+      padding: 32px 28px 80px;
+    }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 220px minmax(0, 1fr); }
+      .page-toc-wrapper { display: none; }
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; gap: 24px; padding: 20px 18px 60px; }
+      .sidebar-wrapper { position: static; }
+    }
+
+    /* ─── Sidebar nav ─── */
+    .sidebar-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-section {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 12px 6px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .sidebar-link.active {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.12));
+      color: var(--text);
+      border-left: 2px solid var(--accent-soft);
+      padding-left: 10px;
+    }
+    .sidebar-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ─── Content ─── */
+    .content {
+      min-width: 0;
+      max-width: 760px;
+    }
+    .content h1, .content h2, .content h3, .content h4 {
+      font-family: 'Rubik', sans-serif;
+      color: #fff;
+      line-height: 1.25;
+      margin: 1.8em 0 0.6em;
+      scroll-margin-top: 90px;
+      position: relative;
+    }
+    .content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 0.4em;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      padding-top: 8px;
+    }
+    .content h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #e8e8e8;
+    }
+    .content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content p { margin: 0.9em 0; color: var(--text); }
+    .content ul, .content ol { padding-left: 1.4em; margin: 0.8em 0; }
+    .content li { margin: 0.35em 0; }
+    .content li > p { margin: 0.4em 0; }
+    .content strong { color: #fff; font-weight: 600; }
+    .content em { color: var(--text); }
+    .content blockquote {
+      border-left: 3px solid var(--accent-soft);
+      background: rgba(102, 126, 234, 0.06);
+      padding: 12px 18px;
+      margin: 1.2em 0;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dim);
+    }
+    .content blockquote p { margin: 0.3em 0; }
+    .content hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2em 0;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2em 0;
+      font-size: 13px;
+      background: var(--bg-elev-1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .content th, .content td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .content th {
+      background: var(--bg-elev-3);
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+    .content tr:last-child td { border-bottom: none; }
+    .content figure {
+      margin: 1.4em 0;
+      text-align: center;
+    }
+    .content figure img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    .content figcaption {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .content img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 1em 0;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Heading anchor */
+    .heading-anchor {
+      position: absolute;
+      left: -22px;
+      color: var(--text-muted);
+      opacity: 0;
+      font-weight: 400;
+      transition: opacity 0.15s;
+    }
+    .content h1:hover .heading-anchor,
+    .content h2:hover .heading-anchor,
+    .content h3:hover .heading-anchor,
+    .content h4:hover .heading-anchor { opacity: 1; }
+
+    /* Inline + block code */
+    .content code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.88em;
+      background: var(--bg-elev-3);
+      color: #f0d090;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-soft);
+    }
+    .content pre.code-block {
+      position: relative;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      margin: 1.2em 0;
+    }
+    .content pre.code-block code {
+      background: none;
+      border: none;
+      color: #d4d4d4;
+      font-size: 13px;
+      padding: 0;
+      line-height: 1.55;
+    }
+    .content pre.code-block::before {
+      content: attr(data-lang);
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: 'Rubik', sans-serif;
+    }
+
+    /* Callout boxes (rendered from blockquotes that start with [!NOTE], [!WARNING], [!TIP]) */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 1.2em 0;
+      border: 1px solid;
+    }
+    .callout-note { background: rgba(102, 179, 255, 0.08); border-color: rgba(102, 179, 255, 0.3); color: var(--text); }
+    .callout-warning { background: rgba(240, 180, 41, 0.08); border-color: rgba(240, 180, 41, 0.35); color: var(--text); }
+    .callout-tip { background: rgba(74, 222, 128, 0.08); border-color: rgba(74, 222, 128, 0.3); color: var(--text); }
+    .callout-danger { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.35); color: var(--text); }
+    .callout-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
+    .callout-note .callout-icon { color: var(--accent); }
+    .callout-warning .callout-icon { color: var(--warning); }
+    .callout-tip .callout-icon { color: var(--success); }
+    .callout-danger .callout-icon { color: var(--danger); }
+    .callout-body { flex: 1; }
+    .callout-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .callout-note .callout-title { color: var(--accent); }
+    .callout-warning .callout-title { color: var(--warning); }
+    .callout-tip .callout-title { color: var(--success); }
+    .callout-danger .callout-title { color: var(--danger); }
+    .callout-body p { margin: 0.2em 0; }
+
+    /* Screenshot placeholder */
+    .screenshot-placeholder {
+      border: 2px dashed #4a4a6a;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 1.2em 0;
+      color: var(--text-dim);
+      font-size: 13px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .screenshot-placeholder .ph-icon {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-soft);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .screenshot-placeholder .ph-label {
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Right-side page TOC ─── */
+    .page-toc-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .page-toc-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      padding-left: 12px;
+    }
+    .page-toc {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid var(--border);
+    }
+    .page-toc li { margin: 0; }
+    .page-toc li a {
+      display: block;
+      padding: 4px 12px;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      border-left: 2px solid transparent;
+      margin-left: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .page-toc li a:hover { color: var(--text); }
+    .page-toc li a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .page-toc .toc-l3 a { padding-left: 24px; font-size: 12px; }
+
+    /* Contents grid */
+    .contents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 1.4em 0;
+    }
+    .contents-grid a {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elev-1);
+      color: var(--text-dim);
+      font-size: 13px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+    .contents-grid a:hover {
+      border-color: var(--accent-soft);
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .contents-grid .cg-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-soft);
+      line-height: 1;
+      min-width: 16px;
+      padding-top: 1px;
+    }
+    .contents-grid .cg-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--accent-soft);
+      margin-top: 1px;
+    }
+    .contents-grid .cg-body { flex: 1; min-width: 0; }
+    .contents-grid .cg-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+    .contents-grid .cg-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Guide meta line */
+    .guide-meta {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: -0.2em 0 1.4em;
+      padding: 8px 14px;
+      background: var(--bg-elev-2);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-soft);
+    }
+
+    /* Step flow bar */
+    .section-steps {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 1em 0 1.4em;
+      padding: 14px 16px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .ss-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ss-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ss-label { font-size: 13px; color: var(--text); }
+    .ss-sep { color: var(--text-muted); display: flex; }
+    .ss-sep svg { width: 14px; height: 14px; }
+
+    /* Toolbar icon grid */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin: 1em 0;
+    }
+    .ig-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px 12px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .ig-item--danger { border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+    .ig-icon { width: 24px; height: 24px; color: var(--accent-soft); }
+    .ig-item--danger .ig-icon { color: var(--danger); }
+    .ig-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .ig-desc { font-size: 11px; color: var(--text-muted); }
+    .ig-label kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: var(--bg-elev-3);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 4px;
+      color: var(--text-dim);
+    }
+
+    /* Trigger grid */
+    .trigger-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tg-item {
+      padding: 14px 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tg-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tg-head svg { width: 15px; height: 15px; color: var(--accent-soft); }
+    .tg-body { font-size: 12.5px; color: var(--text-dim); line-height: 1.45; }
+
+    /* Tips grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tip-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tip-icon { width: 20px; height: 20px; color: var(--accent-soft); flex-shrink: 0; margin-top: 1px; }
+    .tip-body { font-size: 13px; color: var(--text-dim); line-height: 1.45; }
+    .tip-body strong { color: var(--text); }
+
+    /* Example setup grid */
+    .example-setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .esg-item {
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .esg-item--wide { grid-column: 1 / -1; }
+    .esg-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-soft);
+      margin-bottom: 6px;
+    }
+    .esg-body { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+    .esg-body strong { color: var(--text); }
+    .esg-body em { color: var(--text-dim); font-style: italic; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    /* Footer */
+    .doc-footer {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="/" class="topbar-brand" style="color:#fff">
+      HIROBA
+      <span class="brand-tag">Docs</span>
+    </a>
+    <div class="topbar-links">
+      <a href="/"><i data-lucide="arrow-left" class="icon"></i>Back to App</a>
+      <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">
+        <i data-lucide="github" class="icon"></i>GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- Left sidebar -->
+    <aside class="sidebar-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-section">Guides</div>
+        <a href="/guides/" class="sidebar-link" data-slug="index">
+      <i data-lucide="book-open" class="sidebar-icon"></i>
+      <span>Overview</span>
+    </a>
+<a href="/guides/user-guide" class="sidebar-link" data-slug="user-guide">
+      <i data-lucide="user" class="sidebar-icon"></i>
+      <span>User Guide</span>
+    </a>
+<a href="/guides/researcher-guide" class="sidebar-link active" data-slug="researcher-guide">
+      <i data-lucide="flask-conical" class="sidebar-icon"></i>
+      <span>Researcher Guide</span>
+    </a>
+<a href="/guides/developer-guide" class="sidebar-link" data-slug="developer-guide">
+      <i data-lucide="code-2" class="sidebar-icon"></i>
+      <span>Developer Guide</span>
+    </a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="content">
+      <h1 id="researcher-guide"><a class="heading-anchor" href="#researcher-guide" aria-label="Link to Researcher Guide">#</a>Researcher Guide</h1>
+<div class="guide-meta">For <strong>researchers</strong> setting up and running a HIROBA study. Sending this to a participant by mistake? See the <a href="/guides/user-guide">User Guide</a>.</div>
+
+<div class="contents-grid">
+  <a href="#1-system-overview"><span class="cg-num">1</span><i data-lucide="layout-dashboard" class="cg-icon"></i><div class="cg-body"><div class="cg-title">System overview</div><div class="cg-desc">Architecture and dependencies</div></div></a>
+  <a href="#2-deploy"><span class="cg-num">2</span><i data-lucide="server" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Deploy</div><div class="cg-desc">Local, Sakura VPS, or AWS EC2</div></div></a>
+  <a href="#3-configure-conditions-and-agents"><span class="cg-num">3</span><i data-lucide="sliders-horizontal" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Configure</div><div class="cg-desc">Conditions, agents, prompt template</div></div></a>
+  <a href="#4-run-a-session"><span class="cg-num">4</span><i data-lucide="video" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Run a session</div><div class="cg-desc">Lobby → call → host panel → end</div></div></a>
+  <a href="#5-collect-data"><span class="cg-num">5</span><i data-lucide="download" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Collect data</div><div class="cg-desc">Export logs and transcripts</div></div></a>
+  <a href="#6-example-study-setups"><span class="cg-num">6</span><i data-lucide="flask-conical" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Example setups</div><div class="cg-desc">Three ready-to-adapt study designs</div></div></a>
+  <a href="#7-common-operations"><span class="cg-num">7</span><i data-lucide="wrench" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Common operations</div><div class="cg-desc">Updates, secrets, resets</div></div></a>
+  <a href="#8-troubleshooting"><span class="cg-num">8</span><i data-lucide="triangle-alert" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Troubleshooting</div><div class="cg-desc">Common issues and fixes</div></div></a>
+</div>
+
+<hr>
+<h2 id="1-system-overview"><a class="heading-anchor" href="#1-system-overview" aria-label="Link to 1. System overview">#</a>1. System overview</h2>
+<p>HIROBA is a single Node.js app fronted by Caddy (for HTTPS) when deployed. It uses:</p>
+<ul>
+<li><strong>Zoom Video SDK</strong> for the actual audio/video transport and the per-participant raw audio used for transcription.</li>
+<li><strong>OpenAI</strong> <em>(optional)</em> for generating agent replies. Without an API key, agents fall back to canned lines from the settings file — usable for development but not for studies.</li>
+<li><strong>Amazon Polly</strong> <em>(optional)</em> for high-quality voice synthesis. Falls back to browser TTS if not configured.</li>
+<li><strong>SpeechGen.io</strong> <em>(optional)</em> for a third neutral voice option.</li>
+</ul>
+<p>All long-lived state lives in two places:</p>
+<ul>
+<li><code>data/settings.json</code> — conditions, agents, prompts, behaviour parameters. Edited via the admin panel.</li>
+<li><code>logs/sessions/*</code> — one folder per session, with JSON + CSV exports of every utterance.</li>
+</ul>
+<p>Both can also be backed by S3 / DynamoDB if you set the appropriate environment variables (see <a href="#settings-persistence">Settings persistence</a> below).</p>
+<hr>
+<h2 id="2-deploy"><a class="heading-anchor" href="#2-deploy" aria-label="Link to 2. Deploy">#</a>2. Deploy</h2>
+<p>You have three deploy paths. Pick one.</p>
+<h3 id="2a-local-development-your-laptop"><a class="heading-anchor" href="#2a-local-development-your-laptop" aria-label="Link to 2a. Local development (your laptop)">#</a>2a. Local development (your laptop)</h3>
+<p>Useful for piloting conditions before going live. Camera/mic work because <code>localhost</code> counts as a secure context.</p>
+<pre class="code-block" data-lang="bash"><code>git clone https://github.com/Hybrid-Social-Interaction-Lab/hiroba.git
+cd hiroba
+npm install
+cp .env.example .env
+# Edit .env: set ZOOM_VSDK_KEY and ZOOM_VSDK_SECRET at minimum.
+node index.js</code></pre>
+<p>Then open <code>http://localhost:3000/</code> (lobby) and <code>http://localhost:3000/admin/</code> (admin).</p>
+<p>For auto-reload during development:</p>
+<pre class="code-block" data-lang="bash"><code>docker compose -f deploy/docker/docker-compose.dev.yml up</code></pre>
+<p>This mounts the source tree into the container so edits to <code>public/</code>, <code>lib/</code>, and <code>docs/guides/site/</code> show up live without rebuilding the image. (Guides specifically: run <code>npm run build:guides</code> from the host to recompile after editing markdown.)</p>
+<h3 id="2b-sakura-vps-recommended-for-japan-billed-studies"><a class="heading-anchor" href="#2b-sakura-vps-recommended-for-japan-billed-studies" aria-label="Link to 2b. Sakura VPS (recommended for Japan-billed studies)">#</a>2b. Sakura VPS (recommended for Japan-billed studies)</h3>
+<p>Sakura VPS is the lab&#39;s standard host for Japan-billed deployments. The README in the repository root has the full step-by-step, but the headline shape is:</p>
+<ol>
+<li>Create a <strong>2 GB Tokyo Ubuntu 22.04</strong> instance, register your SSH key.</li>
+<li>Point your domain&#39;s A record at the VPS IP.</li>
+<li>Open the <strong>Sakura packet filter</strong> for TCP 22, 80, 443 and <strong>UDP 443</strong>. (Both the panel-level filter and <code>ufw</code> must be open or traffic is silently dropped — this is the most common deployment trap.)</li>
+<li>Prepare <code>.env.production</code> locally, then base64-encode and paste it into the EC2-style user-data script on the VPS.</li>
+<li><code>sudo bash ec2-user-data.sh</code> — wait ~2–3 minutes for <code>=== HIROBA user-data done ===</code>.</li>
+</ol>
+<p>Verify with <code>curl -vI https://${DOMAIN}/</code> — you should see HTTP/2 200 and a Let&#39;s Encrypt certificate.</p>
+<p>Detailed troubleshooting: <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba/blob/main/docs/SAKURA-DEPLOY.md"><code>docs/SAKURA-DEPLOY.md</code></a>.</p>
+<h3 id="2c-aws-ec2-recommended-for-aws-billed-studies"><a class="heading-anchor" href="#2c-aws-ec2-recommended-for-aws-billed-studies" aria-label="Link to 2c. AWS EC2 (recommended for AWS-billed studies)">#</a>2c. AWS EC2 (recommended for AWS-billed studies)</h3>
+<pre class="code-block" data-lang="bash"><code>cp .env.example.production .env.production
+# Edit .env.production: DOMAIN, ACME_EMAIL, ZOOM_VSDK_*, and any optional keys.
+bash deploy/scripts/ec2-deploy.sh</code></pre>
+<p>The script creates a <code>t4g.small</code> ARM instance with Ubuntu 22.04, allocates an Elastic IP, opens the right security group ports, and submits a user-data script that bootstraps the entire Docker Compose + Caddy stack. Use <code>--amd64</code> for <code>t3.small</code> if you need x86. Other knobs are documented in the README.</p>
+<p>After the script prints the Elastic IP:</p>
+<ol>
+<li>Point your domain&#39;s A record at the EIP.</li>
+<li>SSH in and <code>sudo tail -f /var/log/user-data.log</code> to watch the first-boot bootstrap.</li>
+<li>Once you see <code>=== HIROBA user-data done ===</code>, open <code>https://${DOMAIN}/admin/</code>.</li>
+</ol>
+<p>Detailed troubleshooting: <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba/blob/main/docs/AWS-EC2-CADDY-DEPLOY.md"><code>docs/AWS-EC2-CADDY-DEPLOY.md</code></a>.</p>
+<blockquote>
+<p>[!WARNING]
+<strong>DNS must be live before you start the stack.</strong> Caddy requests a Let&#39;s Encrypt certificate on first boot and Let&#39;s Encrypt rate-limits failed attempts (5/hour per hostname). If you bring the stack up before DNS resolves, you can be locked out of issuing a cert for an hour. The safe order is always: add A record → <code>dig +short ${DOMAIN}</code> → start the stack.</p>
+</blockquote>
+<h3 id="required-environment-variables"><a class="heading-anchor" href="#required-environment-variables" aria-label="Link to Required environment variables">#</a>Required environment variables</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Required?</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ZOOM_VSDK_KEY</code>, <code>ZOOM_VSDK_SECRET</code></td>
+<td>Always</td>
+<td>Zoom Video SDK credentials. Get them from the <a href="https://developers.zoom.us/docs/video-sdk/developer-accounts/#get-video-sdk-credentials">Zoom Developer Portal</a>.</td>
+</tr>
+<tr>
+<td><code>DOMAIN</code></td>
+<td>Production</td>
+<td>Public hostname for Let&#39;s Encrypt.</td>
+</tr>
+<tr>
+<td><code>ACME_EMAIL</code></td>
+<td>Production</td>
+<td>Email Let&#39;s Encrypt registers under (used for renewal notices).</td>
+</tr>
+<tr>
+<td><code>OPENAI_API_KEY</code></td>
+<td>For real studies</td>
+<td>Without it, the agents fall back to canned lines.</td>
+</tr>
+<tr>
+<td><code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_REGION</code></td>
+<td>Optional</td>
+<td>Enables Amazon Polly (high-quality neural voices) and S3 log upload.</td>
+</tr>
+<tr>
+<td><code>SPEECHGEN_API_TOKEN</code>, <code>SPEECHGEN_EMAIL</code>, <code>SPEECHGEN_NEUTRAL_VOICE</code></td>
+<td>Optional</td>
+<td>Enables a neutral voice via SpeechGen.io.</td>
+</tr>
+<tr>
+<td><code>ADMIN_PASSWORD</code></td>
+<td>Recommended</td>
+<td>Password to enter the <code>/admin</code> panel. Defaults to <code>admin</code> if unset — change it.</td>
+</tr>
+</tbody></table>
+<p>The admin panel shows a <strong>System Status</strong> panel at the top confirming which services are configured — green for active, red for missing.</p>
+<p><img src="screenshots/system_status.jpg" alt="System Status panel showing green checkmarks for Zoom Video SDK, OpenAI, AWS Polly, and SpeechGen"></p>
+<h3 id="settings-persistence"><a class="heading-anchor" href="#settings-persistence" aria-label="Link to Settings persistence">#</a>Settings persistence</h3>
+<p>By default, <code>data/settings.json</code> lives on the container&#39;s mounted host volume and survives restarts. If you want centralised settings across multiple instances:</p>
+<pre class="code-block" data-lang="bash"><code>SETTINGS_BACKEND=dynamodb
+SETTINGS_DDB_TABLE=hiroba-settings
+SETTINGS_DDB_REGION=ap-northeast-1</code></pre>
+<p>Similarly for session logs:</p>
+<pre class="code-block" data-lang="bash"><code>SESSION_LOG_UPLOAD_BACKEND=s3
+SESSION_LOG_S3_BUCKET=my-lab-bucket
+SESSION_LOG_S3_PREFIX=hiroba/sessions</code></pre>
+<hr>
+<h2 id="3-configure-conditions-and-agents"><a class="heading-anchor" href="#3-configure-conditions-and-agents" aria-label="Link to 3. Configure conditions and agents">#</a>3. Configure conditions and agents</h2>
+<p>Open <code>https://${DOMAIN}/admin/</code>. You&#39;ll get a password prompt (the <code>ADMIN_PASSWORD</code> you set, or <code>admin</code> if you didn&#39;t).</p>
+<p>After unlocking, you land on the <strong>Admin</strong> dashboard with five sections, top to bottom: <strong>Conditions</strong>, <strong>Prompt Template</strong>, <strong>Periodic Speech</strong>, <strong>Silence Detection</strong>, and <strong>Language Model</strong>.</p>
+<h3 id="conditions"><a class="heading-anchor" href="#conditions" aria-label="Link to Conditions">#</a>Conditions</h3>
+<p>A <strong>condition</strong> is one experimental cell. Each condition defines:</p>
+<ul>
+<li>An <strong>ID</strong> (URL-safe, e.g. <code>condition-a</code>) — used internally, never shown to participants.</li>
+<li>A <strong>display name</strong> (e.g. <code>Condition A — One Female Agent</code>) — shown to the host in the lobby.</li>
+<li>A <strong>background image</strong> (one of six built-in scenes) used behind the 3D avatars.</li>
+<li>A list of <strong>agents</strong>, each with their own name, 3D model, voice gender, system prompt, and optional trigger keywords.</li>
+</ul>
+<p>The host picks a condition when creating a session. That choice locks in which agents the room contains and how they speak.</p>
+<p><strong>To create a condition:</strong></p>
+<ol>
+<li>Click <strong>+ Add Condition</strong> at the bottom of the Conditions section.</li>
+<li>Type an ID (e.g. <code>pilot-1</code>) and a display name (e.g. <code>Pilot 1 — single agent</code>).</li>
+<li>Click <strong>Create Condition</strong>.</li>
+</ol>
+<p>The condition appears as a card. Click <strong>Edit</strong> to expand it.</p>
+<p><img src="screenshots/conditions_edit.jpg" alt="Expanded condition card with the Edit form open, showing the Display Name field, an Agents subsection, and the + Add Agent button"></p>
+<p><strong>To add an agent to a condition:</strong></p>
+<ol>
+<li>Inside the open condition card, click <strong>+ Add Agent</strong>.</li>
+<li>Fill in:<ul>
+<li><strong>Name</strong> — what appears as the label under the avatar tile (e.g. <code>Alex</code>, <code>Jordan</code>).</li>
+<li><strong>Avatar Model</strong> — one of the bundled FBX models: <code>female.fbx</code>, <code>male.fbx</code>, <code>female_old.fbx</code>, <code>man_new_idle.fbx</code>, <code>man_new_idle2.fbx</code>, <code>neutral.fbx</code>.</li>
+<li><strong>Voice Gender</strong> — Auto (inferred from model), Female, Male, or Neutral. The Test button plays one line through whichever voice would be used.</li>
+<li><strong>AI System Prompt</strong> — the agent&#39;s persona / instructions. This is injected as <code>%bot_prompt%</code> in the global template.</li>
+<li><strong>Trigger Keywords</strong> — comma-separated names that the agent answers to. Leave blank if you want the agent to potentially respond to every message. Multiple agents can match the same message; the system picks one.</li>
+</ul>
+</li>
+<li>Click <strong>Save Agent</strong>.</li>
+</ol>
+<p><img src="screenshots/agent_customisation.jpg" alt="Agent customisation form showing name, avatar model, voice gender, system prompt, and trigger keyword fields"></p>
+<blockquote>
+<p>[!TIP]
+Trigger keywords are what makes multi-agent rooms work. If you have <strong>Alex</strong> and <strong>Jordan</strong> in the same condition and want them to take turns based on direct address, set Alex&#39;s keywords to <code>Alex, Alexa</code> and Jordan&#39;s to <code>Jordan, Jord</code>. With both lists empty, every message is a candidate for either agent — useful for studies of unsolicited agent intervention.</p>
+</blockquote>
+<h3 id="prompt-template"><a class="heading-anchor" href="#prompt-template" aria-label="Link to Prompt Template">#</a>Prompt Template</h3>
+<p>The global prompt template controls <strong>what the LLM sees</strong> for every agent reply. It is shared across all conditions — each agent&#39;s individual system prompt is injected into it via <code>%bot_prompt%</code>. This separation lets you keep the structural scaffolding (conversation history, participant list, date/time) consistent while varying only the agent&#39;s persona per condition.</p>
+<p><img src="screenshots/prompt_template.jpg" alt="The Prompt Template section in the admin panel, showing the template textarea with variable chips above it and a Save button"></p>
+<h4 id="default-template"><a class="heading-anchor" href="#default-template" aria-label="Link to Default template">#</a>Default template</h4>
+<pre class="code-block" data-lang="text"><code>You are %agent_name%. Today is %date% and the current time is %time%.
+
+%bot_prompt%
+
+Participants in this call: %user_list%.
+
+Recent conversation:
+%conversation_history%</code></pre>
+<h4 id="available-variables"><a class="heading-anchor" href="#available-variables" aria-label="Link to Available variables">#</a>Available variables</h4>
+<p>Click a chip in the admin UI to insert a variable at the cursor position.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What it inserts</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%agent_name%</code></td>
+<td>The agent&#39;s display name as set in the condition.</td>
+</tr>
+<tr>
+<td><code>%bot_prompt%</code></td>
+<td>That agent&#39;s per-condition system prompt — this is the main per-agent customisation point.</td>
+</tr>
+<tr>
+<td><code>%conversation_history%</code></td>
+<td>Recent utterances, bounded by the <code>CHAT_HISTORY_MAX_ITEMS</code> and <code>CHAT_HISTORY_MAX_CHARS</code> env vars (defaults: ~20 items / 6000 chars). Oldest entries are dropped first when the limit is hit.</td>
+</tr>
+<tr>
+<td><code>%date%</code></td>
+<td>Server&#39;s current date (YYYY-MM-DD).</td>
+</tr>
+<tr>
+<td><code>%time%</code></td>
+<td>Server&#39;s current time (HH:MM, 24-hour).</td>
+</tr>
+<tr>
+<td><code>%user_list%</code></td>
+<td>Comma-separated display names of the human participants currently in the room. Updates as people join/leave.</td>
+</tr>
+<tr>
+<td><code>%condition_name%</code></td>
+<td>The active condition&#39;s display name. Useful if you want the agent to be aware of which experimental arm it&#39;s in.</td>
+</tr>
+</tbody></table>
+<h4 id="tips-for-writing-effective-templates"><a class="heading-anchor" href="#tips-for-writing-effective-templates" aria-label="Link to Tips for writing effective templates">#</a>Tips for writing effective templates</h4>
+<p><strong>Keep <code>%bot_prompt%</code> early.</strong> The LLM attends more strongly to content near the top of the system prompt. Putting <code>%bot_prompt%</code> before the conversation history means the agent&#39;s persona and instructions have more weight than the recency context — generally the right trade-off for social agents.</p>
+<p><strong>Scope the conversation history.</strong> If agents are going off-topic or over-referencing old turns, lower <code>CHAT_HISTORY_MAX_ITEMS</code> in your <code>.env</code> rather than truncating the history mid-template. Removing it entirely makes the agent contextually deaf — keep at least 5–10 items.</p>
+<p><strong>Use <code>%condition_name%</code> sparingly.</strong> It is rarely needed in the template itself, but it is useful for logging or when you want the agent to subtly adapt its register based on condition (e.g. formal vs. informal).</p>
+<p><strong>Test incrementally.</strong> Save a template change, then use the <strong>WoZ → AI Trigger</strong> button to fire a reply immediately without waiting for silence or a periodic timer. Check the log tab to see exactly what was said.</p>
+<p>Click <strong>Save</strong> to persist. Changes apply to the <strong>next</strong> generated reply in any active session — there is no need to restart anything.</p>
+<h3 id="periodic-speech"><a class="heading-anchor" href="#periodic-speech" aria-label="Link to Periodic Speech">#</a>Periodic Speech</h3>
+<p>Defines proactive utterances — the agent speaks unprompted on a timer.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Interval (seconds)</strong></td>
+<td>How often a periodic utterance is considered. Range 30–600. Default 180 (3 min).</td>
+</tr>
+<tr>
+<td><strong>Enabled</strong></td>
+<td>Yes/No global toggle.</td>
+</tr>
+<tr>
+<td><strong>Bot Selection: Random / Specific</strong></td>
+<td>Random picks one of the active agents in the condition. Specific names one agent.</td>
+</tr>
+<tr>
+<td><strong>Prompt injected when periodic speech triggers</strong></td>
+<td>A short instruction appended to the system prompt to bias the reply toward keeping the conversation moving (e.g. &quot;use softeners or floor-grabbing signals first&quot;).</td>
+</tr>
+</tbody></table>
+<p>Hosts can override the interval live from the <strong>Session Host Panel</strong> during a session.</p>
+<h3 id="silence-detection"><a class="heading-anchor" href="#silence-detection" aria-label="Link to Silence Detection">#</a>Silence Detection</h3>
+<p>Defines reactive utterances — the agent jumps in when nobody has spoken.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Threshold (seconds)</strong></td>
+<td>How long the room must be silent before an agent intervenes. Default 10.</td>
+</tr>
+<tr>
+<td><strong>Enabled</strong></td>
+<td>Yes/No global toggle.</td>
+</tr>
+<tr>
+<td><strong>Bot Selection</strong></td>
+<td>Random or a specific agent, same logic as periodic.</td>
+</tr>
+</tbody></table>
+<p>Like periodic speech, hosts can override the threshold live from the panel.</p>
+<p><img src="screenshots/periodic_speech_silence_detection.jpg" alt="Periodic speech and silence detection settings panels in the admin dashboard"></p>
+<h3 id="language-model"><a class="heading-anchor" href="#language-model" aria-label="Link to Language Model">#</a>Language Model</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model</strong></td>
+<td>OpenAI model name (<code>gpt-3.5-turbo</code>, <code>gpt-4o-mini</code>, etc.). Whatever your API key has access to.</td>
+</tr>
+<tr>
+<td><strong>Max Tokens</strong></td>
+<td>Reply length cap. 150 is reasonable; raise it if agents are getting cut off mid-sentence.</td>
+</tr>
+<tr>
+<td><strong>Temperature</strong></td>
+<td>0 = deterministic, 2 = very random. 0.7 is a sensible default.</td>
+</tr>
+</tbody></table>
+<p><img src="screenshots/language_model_selection.jpg" alt="Language model selection panel showing model name, max tokens, and temperature fields"></p>
+<p>Click <strong>Save</strong>. Changes apply immediately to the next reply.</p>
+<hr>
+<h2 id="4-run-a-session"><a class="heading-anchor" href="#4-run-a-session" aria-label="Link to 4. Run a session">#</a>4. Run a session</h2>
+<p>With conditions configured, you&#39;re ready to run a study. The flow is: create a session in the lobby → join → host the session from the Session Host Panel → end + export.</p>
+<h3 id="create-a-session"><a class="heading-anchor" href="#create-a-session" aria-label="Link to Create a session">#</a>Create a session</h3>
+<p>Open <code>https://${DOMAIN}/</code>. The lobby has two panels; as host, use <strong>Create Session</strong> on the left.</p>
+<p><img src="screenshots/create_session.jpg" alt="The lobby Create Session panel filled out with session name, password, condition, display name, and the Create &amp; Join button"></p>
+<ol>
+<li><strong>Session Name</strong> — a label only your participants will see in their join dropdown. Use something findable, e.g. <code>pilot-2026-05-22</code>.</li>
+<li><strong>Password</strong> <em>(optional)</em> — leave blank if you want any joiner with the URL to walk in. Set one for real studies.</li>
+<li><strong>Condition</strong> — pick the experimental condition. This locks in the agents, voices, backgrounds, and per-agent prompts for this session.</li>
+<li><strong>Display Name</strong> <em>(optional)</em> — your name as it appears to participants. If you plan to be visible (i.e. not running as an invisible host), use your real name. If you&#39;ll be hidden, it doesn&#39;t matter.</li>
+<li>Click <strong>Create &amp; Join</strong>.</li>
+</ol>
+<p>You enter the call as host. The session is now visible in the <strong>Join Session</strong> dropdown of the lobby — participants can join it.</p>
+<h3 id="share-the-session"><a class="heading-anchor" href="#share-the-session" aria-label="Link to Share the session">#</a>Share the session</h3>
+<p>Once in the call, open the Session Host Panel (gear icon on the toolbar, or it may be open by default), and go to the <strong>Participants</strong> tab. The top card is <strong>Session Invite</strong>.</p>
+<p><img src="screenshots/session_invite.jpg" alt="The Session Invite card showing the share link with copy button, session password field, and the Allow new participants toggle"></p>
+<p>There are two ways to invite:</p>
+<ul>
+<li><strong>Invite link</strong> — pre-encodes the session and password so participants don&#39;t have to type anything. Click the copy button next to the link field. Send the URL by Slack/email.</li>
+<li><strong>Session name + password manually</strong> — tell the participant the session name. They pick it from the Join Session dropdown and type the password.</li>
+</ul>
+<p>The <strong>Allow new participants to join</strong> toggle is your control over when the door is open. Turn it off once everyone is in to prevent stragglers; turn it back on to let a latecomer in.</p>
+<h3 id="the-session-host-panel"><a class="heading-anchor" href="#the-session-host-panel" aria-label="Link to The Session Host Panel">#</a>The Session Host Panel</h3>
+<p>The left side of the call view is the host&#39;s command surface. It has four tabs.</p>
+<p><img src="screenshots/session_host_panel_tabs.jpg" alt="The Session Host Panel tab bar showing Agent, WoZ, Participants, and Log tabs with the condition banner and host name field"></p>
+<p><img src="screenshots/session_host_agent_tab.jpg" alt="The Agent tab showing Host Visibility toggle, Live Agents list with idle/speaking status, Silence Detection countdown, and Periodic Speech countdown"></p>
+<h4 id="agent-tab"><a class="heading-anchor" href="#agent-tab" aria-label="Link to Agent tab">#</a>Agent tab</h4>
+<p>This is what is running, and what dials you can turn during the session.</p>
+<ul>
+<li><strong>Host Visibility</strong> — when off, you are completely hidden: not in anyone&#39;s video grid, not in their participants list, your mic is silent to them. Use this to act as an invisible observer. Even hidden, you still hear and see the room.</li>
+<li><strong>Live Agents</strong> — a real-time list of which agents are loaded into the room and whether each one is currently speaking (green dot) or idle.</li>
+<li><strong>Silence Detection</strong> — live toggle and threshold. The card shows a countdown (<code>Next response in: NN s</code>) plus a progress bar so you can see when an intervention is about to fire. Change the threshold by typing in the box and clicking <strong>Apply</strong>.</li>
+<li><strong>Periodic Speech</strong> — same UI shape, on the longer interval. Countdown and threshold both live.</li>
+</ul>
+<p>Settings changed here are broadcast to all connected clients over WebSocket — so if you raise the silence threshold from 10 s to 30 s mid-session, every participant&#39;s client immediately reflects the new timing. The change is also persisted to <code>data/settings.json</code>.</p>
+<blockquote>
+<p>[!NOTE]
+Inputs on participant clients show as <code>view only</code>. Only the host (the session creator) can change behaviour settings during a session. If you need to hand control to a colleague, see <a href="#co-hosting">Co-hosting</a> below.</p>
+</blockquote>
+<h4 id="woz-tab"><a class="heading-anchor" href="#woz-tab" aria-label="Link to WoZ tab">#</a>WoZ tab</h4>
+<p>Wizard-of-Oz controls. You can manually trigger an agent reply or speak a specific line <em>as</em> an agent. Used heavily in pilot studies and in any condition where the AI is meant to look more capable than the raw model output would be.</p>
+<p><img src="screenshots/woz_line_preset.jpg" alt="The WoZ tab showing the Speech Queue at the top and per-agent control cards with AI Trigger, preset line dropdown, and custom text input"></p>
+<ul>
+<li><strong>Speech Queue</strong> — shows lines that have been queued but not yet spoken. <strong>Clear</strong> dumps the queue.</li>
+<li><strong>Per-agent cards</strong> — one card per agent in the active condition. For each agent:<ul>
+<li><strong>AI Trigger</strong> — force the agent to generate a reply right now, regardless of silence/periodic timers. The LLM still does the actual writing.</li>
+<li><strong>Preset line dropdown + Say Preset</strong> — speak one of the preset lines (defined in <code>data/settings.json</code> under <code>silenceDetection.messages</code> / <code>periodicSpeech.messages</code>). Useful for canned responses you&#39;ve planned in advance.</li>
+<li><strong>Custom line input + Say</strong> — type any line and have the agent voice it through the configured TTS. This bypasses the LLM entirely — useful when you need precise control over what the agent says.</li>
+</ul>
+</li>
+</ul>
+<h4 id="participants-tab"><a class="heading-anchor" href="#participants-tab" aria-label="Link to Participants tab">#</a>Participants tab</h4>
+<p>Session management.</p>
+<ul>
+<li><strong>Session Invite</strong> (covered above).</li>
+<li><strong>Connected Participants</strong> — one button per remote participant, showing their display name. Clicking it opens controls for that participant (e.g. mute them, remove them).</li>
+<li><strong>Session Control → Clear All Participants</strong> — removes every remote participant in one action. Useful between trials when you want to fully reset the room without ending the session.</li>
+</ul>
+<h4 id="log-tab"><a class="heading-anchor" href="#log-tab" aria-label="Link to Log tab">#</a>Log tab</h4>
+<p>Live conversation log.</p>
+<p><img src="screenshots/session_host_log_tab.jpg" alt="The Log tab showing timestamped utterances with agent lines and human lines differentiated by colour"></p>
+<p>The kebab menu (⋮) in the upper right offers:</p>
+<ul>
+<li><strong>Table / Chat</strong> — toggle between table view (good for reviewing/exporting) and chat view (good for at-a-glance monitoring during a session).</li>
+<li><strong>Export CSV</strong> — download a CSV of the current session&#39;s utterances. Each row is <code>timestamp, speaker, role (human/agent), text, agent_name (if agent), condition_id</code>.</li>
+<li><strong>Expand</strong> — pop the log out into a fullscreen panel for easier reading.</li>
+<li><strong>Clear</strong> — wipes the visible log. ⚠️ This does not delete the server-side log — that lives in <code>logs/sessions/</code> and is preserved. But it does throw away what&#39;s on screen, so don&#39;t use it unless you mean to start fresh.</li>
+</ul>
+<h3 id="co-hosting"><a class="heading-anchor" href="#co-hosting" aria-label="Link to Co-hosting">#</a>Co-hosting</h3>
+<p>There is no &quot;promote to co-host&quot; button. The session&#39;s host is whoever <strong>created</strong> it; everyone else joins as a participant with view-only host panel. If you need a second researcher to operate the WoZ tab or change settings while you run the study from the outside, two options:</p>
+<ol>
+<li>Have them create the session and you join as participant. They&#39;ll have the host panel.</li>
+<li>Run two instances of the admin/host (e.g. two browser tabs from the same host machine). The host&#39;s powers are tied to the host&#39;s WebSocket session, not their browser tab.</li>
+</ol>
+<h3 id="ending-the-session"><a class="heading-anchor" href="#ending-the-session" aria-label="Link to Ending the session">#</a>Ending the session</h3>
+<p>There is no &quot;end session for everyone&quot; button. To wrap up:</p>
+<ol>
+<li>Click <strong>Clear All Participants</strong> under Session Control to remove remote participants.</li>
+<li>Toggle <strong>Allow new participants to join</strong> off so nobody can re-enter.</li>
+<li>Click the red <strong>Leave</strong> button on the toolbar.</li>
+</ol>
+<p>The session record remains in <code>logs/sessions/</code> for export.</p>
+<hr>
+<h2 id="5-collect-data"><a class="heading-anchor" href="#5-collect-data" aria-label="Link to 5. Collect data">#</a>5. Collect data</h2>
+<p>Every session writes a per-session folder on the server under <code>logs/sessions/&lt;session-id&gt;/</code>. The structure:</p>
+<pre class="code-block" data-lang="text"><code>logs/sessions/
+  pilot-2026-05-22__&lt;uuid&gt;/
+    transcript.json    — full event log with timestamps, speakers, utterances
+    transcript.csv     — CSV export of the same
+    metadata.json      — session name, condition ID, host display name, start/end times</code></pre>
+<p>You can either:</p>
+<ul>
+<li><strong>Export from the host panel live</strong> via the Log tab → Export CSV. This gives you the same CSV the server writes, downloadable in one click without server access.</li>
+<li><strong>Pull from the server</strong> with <code>scp</code> / <code>aws s3 cp</code> (if S3 backend) once the study is done.</li>
+</ul>
+<p>If <code>SESSION_LOG_UPLOAD_BACKEND=s3</code> is configured, every session is uploaded to your S3 bucket after it ends — see <code>SESSION_LOG_S3_BUCKET</code> and <code>SESSION_LOG_S3_PREFIX</code>.</p>
+<h3 id="what-each-event-looks-like"><a class="heading-anchor" href="#what-each-event-looks-like" aria-label="Link to What each event looks like">#</a>What each event looks like</h3>
+<p>A typical row in <code>transcript.csv</code>:</p>
+<pre class="code-block" data-lang="text"><code>timestamp,speaker,role,text,agent_name,condition_id
+2026-05-22T14:03:11.420Z,Daniel,human,"Hi everyone, can you hear me?",,condition-a
+2026-05-22T14:03:14.108Z,Alex,agent,"Yes, loud and clear. Good to meet you.",Alex,condition-a
+2026-05-22T14:03:42.001Z,SYSTEM,system,"silence_threshold_changed: 10s -&gt; 30s",,condition-a</code></pre>
+<p>System rows record state changes (host visibility toggles, threshold changes, participants joining/leaving). They are useful as ground truth when you reconcile a session log against your experimental notes.</p>
+<hr>
+<hr>
+<h2 id="6-example-study-setups"><a class="heading-anchor" href="#6-example-study-setups" aria-label="Link to 6. Example study setups">#</a>6. Example study setups</h2>
+<p>These three designs cover different research goals and use HIROBA&#39;s features in meaningfully different ways. Each is a starting point — adapt conditions, agent prompts, and timing to your specific hypotheses.</p>
+<hr>
+<h3 id="setup-a-agent-presence-count-comparison"><a class="heading-anchor" href="#setup-a-agent-presence-count-comparison" aria-label="Link to Setup A — Agent presence / count comparison">#</a>Setup A — Agent presence / count comparison</h3>
+<p><strong>Research question:</strong> Does having an AI agent in a group video call change how participants converse, and does the number of agents matter?</p>
+<p><strong>Design:</strong> Between-subjects, three conditions.</p>
+<div class="example-setup-grid">
+  <div class="esg-item">
+    <div class="esg-label">Control</div>
+    <div class="esg-body">No agents. Two or three human participants. Silence detection <strong>off</strong>, periodic speech <strong>off</strong>. Standard Zoom-style call.</div>
+  </div>
+  <div class="esg-item">
+    <div class="esg-label">One agent</div>
+    <div class="esg-body">One agent (<code>neutral.fbx</code>, neutral voice). Silence threshold 10 s. Periodic speech every 3 min. Generic facilitator persona: <em>"You are a friendly, neutral discussion facilitator. Encourage all participants to contribute equally. Keep replies under 2 sentences."</em></div>
+  </div>
+  <div class="esg-item">
+    <div class="esg-label">Two agents</div>
+    <div class="esg-body">Two agents with distinct personas (e.g. one agreeable, one challenging). Trigger keywords set so each responds only when addressed by name, preventing them from talking over each other.</div>
+  </div>
+</div>
+
+<p><strong>What to measure:</strong> Turn-taking frequency, speaker overlap, total words per participant. Export the CSV; each row includes speaker and timestamp — compute inter-turn intervals in R or Python.</p>
+<p><strong>Key admin settings:</strong></p>
+<ul>
+<li>Conditions → create three conditions; copy the agent config from the &quot;one agent&quot; condition when making the &quot;two agents&quot; one.</li>
+<li>Silence Detection → threshold 10 s for agent conditions, disabled for control.</li>
+<li>Language Model → <code>gpt-4o-mini</code>, max tokens 80, temperature 0.7 (keeps replies short and natural).</li>
+</ul>
+<hr>
+<h3 id="setup-b-wizard-of-oz-confederate-agent"><a class="heading-anchor" href="#setup-b-wizard-of-oz-confederate-agent" aria-label="Link to Setup B — Wizard-of-Oz confederate agent">#</a>Setup B — Wizard-of-Oz confederate agent</h3>
+<p><strong>Research question:</strong> Can a researcher-scripted AI agent steer group discussion toward (or away from) consensus without participants noticing the human hand?</p>
+<p><strong>Design:</strong> Within-session, single condition. The agent appears fully AI-powered to participants; the researcher controls what it says in real time using the WoZ tab.</p>
+<div class="example-setup-grid">
+  <div class="esg-item esg-item--wide">
+    <div class="esg-label">Session structure</div>
+    <div class="esg-body">
+      <ol style="margin:0;padding-left:1.2em">
+        <li>Participants discuss a provided dilemma for 5 minutes without agent intervention (researcher stays hidden via <strong>Host Visibility → off</strong>; AI Trigger disabled).</li>
+        <li>Researcher enables the agent at a pre-planned moment using <strong>WoZ → Custom line</strong> to deliver a scripted opener.</li>
+        <li>For the next 10 minutes the researcher monitors the Log tab and uses <strong>WoZ → Custom line</strong> or <strong>Preset line</strong> to deliver scripted interventions at decision-point moments.</li>
+        <li>Final 5 minutes: researcher goes silent again; participants reach a conclusion.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<p><strong>Preparation:</strong></p>
+<ol>
+<li>Write a script of ~10 intervention lines and load them as preset lines in <code>data/settings.json</code> under <code>periodicSpeech.messages</code>. They&#39;ll appear in the WoZ preset dropdown.</li>
+<li>Set <strong>Periodic Speech → Enabled: No</strong> and <strong>Silence Detection → Enabled: No</strong> — all speech is researcher-driven.</li>
+<li>Use <strong>Host Visibility → off</strong> so the researcher&#39;s own video tile doesn&#39;t appear.</li>
+</ol>
+<p><strong>Post-session:</strong> System rows in the CSV log record every WoZ action with a timestamp, so you can align researcher interventions with participant responses precisely.</p>
+<hr>
+<h3 id="setup-c-floor-management-timing-manipulation"><a class="heading-anchor" href="#setup-c-floor-management-timing-manipulation" aria-label="Link to Setup C — Floor-management timing manipulation">#</a>Setup C — Floor-management timing manipulation</h3>
+<p><strong>Research question:</strong> How does the latency and frequency of AI interjection affect perceived conversational naturalness and participant satisfaction?</p>
+<p><strong>Design:</strong> Between-subjects, four conditions varying silence threshold and periodic interval.</p>
+<div class="example-setup-grid">
+  <div class="esg-item">
+    <div class="esg-label">Fast / frequent</div>
+    <div class="esg-body">Silence threshold <strong>5 s</strong>. Periodic speech every <strong>60 s</strong>. Agent interrupts often; tests whether high-frequency interjection feels intrusive.</div>
+  </div>
+  <div class="esg-item">
+    <div class="esg-label">Fast / infrequent</div>
+    <div class="esg-body">Silence threshold <strong>5 s</strong>. Periodic speech every <strong>300 s</strong>. Agent only speaks unprompted rarely, but reacts quickly to pauses.</div>
+  </div>
+  <div class="esg-item">
+    <div class="esg-label">Slow / frequent</div>
+    <div class="esg-body">Silence threshold <strong>30 s</strong>. Periodic speech every <strong>60 s</strong>. Agent is proactive but patient; closer to a human "thinking before speaking."</div>
+  </div>
+  <div class="esg-item">
+    <div class="esg-label">Slow / infrequent</div>
+    <div class="esg-body">Silence threshold <strong>30 s</strong>. Periodic speech every <strong>300 s</strong>. Minimal intervention baseline. Useful as a near-silent-agent control.</div>
+  </div>
+</div>
+
+<p><strong>What to measure:</strong> Post-session survey (naturalness, comfort, perceived responsiveness). In-session: agent turn count, mean silence length before agent intervention (calculable from system events in the CSV log).</p>
+<p><strong>Key admin settings:</strong></p>
+<ul>
+<li>Create four conditions with the same agent persona but different condition IDs (<code>timing-fast-freq</code>, <code>timing-fast-infreq</code>, etc.).</li>
+<li>Set the thresholds per condition in admin → Silence Detection / Periodic Speech before each session. Note that these are <strong>global</strong> settings — only run one condition at a time per server instance, or deploy four separate instances.</li>
+<li>Add <code>%condition_name%</code> to the prompt template if you want the agent to be subtly aware of its pacing role (experimental — test carefully).</li>
+</ul>
+<blockquote>
+<p>[!TIP]
+For all three setups: run at least one full pilot session per condition on a lab machine before live data collection. Use the Log tab → Table view to sanity-check that utterances are being captured, timing offsets look correct, and WoZ controls behave as expected.</p>
+</blockquote>
+<hr>
+<h2 id="7-common-operations"><a class="heading-anchor" href="#7-common-operations" aria-label="Link to 7. Common operations">#</a>7. Common operations</h2>
+<h3 id="update-the-deployed-version"><a class="heading-anchor" href="#update-the-deployed-version" aria-label="Link to Update the deployed version">#</a>Update the deployed version</h3>
+<p>After a <code>git push</code> to <code>main</code>:</p>
+<pre class="code-block" data-lang="bash"><code>ssh &lt;user&gt;@&lt;server&gt;
+cd /opt/hiroba
+sudo git pull
+sudo docker compose \
+  -f deploy/docker/docker-compose.caddy.yml \
+  --env-file .env.production \
+  up -d --build</code></pre>
+<p>Settings and session logs are on volume mounts, so they survive the rebuild.</p>
+<h3 id="rotate-secrets"><a class="heading-anchor" href="#rotate-secrets" aria-label="Link to Rotate secrets">#</a>Rotate secrets</h3>
+<p>Edit <code>/opt/hiroba/.env.production</code> on the host and re-run the <code>docker compose up -d</code> command above. No rebuild needed unless the Dockerfile changed.</p>
+<h3 id="check-whats-running"><a class="heading-anchor" href="#check-whats-running" aria-label="Link to Check what's running">#</a>Check what&#39;s running</h3>
+<pre class="code-block" data-lang="bash"><code>sudo docker compose -f /opt/hiroba/deploy/docker/docker-compose.caddy.yml ps
+sudo docker compose -f /opt/hiroba/deploy/docker/docker-compose.caddy.yml logs --tail 100</code></pre>
+<h3 id="reset-all-conditions"><a class="heading-anchor" href="#reset-all-conditions" aria-label="Link to Reset all conditions">#</a>Reset all conditions</h3>
+<p>Delete <code>data/settings.json</code>. The app will recreate it with empty defaults on next start. <strong>Do this only between studies</strong> — there is no undo.</p>
+<hr>
+<h2 id="8-troubleshooting"><a class="heading-anchor" href="#8-troubleshooting" aria-label="Link to 8. Troubleshooting">#</a>8. Troubleshooting</h2>
+<p><strong>Participants see the lobby but the session doesn&#39;t appear in the Join dropdown.</strong>
+The session is only visible while the host is connected. Make sure your host browser tab is still open. If you closed it by accident, recreate the session with the same name.</p>
+<p><strong>An agent&#39;s voice sounds wrong / robotic.</strong>
+Check that <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> are set on the server. Without Polly, the system falls back to the participant&#39;s browser TTS, which is much lower quality. SpeechGen is a third option for neutral voices.</p>
+<p><strong>LLM replies are empty or generic.</strong>
+Check that <code>OPENAI_API_KEY</code> is set and that the model name in admin → Language Model is one your key has access to. Look at server logs (<code>docker compose logs app</code>) for OpenAI error responses.</p>
+<p><strong>Caddy can&#39;t issue a certificate.</strong>
+99% of the time this is DNS — <code>dig +short ${DOMAIN}</code> must return the server&#39;s IP before the stack starts. The other 1% is the Sakura packet filter blocking port 80 (used for the HTTP-01 ACME challenge); make sure both the panel-level filter and <code>ufw</code> allow 80.</p>
+<p><strong>A participant joined but doesn&#39;t appear in my video grid.</strong>
+Open the Participants tab on the host panel and check the <strong>Connected Participants</strong> list. If they appear there but not in the grid, ask them to refresh — the Zoom SDK occasionally fails to subscribe to a remote video stream on first attempt.</p>
+<p><strong>Conversation log is empty even though everyone is talking.</strong>
+The transcription path depends on per-user audio access from the Zoom SDK. The most common cause is that a participant denied microphone permission. Their mic icon on the toolbar will look fine but the system never receives audio. Ask them to re-grant permission via the browser&#39;s site settings.</p>
+<hr>
+<h2 id="reference"><a class="heading-anchor" href="#reference" aria-label="Link to Reference">#</a>Reference</h2>
+<ul>
+<li><a href="/guides/user-guide">User Guide</a> — what to send participants.</li>
+<li><a href="/guides/developer-guide">Developer Guide</a> — architecture, code layout, extension points.</li>
+<li><a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba">Project on GitHub</a> — source of truth for the deploy scripts and the README.</li>
+</ul>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="page-toc-wrapper">
+      <div class="page-toc-label">On this page</div>
+      <ul class="page-toc"><li class="toc-l2"><a href="#1-system-overview">1. System overview</a></li>
+<li class="toc-l2"><a href="#2-deploy">2. Deploy</a></li>
+<li class="toc-l3"><a href="#2a-local-development-your-laptop">2a. Local development (your laptop)</a></li>
+<li class="toc-l3"><a href="#2b-sakura-vps-recommended-for-japan-billed-studies">2b. Sakura VPS (recommended for Japan-billed studies)</a></li>
+<li class="toc-l3"><a href="#2c-aws-ec2-recommended-for-aws-billed-studies">2c. AWS EC2 (recommended for AWS-billed studies)</a></li>
+<li class="toc-l3"><a href="#required-environment-variables">Required environment variables</a></li>
+<li class="toc-l3"><a href="#settings-persistence">Settings persistence</a></li>
+<li class="toc-l2"><a href="#3-configure-conditions-and-agents">3. Configure conditions and agents</a></li>
+<li class="toc-l3"><a href="#conditions">Conditions</a></li>
+<li class="toc-l3"><a href="#prompt-template">Prompt Template</a></li>
+<li class="toc-l3"><a href="#periodic-speech">Periodic Speech</a></li>
+<li class="toc-l3"><a href="#silence-detection">Silence Detection</a></li>
+<li class="toc-l3"><a href="#language-model">Language Model</a></li>
+<li class="toc-l2"><a href="#4-run-a-session">4. Run a session</a></li>
+<li class="toc-l3"><a href="#create-a-session">Create a session</a></li>
+<li class="toc-l3"><a href="#share-the-session">Share the session</a></li>
+<li class="toc-l3"><a href="#the-session-host-panel">The Session Host Panel</a></li>
+<li class="toc-l3"><a href="#co-hosting">Co-hosting</a></li>
+<li class="toc-l3"><a href="#ending-the-session">Ending the session</a></li>
+<li class="toc-l2"><a href="#5-collect-data">5. Collect data</a></li>
+<li class="toc-l3"><a href="#what-each-event-looks-like">What each event looks like</a></li>
+<li class="toc-l2"><a href="#6-example-study-setups">6. Example study setups</a></li>
+<li class="toc-l3"><a href="#setup-a-agent-presence-count-comparison">Setup A — Agent presence / count comparison</a></li>
+<li class="toc-l3"><a href="#setup-b-wizard-of-oz-confederate-agent">Setup B — Wizard-of-Oz confederate agent</a></li>
+<li class="toc-l3"><a href="#setup-c-floor-management-timing-manipulation">Setup C — Floor-management timing manipulation</a></li>
+<li class="toc-l2"><a href="#7-common-operations">7. Common operations</a></li>
+<li class="toc-l3"><a href="#update-the-deployed-version">Update the deployed version</a></li>
+<li class="toc-l3"><a href="#rotate-secrets">Rotate secrets</a></li>
+<li class="toc-l3"><a href="#check-whats-running">Check what's running</a></li>
+<li class="toc-l3"><a href="#reset-all-conditions">Reset all conditions</a></li>
+<li class="toc-l2"><a href="#8-troubleshooting">8. Troubleshooting</a></li>
+<li class="toc-l2"><a href="#reference">Reference</a></li></ul>
+    </aside>
+  </div>
+
+  <footer class="doc-footer">
+    <div>© 2026 HIROBA · Hybrid Social Interaction Lab, University of Tsukuba</div>
+    <div><a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">View on GitHub</a></div>
+  </footer>
+
+  <script>
+    // Transform GitHub-style callouts: blockquotes starting with [!NOTE], [!WARNING], [!TIP], [!DANGER]
+    (function transformCallouts() {
+      const types = {
+        '[!NOTE]':    { cls: 'callout-note',    icon: 'info',           title: 'Note' },
+        '[!TIP]':     { cls: 'callout-tip',     icon: 'lightbulb',      title: 'Tip' },
+        '[!WARNING]': { cls: 'callout-warning', icon: 'alert-triangle', title: 'Warning' },
+        '[!DANGER]':  { cls: 'callout-danger',  icon: 'octagon-alert',  title: 'Danger' }
+      };
+      document.querySelectorAll('.content blockquote').forEach(bq => {
+        const firstP = bq.querySelector('p');
+        if (!firstP) return;
+        const txt = firstP.textContent.trim();
+        for (const key in types) {
+          if (txt.startsWith(key)) {
+            const info = types[key];
+            firstP.innerHTML = firstP.innerHTML.replace(key, '').trim();
+            if (!firstP.textContent.trim()) firstP.remove();
+            const div = document.createElement('div');
+            div.className = 'callout ' + info.cls;
+            div.innerHTML = `
+              <i data-lucide="${info.icon}" class="callout-icon"></i>
+              <div class="callout-body">
+                <div class="callout-title">${info.title}</div>
+                ${bq.innerHTML}
+              </div>`;
+            bq.replaceWith(div);
+            return;
+          }
+        }
+      });
+    })();
+
+    // Transform [Screenshot: ...] placeholders
+    (function transformScreenshots() {
+      document.querySelectorAll('.content p').forEach(p => {
+        const m = p.textContent.match(/^\[Screenshot:\s*(.+?)\]\s*$/);
+        if (!m) return;
+        const div = document.createElement('div');
+        div.className = 'screenshot-placeholder';
+        div.innerHTML = `
+          <i data-lucide="image" class="ph-icon"></i>
+          <div>
+            <div class="ph-label">Screenshot needed</div>
+            <div>${m[1]}</div>
+          </div>`;
+        p.replaceWith(div);
+      });
+    })();
+
+    // Wrap content images in <figure> with alt as caption
+    document.querySelectorAll('.content img').forEach(img => {
+      const alt = img.getAttribute('alt')
+      if (!alt) return
+      const figure = document.createElement('figure')
+      const caption = document.createElement('figcaption')
+      caption.textContent = alt
+      img.replaceWith(figure)
+      figure.appendChild(img)
+      figure.appendChild(caption)
+    })
+
+    // Initialize Lucide icons
+    if (window.lucide) lucide.createIcons();
+
+    // Scrollspy for right-side TOC
+    (function scrollspy() {
+      const tocLinks = document.querySelectorAll('.page-toc a');
+      if (tocLinks.length === 0) return;
+      const headings = Array.from(document.querySelectorAll('.content h2[id], .content h3[id]'));
+      if (headings.length === 0) return;
+      function update() {
+        const scrollY = window.scrollY + 120;
+        let current = headings[0].id;
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) current = h.id;
+        }
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+  </script>
+</body>
+</html>

@@ -5,7 +5,10 @@ async function getSignature(topic, password) {
     headers: { 'Content-Type': 'application/json' },
     body   : JSON.stringify(body)
   })
-  if (!res.ok) throw new Error(`Signature API ${res.status}`)
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error || `Signature API ${res.status}`)
+  }
   const { signature } = await res.json()
   return signature
 }
@@ -474,7 +477,9 @@ async function triggerPeriodicResponse() {
   }
 }
 
-// Preset lines available for each bot in the WoZ panel
+// Preset lines available for each bot in the WoZ panel.
+// Loaded from `settings.wozPresets` (see applySettings / SETTINGS_UPDATE handler).
+// This array is the fallback when settings don't define any presets.
 window.wozPresetLines = [
   "Thank you for sharing that.",
   "That's a great point.",
@@ -487,6 +492,24 @@ window.wozPresetLines = [
   "Let me summarize what we've discussed so far.",
   "Is there anything else you'd like to cover?"
 ]
+
+// Replace the WoZ preset list and re-render the host panel WoZ controls if they're mounted.
+window.applyWozPresets = function applyWozPresets(presets) {
+  if (!Array.isArray(presets) || presets.length === 0) return
+  window.wozPresetLines = presets.slice()
+  // Force a re-render of the WoZ bot dropdowns so new lines show up immediately.
+  if (typeof refreshWozBotControls === 'function') {
+    const container = document.getElementById('woz-bot-controls')
+    if (container) {
+      const names = Array.from(container.querySelectorAll('[data-bot-name]')).map(el => el.dataset.botName)
+      // Pass through a fake avatars shape that matches what refreshWozBotControls expects.
+      const avatars = names.map(name => ({ config: { name } }))
+      // Clear container first so the "agent list changed" check inside refreshWozBotControls fires.
+      container.innerHTML = ''
+      refreshWozBotControls(avatars)
+    }
+  }
+}
 
 async function triggerManualGenerateResponseForBot(agentName) {
   if (!isTimerMasterClient()) {

@@ -1116,18 +1116,19 @@ function handleWebSocketMessage(message) {
       handleDebugCommand(message.command, message.data);
       break;
       
-    case 'CONNECTION_UPDATE':
+    case 'CONNECTION_UPDATE': {
       const connectionCountEl = document.getElementById('connection-count')
       if (connectionCountEl) {
         connectionCountEl.textContent = `${message.count}/${message.maxUsers || 2}`
       }
-      
+
       // 2人制限の警告表示
       if (message.isRoomFull && message.count > 2) {
-        console.warn('<i data-lucide="alert-triangle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> [WS] Room is full! Maximum 2 users allowed.')
+        console.warn('[WS] Room is full!')
         addSystemMessage('<i data-lucide="alert-triangle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> 会議室が満員です。最大2人まで参加できます。')
       }
       break
+    }
       
     case 'USER_JOINED':
       addSystemMessage(`${message.userName} が参加しました`)
@@ -1197,18 +1198,17 @@ function handleWebSocketMessage(message) {
       addSystemMessage(message.hasPassword ? 'Session password updated.' : 'Session password removed.')
       break
       
-    case 'SESSION_STATUS':
-      
+    case 'SESSION_STATUS': {
       // ホスト状態を更新
       if (typeof message.isHost === 'boolean') {
         const wasHost = isSessionHost
         isSessionHost = message.isHost
+        console.log(`[SYNC2] SESSION_STATUS isHost=${message.isHost} roomSize=${message.roomSize}`)
         if (isSessionHost && !wasHost) {
-          isAgentMaster = true  // ホストはエージェントマスターにもする
-        } else if (!isSessionHost && wasHost) {
+          isAgentMaster = true
         }
       }
-      
+
       const sessionStatusEl = document.getElementById('session-status')
       if (sessionStatusEl) {
         sessionStatusEl.textContent = `${message.roomSize}/${message.maxUsers}`
@@ -1216,13 +1216,15 @@ function handleWebSocketMessage(message) {
       if (message.isRoomFull && message.roomSize > message.maxUsers) {
         addSystemMessage('<i data-lucide="alert-triangle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> セッションが満員です')
       }
-      
+
       // UI状態を更新
       updateSessionStatusDisplay(message.roomSize, message.maxUsers)
+      updateHostOnlyElements()
       refreshHostParticipantFlags()
       applyMasterVideoVisibilityToHostCanvas()
       break
-      
+    }
+
     case 'CONVERSATION_UPDATE':
       if (message.conversation) {
         const conv = message.conversation
@@ -2584,6 +2586,10 @@ function handleSettingsBroadcastUpdate(message) {
 
   if (settings.periodicSpeech && settings.periodicSpeech.botSelection) {
     window.periodicBotSelection = settings.periodicSpeech.botSelection
+  }
+
+  if (Array.isArray(settings.wozPresets) && settings.wozPresets.length > 0 && typeof window.applyWozPresets === 'function') {
+    window.applyWozPresets(settings.wozPresets)
   }
 
   applyNameSettingsToUI(settings)
