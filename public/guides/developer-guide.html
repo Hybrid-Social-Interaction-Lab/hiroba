@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Guide · HIROBA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.408.0"></script>
+  <style>
+    :root {
+      --bg: #1c1c1c;
+      --bg-elev-1: #1e1e1e;
+      --bg-elev-2: #252525;
+      --bg-elev-3: #2a2a2a;
+      --border: #333;
+      --border-soft: #2a2a2a;
+      --text: #e0e0e0;
+      --text-dim: #aaa;
+      --text-muted: #888;
+      --accent: #66b3ff;
+      --accent-hover: #99ccff;
+      --accent-soft: #667eea;
+      --accent-grad-end: #764ba2;
+      --code-bg: #161616;
+      --warning: #f0b429;
+      --danger: #f87171;
+      --success: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* ─── Top bar ─── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 17, 17, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .topbar-brand .brand-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elev-3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .topbar-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .topbar-links a {
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-links a:hover { color: var(--text); }
+    .topbar-links .icon { width: 15px; height: 15px; }
+
+    /* ─── Layout ─── */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 220px;
+      max-width: 1280px;
+      margin: 0 auto;
+      gap: 40px;
+      padding: 32px 28px 80px;
+    }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 220px minmax(0, 1fr); }
+      .page-toc-wrapper { display: none; }
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; gap: 24px; padding: 20px 18px 60px; }
+      .sidebar-wrapper { position: static; }
+    }
+
+    /* ─── Sidebar nav ─── */
+    .sidebar-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-section {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 12px 6px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .sidebar-link.active {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.12));
+      color: var(--text);
+      border-left: 2px solid var(--accent-soft);
+      padding-left: 10px;
+    }
+    .sidebar-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ─── Content ─── */
+    .content {
+      min-width: 0;
+      max-width: 760px;
+    }
+    .content h1, .content h2, .content h3, .content h4 {
+      font-family: 'Rubik', sans-serif;
+      color: #fff;
+      line-height: 1.25;
+      margin: 1.8em 0 0.6em;
+      scroll-margin-top: 90px;
+      position: relative;
+    }
+    .content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 0.4em;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      padding-top: 8px;
+    }
+    .content h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #e8e8e8;
+    }
+    .content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content p { margin: 0.9em 0; color: var(--text); }
+    .content ul, .content ol { padding-left: 1.4em; margin: 0.8em 0; }
+    .content li { margin: 0.35em 0; }
+    .content li > p { margin: 0.4em 0; }
+    .content strong { color: #fff; font-weight: 600; }
+    .content em { color: var(--text); }
+    .content blockquote {
+      border-left: 3px solid var(--accent-soft);
+      background: rgba(102, 126, 234, 0.06);
+      padding: 12px 18px;
+      margin: 1.2em 0;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dim);
+    }
+    .content blockquote p { margin: 0.3em 0; }
+    .content hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2em 0;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2em 0;
+      font-size: 13px;
+      background: var(--bg-elev-1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .content th, .content td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .content th {
+      background: var(--bg-elev-3);
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+    .content tr:last-child td { border-bottom: none; }
+    .content figure {
+      margin: 1.4em 0;
+      text-align: center;
+    }
+    .content figure img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    .content figcaption {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .content img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 1em 0;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Heading anchor */
+    .heading-anchor {
+      position: absolute;
+      left: -22px;
+      color: var(--text-muted);
+      opacity: 0;
+      font-weight: 400;
+      transition: opacity 0.15s;
+    }
+    .content h1:hover .heading-anchor,
+    .content h2:hover .heading-anchor,
+    .content h3:hover .heading-anchor,
+    .content h4:hover .heading-anchor { opacity: 1; }
+
+    /* Inline + block code */
+    .content code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.88em;
+      background: var(--bg-elev-3);
+      color: #f0d090;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-soft);
+    }
+    .content pre.code-block {
+      position: relative;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      margin: 1.2em 0;
+    }
+    .content pre.code-block code {
+      background: none;
+      border: none;
+      color: #d4d4d4;
+      font-size: 13px;
+      padding: 0;
+      line-height: 1.55;
+    }
+    .content pre.code-block::before {
+      content: attr(data-lang);
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: 'Rubik', sans-serif;
+    }
+
+    /* Callout boxes (rendered from blockquotes that start with [!NOTE], [!WARNING], [!TIP]) */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 1.2em 0;
+      border: 1px solid;
+    }
+    .callout-note { background: rgba(102, 179, 255, 0.08); border-color: rgba(102, 179, 255, 0.3); color: var(--text); }
+    .callout-warning { background: rgba(240, 180, 41, 0.08); border-color: rgba(240, 180, 41, 0.35); color: var(--text); }
+    .callout-tip { background: rgba(74, 222, 128, 0.08); border-color: rgba(74, 222, 128, 0.3); color: var(--text); }
+    .callout-danger { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.35); color: var(--text); }
+    .callout-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
+    .callout-note .callout-icon { color: var(--accent); }
+    .callout-warning .callout-icon { color: var(--warning); }
+    .callout-tip .callout-icon { color: var(--success); }
+    .callout-danger .callout-icon { color: var(--danger); }
+    .callout-body { flex: 1; }
+    .callout-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .callout-note .callout-title { color: var(--accent); }
+    .callout-warning .callout-title { color: var(--warning); }
+    .callout-tip .callout-title { color: var(--success); }
+    .callout-danger .callout-title { color: var(--danger); }
+    .callout-body p { margin: 0.2em 0; }
+
+    /* Screenshot placeholder */
+    .screenshot-placeholder {
+      border: 2px dashed #4a4a6a;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 1.2em 0;
+      color: var(--text-dim);
+      font-size: 13px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .screenshot-placeholder .ph-icon {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-soft);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .screenshot-placeholder .ph-label {
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Right-side page TOC ─── */
+    .page-toc-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .page-toc-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      padding-left: 12px;
+    }
+    .page-toc {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid var(--border);
+    }
+    .page-toc li { margin: 0; }
+    .page-toc li a {
+      display: block;
+      padding: 4px 12px;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      border-left: 2px solid transparent;
+      margin-left: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .page-toc li a:hover { color: var(--text); }
+    .page-toc li a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .page-toc .toc-l3 a { padding-left: 24px; font-size: 12px; }
+
+    /* Contents grid */
+    .contents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 1.4em 0;
+    }
+    .contents-grid a {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elev-1);
+      color: var(--text-dim);
+      font-size: 13px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+    .contents-grid a:hover {
+      border-color: var(--accent-soft);
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .contents-grid .cg-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-soft);
+      line-height: 1;
+      min-width: 16px;
+      padding-top: 1px;
+    }
+    .contents-grid .cg-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--accent-soft);
+      margin-top: 1px;
+    }
+    .contents-grid .cg-body { flex: 1; min-width: 0; }
+    .contents-grid .cg-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+    .contents-grid .cg-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Guide meta line */
+    .guide-meta {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: -0.2em 0 1.4em;
+      padding: 8px 14px;
+      background: var(--bg-elev-2);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-soft);
+    }
+
+    /* Step flow bar */
+    .section-steps {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 1em 0 1.4em;
+      padding: 14px 16px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .ss-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ss-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ss-label { font-size: 13px; color: var(--text); }
+    .ss-sep { color: var(--text-muted); display: flex; }
+    .ss-sep svg { width: 14px; height: 14px; }
+
+    /* Toolbar icon grid */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin: 1em 0;
+    }
+    .ig-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px 12px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .ig-item--danger { border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+    .ig-icon { width: 24px; height: 24px; color: var(--accent-soft); }
+    .ig-item--danger .ig-icon { color: var(--danger); }
+    .ig-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .ig-desc { font-size: 11px; color: var(--text-muted); }
+    .ig-label kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: var(--bg-elev-3);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 4px;
+      color: var(--text-dim);
+    }
+
+    /* Trigger grid */
+    .trigger-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tg-item {
+      padding: 14px 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tg-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tg-head svg { width: 15px; height: 15px; color: var(--accent-soft); }
+    .tg-body { font-size: 12.5px; color: var(--text-dim); line-height: 1.45; }
+
+    /* Tips grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tip-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tip-icon { width: 20px; height: 20px; color: var(--accent-soft); flex-shrink: 0; margin-top: 1px; }
+    .tip-body { font-size: 13px; color: var(--text-dim); line-height: 1.45; }
+    .tip-body strong { color: var(--text); }
+
+    /* Example setup grid */
+    .example-setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .esg-item {
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .esg-item--wide { grid-column: 1 / -1; }
+    .esg-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-soft);
+      margin-bottom: 6px;
+    }
+    .esg-body { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+    .esg-body strong { color: var(--text); }
+    .esg-body em { color: var(--text-dim); font-style: italic; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    /* Footer */
+    .doc-footer {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="/" class="topbar-brand" style="color:#fff">
+      HIROBA
+      <span class="brand-tag">Docs</span>
+    </a>
+    <div class="topbar-links">
+      <a href="/"><i data-lucide="arrow-left" class="icon"></i>Back to App</a>
+      <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">
+        <i data-lucide="github" class="icon"></i>GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- Left sidebar -->
+    <aside class="sidebar-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-section">Guides</div>
+        <a href="/guides/" class="sidebar-link" data-slug="index">
+      <i data-lucide="book-open" class="sidebar-icon"></i>
+      <span>Overview</span>
+    </a>
+<a href="/guides/user-guide" class="sidebar-link" data-slug="user-guide">
+      <i data-lucide="user" class="sidebar-icon"></i>
+      <span>User Guide</span>
+    </a>
+<a href="/guides/researcher-guide" class="sidebar-link" data-slug="researcher-guide">
+      <i data-lucide="flask-conical" class="sidebar-icon"></i>
+      <span>Researcher Guide</span>
+    </a>
+<a href="/guides/developer-guide" class="sidebar-link active" data-slug="developer-guide">
+      <i data-lucide="code-2" class="sidebar-icon"></i>
+      <span>Developer Guide</span>
+    </a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="content">
+      <h1 id="developer-guide"><a class="heading-anchor" href="#developer-guide" aria-label="Link to Developer Guide">#</a>Developer Guide</h1>
+<blockquote>
+<p>[!NOTE]
+This guide is a work in progress. The sections below are stubs to be filled in as the codebase evolves. The <a href="/guides/researcher-guide">Researcher Guide</a> is currently the most complete reference.</p>
+</blockquote>
+<p>This guide is for people <strong>extending or modifying HIROBA&#39;s code</strong>.</p>
+<div class="contents-grid">
+  <a href="#repository-layout"><span class="cg-num">1</span><i data-lucide="folder-tree" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Repository layout</div><div class="cg-desc">File structure and entry points</div></div></a>
+  <a href="#tech-stack"><span class="cg-num">2</span><i data-lucide="layers" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Tech stack</div><div class="cg-desc">Node, Zoom SDK, and dependencies</div></div></a>
+  <a href="#local-development"><span class="cg-num">3</span><i data-lucide="terminal" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Local development</div><div class="cg-desc">Running and hot-reloading locally</div></div></a>
+  <a href="#how-a-session-works-end-to-end"><span class="cg-num">4</span><i data-lucide="workflow" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Session flow</div><div class="cg-desc">End-to-end request lifecycle</div></div></a>
+  <a href="#client-modules"><span class="cg-num">5</span><i data-lucide="package" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Client modules</div><div class="cg-desc">Frontend JS module breakdown</div></div></a>
+  <a href="#websocket-sync-protocol"><span class="cg-num">6</span><i data-lucide="radio" class="cg-icon"></i><div class="cg-body"><div class="cg-title">WebSocket protocol</div><div class="cg-desc">Real-time sync message format</div></div></a>
+  <a href="#adding-a-new-agent-behaviour"><span class="cg-num">7</span><i data-lucide="bot" class="cg-icon"></i><div class="cg-body"><div class="cg-title">New agent behaviour</div><div class="cg-desc">Extending agent response logic</div></div></a>
+  <a href="#adding-a-new-tts-backend"><span class="cg-num">8</span><i data-lucide="mic" class="cg-icon"></i><div class="cg-body"><div class="cg-title">New TTS backend</div><div class="cg-desc">Plugging in a voice provider</div></div></a>
+  <a href="#editing-these-guides"><span class="cg-num">9</span><i data-lucide="book-open" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Editing guides</div><div class="cg-desc">How this docs site is built</div></div></a>
+</div>
+
+<h2 id="repository-layout"><a class="heading-anchor" href="#repository-layout" aria-label="Link to Repository layout">#</a>Repository layout</h2>
+<pre class="code-block" data-lang="text"><code>hiroba/
+├── index.js                         — Express entry point
+├── lib/
+│   ├── api-clients.js               — OpenAI / Polly / SpeechGen client init
+│   ├── logger.js                    — File + stdout logging
+│   ├── session-manager.js           — In-memory session/room registry
+│   ├── settings-manager.js          — File or DynamoDB-backed settings
+│   ├── speech-service.js            — TTS dispatch (Polly / SpeechGen / browser)
+│   ├── websocket-manager.js         — Real-time sync of host settings + WoZ events
+│   └── routes/
+│       ├── api-routes.js            — JSON REST endpoints
+│       └── page-routes.js           — HTML page delivery (lobby, admin, guides)
+├── public/
+│   ├── index.html                   — Lobby + call view (single page)
+│   ├── admin.html                   — Admin dashboard
+│   ├── guides/                      — Generated guide HTML (do not edit by hand)
+│   ├── js/                          — Client-side modules
+│   ├── models/                      — FBX avatar assets
+│   └── avatar_backgrounds/          — Condition background images
+├── docs/guides/site/                — Markdown sources for these guides
+├── scripts/build-guides.js          — Markdown → HTML compiler
+├── deploy/
+│   ├── docker/                      — Compose files + Dockerfile + Caddyfile
+│   └── scripts/                     — Provisioning scripts (Sakura + AWS)
+└── data/settings.json               — Persisted settings (conditions, prompts, behaviour)</code></pre>
+<h2 id="tech-stack"><a class="heading-anchor" href="#tech-stack" aria-label="Link to Tech stack">#</a>Tech stack</h2>
+<ul>
+<li><strong>Runtime:</strong> Node.js 18 (Alpine in Docker).</li>
+<li><strong>HTTP:</strong> Express 4.</li>
+<li><strong>Realtime:</strong> <code>ws</code> (WebSocket server attached to the same HTTP/HTTPS listeners as Express).</li>
+<li><strong>Video/audio:</strong> Zoom Video SDK on the client side (browser SDK loaded from <code>source.zoom.us</code>).</li>
+<li><strong>3D avatars:</strong> Three.js + <code>@pixiv/three-vrm</code> + FBXLoader. Animations come from Mixamo (see <code>docs/guides/MIXAMO_GUIDE.md</code>).</li>
+<li><strong>LLM:</strong> OpenAI SDK (<code>openai</code> v4).</li>
+<li><strong>TTS:</strong> AWS Polly via <code>@aws-sdk/client-polly</code>; SpeechGen via REST; browser <code>SpeechSynthesis</code> as fallback.</li>
+<li><strong>Persistence:</strong> filesystem by default; DynamoDB / S3 optional via env vars.</li>
+</ul>
+<h2 id="local-development"><a class="heading-anchor" href="#local-development" aria-label="Link to Local development">#</a>Local development</h2>
+<pre class="code-block" data-lang="bash"><code>npm install
+cp .env.example .env       # fill in ZOOM_VSDK_KEY / ZOOM_VSDK_SECRET at minimum
+npm start                  # = build:guides + node index.js</code></pre>
+<p>Or with the dev container:</p>
+<pre class="code-block" data-lang="bash"><code>docker compose -f deploy/docker/docker-compose.dev.yml up</code></pre>
+<p>The dev compose mounts the repo into the container, so edits to <code>public/</code>, <code>lib/</code>, and <code>docs/guides/site/</code> are reflected without a rebuild. For markdown changes, re-run <code>npm run build:guides</code> from the host to recompile.</p>
+<h2 id="how-a-session-works-end-to-end"><a class="heading-anchor" href="#how-a-session-works-end-to-end" aria-label="Link to How a session works (end-to-end)">#</a>How a session works (end-to-end)</h2>
+<blockquote>
+<p>Stub — to be filled in. High-level flow:</p>
+<ol>
+<li>Host hits <code>/api/sessions/create</code> → SessionManager registers the session in-memory.</li>
+<li>Client requests a Zoom Video SDK JWT from <code>/api/sdk/jwt</code> (signed with <code>ZOOM_VSDK_SECRET</code>).</li>
+<li>Client joins the Zoom session with the JWT; per-user audio streams are subscribed to.</li>
+<li>Browser transcribes its own mic via the Web Speech API and broadcasts text over the WebSocket.</li>
+<li>WebSocketManager fans transcripts out to all clients + persists to the session log.</li>
+<li>Agent behaviour timers (silence detection, periodic speech) live client-side on the host and trigger <code>/api/generate</code> for LLM replies.</li>
+<li>Replies are spoken via the configured TTS backend; lip-sync drives the avatar mouth blendshapes.</li>
+</ol>
+</blockquote>
+<h2 id="client-modules"><a class="heading-anchor" href="#client-modules" aria-label="Link to Client modules">#</a>Client modules</h2>
+<blockquote>
+<p>Stub.</p>
+</blockquote>
+<ul>
+<li><code>public/js/lobby.js</code> — pre-join screen.</li>
+<li><code>public/js/session.js</code> — Zoom SDK join + call lifecycle.</li>
+<li><code>public/js/avatar.js</code> — FBX avatar system (loading, animation, lip-sync).</li>
+<li><code>public/js/agent-behavior.js</code> — silence/periodic timers and trigger logic.</li>
+<li><code>public/js/sync.js</code> — WebSocket client for cross-participant settings + WoZ events.</li>
+<li><code>public/js/conversation.js</code> — transcript log + CSV export.</li>
+<li><code>public/js/participants.js</code> — host-side participant management.</li>
+</ul>
+<h2 id="websocket-sync-protocol"><a class="heading-anchor" href="#websocket-sync-protocol" aria-label="Link to WebSocket sync protocol">#</a>WebSocket sync protocol</h2>
+<blockquote>
+<p>Stub — to be filled in. Message types currently include <code>SILENCE_THRESHOLD_UPDATE</code>, <code>PERIODIC_INTERVAL_UPDATE</code>, settings broadcasts, and WoZ events.</p>
+</blockquote>
+<h2 id="adding-a-new-agent-behaviour"><a class="heading-anchor" href="#adding-a-new-agent-behaviour" aria-label="Link to Adding a new agent behaviour">#</a>Adding a new agent behaviour</h2>
+<blockquote>
+<p>Stub — to be filled in.</p>
+</blockquote>
+<h2 id="adding-a-new-tts-backend"><a class="heading-anchor" href="#adding-a-new-tts-backend" aria-label="Link to Adding a new TTS backend">#</a>Adding a new TTS backend</h2>
+<blockquote>
+<p>Stub — to be filled in. See <code>lib/speech-service.js</code> for the existing dispatch.</p>
+</blockquote>
+<h2 id="editing-these-guides"><a class="heading-anchor" href="#editing-these-guides" aria-label="Link to Editing these guides">#</a>Editing these guides</h2>
+<p>The pages you&#39;re reading are compiled at server startup by <code>scripts/build-guides.js</code>. To edit:</p>
+<ol>
+<li>Edit the markdown in <code>docs/guides/site/*.md</code>.</li>
+<li>Run <code>npm run build:guides</code> (or restart the server, which runs it automatically).</li>
+<li>Reload the page.</li>
+</ol>
+<p>In Docker dev mode, the source tree is volume-mounted — so step 2 from the host machine is enough; no container rebuild needed.</p>
+<p>To add a new guide page:</p>
+<ol>
+<li>Add the markdown file to <code>docs/guides/site/</code>.</li>
+<li>Register it in the <code>PAGES</code> array at the top of <code>scripts/build-guides.js</code>.</li>
+<li>Add the slug to <code>GUIDE_SLUGS</code> in <code>lib/routes/page-routes.js</code>.</li>
+<li>Optionally add a footer link in <code>public/index.html</code>.</li>
+</ol>
+<p>The template supports GitHub-style callouts (<code>[!NOTE]</code>, <code>[!TIP]</code>, <code>[!WARNING]</code>, <code>[!DANGER]</code>) and <code>[Screenshot: ...]</code> placeholders that render as visible &quot;Screenshot needed&quot; boxes.</p>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="page-toc-wrapper">
+      <div class="page-toc-label">On this page</div>
+      <ul class="page-toc"><li class="toc-l2"><a href="#repository-layout">Repository layout</a></li>
+<li class="toc-l2"><a href="#tech-stack">Tech stack</a></li>
+<li class="toc-l2"><a href="#local-development">Local development</a></li>
+<li class="toc-l2"><a href="#how-a-session-works-end-to-end">How a session works (end-to-end)</a></li>
+<li class="toc-l2"><a href="#client-modules">Client modules</a></li>
+<li class="toc-l2"><a href="#websocket-sync-protocol">WebSocket sync protocol</a></li>
+<li class="toc-l2"><a href="#adding-a-new-agent-behaviour">Adding a new agent behaviour</a></li>
+<li class="toc-l2"><a href="#adding-a-new-tts-backend">Adding a new TTS backend</a></li>
+<li class="toc-l2"><a href="#editing-these-guides">Editing these guides</a></li></ul>
+    </aside>
+  </div>
+
+  <footer class="doc-footer">
+    <div>© 2026 HIROBA · Hybrid Social Interaction Lab, University of Tsukuba</div>
+    <div><a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">View on GitHub</a></div>
+  </footer>
+
+  <script>
+    // Transform GitHub-style callouts: blockquotes starting with [!NOTE], [!WARNING], [!TIP], [!DANGER]
+    (function transformCallouts() {
+      const types = {
+        '[!NOTE]':    { cls: 'callout-note',    icon: 'info',           title: 'Note' },
+        '[!TIP]':     { cls: 'callout-tip',     icon: 'lightbulb',      title: 'Tip' },
+        '[!WARNING]': { cls: 'callout-warning', icon: 'alert-triangle', title: 'Warning' },
+        '[!DANGER]':  { cls: 'callout-danger',  icon: 'octagon-alert',  title: 'Danger' }
+      };
+      document.querySelectorAll('.content blockquote').forEach(bq => {
+        const firstP = bq.querySelector('p');
+        if (!firstP) return;
+        const txt = firstP.textContent.trim();
+        for (const key in types) {
+          if (txt.startsWith(key)) {
+            const info = types[key];
+            firstP.innerHTML = firstP.innerHTML.replace(key, '').trim();
+            if (!firstP.textContent.trim()) firstP.remove();
+            const div = document.createElement('div');
+            div.className = 'callout ' + info.cls;
+            div.innerHTML = `
+              <i data-lucide="${info.icon}" class="callout-icon"></i>
+              <div class="callout-body">
+                <div class="callout-title">${info.title}</div>
+                ${bq.innerHTML}
+              </div>`;
+            bq.replaceWith(div);
+            return;
+          }
+        }
+      });
+    })();
+
+    // Transform [Screenshot: ...] placeholders
+    (function transformScreenshots() {
+      document.querySelectorAll('.content p').forEach(p => {
+        const m = p.textContent.match(/^\[Screenshot:\s*(.+?)\]\s*$/);
+        if (!m) return;
+        const div = document.createElement('div');
+        div.className = 'screenshot-placeholder';
+        div.innerHTML = `
+          <i data-lucide="image" class="ph-icon"></i>
+          <div>
+            <div class="ph-label">Screenshot needed</div>
+            <div>${m[1]}</div>
+          </div>`;
+        p.replaceWith(div);
+      });
+    })();
+
+    // Wrap content images in <figure> with alt as caption
+    document.querySelectorAll('.content img').forEach(img => {
+      const alt = img.getAttribute('alt')
+      if (!alt) return
+      const figure = document.createElement('figure')
+      const caption = document.createElement('figcaption')
+      caption.textContent = alt
+      img.replaceWith(figure)
+      figure.appendChild(img)
+      figure.appendChild(caption)
+    })
+
+    // Initialize Lucide icons
+    if (window.lucide) lucide.createIcons();
+
+    // Scrollspy for right-side TOC
+    (function scrollspy() {
+      const tocLinks = document.querySelectorAll('.page-toc a');
+      if (tocLinks.length === 0) return;
+      const headings = Array.from(document.querySelectorAll('.content h2[id], .content h3[id]'));
+      if (headings.length === 0) return;
+      function update() {
+        const scrollY = window.scrollY + 120;
+        let current = headings[0].id;
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) current = h.id;
+        }
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+  </script>
+</body>
+</html>

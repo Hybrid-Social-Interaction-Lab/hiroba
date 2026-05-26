@@ -9,6 +9,9 @@
         margin: 0;
         font-family: 'Rubik', sans-serif;
         background: #1c1c1c;
+        display: flex;
+        overflow: hidden;
+        height: 100vh;
       }
 
       /* Agent Setting Controls - Client Mode Grayed Out */
@@ -64,8 +67,8 @@
       .input-forms {
         width: 30%;
         min-width: 380px;
+        flex-shrink: 0;
         height: 100vh;
-        float: left;
         padding: 50px 15px 15px 15px;
         box-sizing: border-box;
         overflow-y: auto;
@@ -73,7 +76,6 @@
         color: #e0e0e0;
         border-right: 1px solid #333;
         transition: margin-left 0.3s ease, opacity 0.3s ease;
-        max-height: 100vh;
         position: relative;
       }
 
@@ -276,9 +278,9 @@
       }
 
       .main {
-        width: 70%;
+        flex: 1;
+        min-width: 0;
         height: 100vh;
-        float: right;
         padding: 0;
         box-sizing: border-box;
         transition: width 0.3s ease;
@@ -848,6 +850,30 @@
 
         </div>
 
+        <!-- Documentation Links -->
+        <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid #2a2a2a; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-family: 'Rubik'; font-size: 13px;">
+          <a href="/guides/user-guide"
+             style="color: #aaa; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;"
+             onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">
+            <i data-lucide="user" style="width: 14px; height: 14px;"></i>User Guide
+          </a>
+          <a href="/guides/researcher-guide"
+             style="color: #aaa; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;"
+             onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">
+            <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i>Researcher Guide
+          </a>
+          <a href="/guides/developer-guide"
+             style="color: #aaa; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;"
+             onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">
+            <i data-lucide="code-2" style="width: 14px; height: 14px;"></i>Developer Guide
+          </a>
+          <a href="/guides"
+             style="color: #aaa; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease;"
+             onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">
+            <i data-lucide="book-open" style="width: 14px; height: 14px;"></i>All Docs
+          </a>
+        </div>
+
         <p style="color: #666; font-size: 12px; margin-top: 20px; font-family: 'Rubik';">
           © 2026 HIROBA. All rights reserved.
         </p>
@@ -1150,9 +1176,9 @@
           <!-- Remote Users Container - Dynamically populated by JS -->
           <div id="remote-users-container" style="display: contents;"></div>
           <div style="position: relative;">
-            <video id="self-video-videotag" class="video-canvas self-video" autoplay muted playsinline></video>
+            <video id="self-video-videotag" class="video-canvas self-video" autoplay muted playsinline style="visibility: hidden;"></video>
             <div class="avatar-display-name" id="self-user-label">You</div>
-            <div id="self-video-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; font-size: 14px; text-align: center; pointer-events: none; display: none;">
+            <div id="self-video-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; font-size: 14px; text-align: center; pointer-events: none; display: block;">
               Video Off
             </div>
           </div>
@@ -1617,46 +1643,57 @@
       }
     ];
 
-    // CSV download functionality
-    function downloadCSV() {
-      // Use simpleChatHistory if available, otherwise fallback to conversationHistory
-      const history = window.simpleChatHistory || window.conversationHistory || [];
+    // CSV download — prefer the server-rendered transcript so the file matches
+    // what gets written to disk on session end. Falls back to the in-browser CSV
+    // (system rows excluded) if the server endpoint is unreachable.
+    async function downloadCSV() {
+      const condition = (() => {
+        const params = new URLSearchParams(window.location.search);
+        const id = (params.get('condition') || '').trim();
+        return id || null;
+      })();
+      const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+      const filename = `conversation_log_${ts}${condition ? `_${condition}` : ''}.csv`;
 
+      const triggerDownload = (csvText) => {
+        const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download === undefined) return;
+        link.setAttribute('href', URL.createObjectURL(blob));
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      try {
+        const topic = document.getElementById('session_topic')?.value || 'default';
+        const sessionId = (typeof generateSessionId === 'function' ? generateSessionId(topic) : topic);
+        const res = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}/transcript.csv`);
+        if (res.ok) {
+          triggerDownload(await res.text());
+          return;
+        }
+      } catch (err) {
+        console.warn('[CSV] Server transcript fetch failed, falling back to in-browser CSV:', err);
+      }
+
+      // Fallback: build CSV in the browser (omits system rows).
+      const history = window.simpleChatHistory || window.conversationHistory || [];
       if (history.length === 0) {
         alert('No conversation data to download');
         return;
       }
 
       const filteredHistory = history.filter(conv => conv.type !== 'system');
-
-      // Generate CSV header from field config
       const headers = CSV_FIELD_CONFIG.map(field => field.name);
       let csvContent = headers.join(',') + '\n';
-
-      // Generate CSV rows using field extractors
       filteredHistory.forEach(conv => {
         const row = CSV_FIELD_CONFIG.map(field => field.extractor(conv));
         csvContent += row.join(',') + '\n';
       });
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      
-      if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        const condition = (() => {
-          const params = new URLSearchParams(window.location.search);
-          const id = (params.get('condition') || '').trim();
-          return id || null;
-        })();
-        const ts = new Date().toISOString().slice(0,19).replace(/:/g,'-');
-        link.setAttribute('download', `conversation_log_${ts}${condition ? `_${condition}` : ''}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      triggerDownload(csvContent);
     }
 
     // Helper function to escape HTML

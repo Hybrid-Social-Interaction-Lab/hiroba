@@ -371,6 +371,7 @@
       pointer-events: none;
     }
   </style>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -401,6 +402,14 @@
 
   <div class="container-main">
 
+    <!-- ── System Status ── -->
+    <div class="section" id="status-section">
+      <h2>System Status</h2>
+      <div id="status-list" style="display:flex;flex-direction:column;gap:8px;">
+        <p style="color:#666;font-size:13px">Checking…</p>
+      </div>
+    </div>
+
     <!-- ── Conditions ── -->
     <div class="section">
       <h2>Conditions</h2>
@@ -420,6 +429,9 @@
             <input type="text" id="new-name" placeholder="e.g. Condition A">
           </div>
         </div>
+        <label>Background</label>
+        <div class="bg-picker" id="new-bg-picker"></div>
+        <input type="hidden" id="new-bg" value="">
         <div id="new-condition-error" class="form-error"></div>
         <div style="display:flex; gap:10px">
           <button class="btn-primary-custom" onclick="saveNewCondition()">Create Condition</button>
@@ -516,6 +528,14 @@
         </div>
       </div>
       <button class="btn-primary-custom" onclick="saveSilenceSettings()">Save</button>
+    </div>
+
+    <!-- ── WoZ Preset Lines ── -->
+    <div class="section">
+      <h2>WoZ Preset Lines</h2>
+      <label>One line per row. These appear in the host panel's per-agent "select a preset line" dropdown.</label>
+      <textarea id="woz-presets" rows="10" placeholder="One line per row…"></textarea>
+      <button class="btn-primary-custom" onclick="saveWozPresets()">Save</button>
     </div>
 
     <!-- ── LLM ── -->
@@ -632,7 +652,32 @@
   }
 
   async function init() {
-    await loadAll()
+    await Promise.all([loadAll(), loadStatus()])
+  }
+
+  async function loadStatus() {
+    const el = document.getElementById('status-list')
+    try {
+      const res = await fetch('/api/status')
+      const { checks } = await res.json()
+      const iconName = (c) => c.ok ? 'check-circle' : (c.required ? 'x-circle' : 'alert-triangle')
+      const iconColor = (c) => c.ok ? '#4caf50' : (c.required ? '#f44336' : '#ffb300')
+      const bg = (c) => c.ok ? '#1a2e1a' : (c.required ? '#2e1a1a' : '#2e2a10')
+      const border = (c) => c.ok ? '#2d6a2d' : (c.required ? '#6a1f1f' : '#5a4a00')
+      el.innerHTML = checks.map(c => {
+        const badge = c.required ? '' : '<span style="font-size:10px;color:#666;margin-left:6px;">optional</span>'
+        const detail = (!c.ok && c.detail) ? `<div style="font-size:11px;color:#aaa;margin-top:3px;">${c.detail}</div>` : ''
+        return `<div style="display:flex;flex-direction:column;padding:8px 12px;border-radius:6px;border:1px solid ${border(c)};background:${bg(c)};">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i data-lucide="${iconName(c)}" style="width:15px;height:15px;flex-shrink:0;color:${iconColor(c)};"></i>
+            <span style="color:#ccc;font-size:13px;">${c.label}</span>${badge}
+          </div>${detail}
+        </div>`
+      }).join('')
+      if (window.lucide) lucide.createIcons()
+    } catch (err) {
+      el.innerHTML = '<p style="color:#f44336;font-size:13px;">Failed to load status</p>'
+    }
   }
 
   async function loadAll() {
@@ -672,6 +717,8 @@
     document.getElementById('llm-model').value = (settings.llm && settings.llm.model) || 'gpt-3.5-turbo'
     document.getElementById('llm-max-tokens').value = (settings.llm && settings.llm.maxTokens) || 150
     document.getElementById('llm-temperature').value = (settings.llm && settings.llm.temperature !== undefined) ? settings.llm.temperature : 0.7
+    const wozPresets = Array.isArray(settings.wozPresets) ? settings.wozPresets : []
+    document.getElementById('woz-presets').value = wozPresets.join('\n')
   }
 
   // ── Render conditions ────────────────────────────────────
@@ -716,6 +763,9 @@
             </div>
 
           </div>
+          <label>Background</label>
+          <div class="bg-picker" id="edit-bg-picker-${escHtml(c.id)}"></div>
+          <input type="hidden" id="edit-bg-${escHtml(c.id)}" value="${escHtml(c.background || '')}">
           <div class="form-error" id="edit-cond-error-${escHtml(c.id)}"></div>
           <div style="display:flex;gap:10px;margin-bottom:20px">
             <button class="btn-primary-custom" onclick="saveConditionMeta('${escHtml(c.id)}')">Save</button>
@@ -730,6 +780,11 @@
         </div>
       `
       list.appendChild(card)
+      populateBgPicker(
+        document.getElementById(`edit-bg-picker-${c.id}`),
+        `edit-bg-${c.id}`,
+        c.background || ''
+      )
       renderAgents(c.id, agents)
     })
   }
@@ -876,10 +931,12 @@
     const form = document.getElementById('new-condition-form')
     if (open) {
       form.classList.add('open')
+      document.getElementById('new-bg').value = CONDITION_BACKGROUNDS[0]
+      populateBgPicker(document.getElementById('new-bg-picker'), 'new-bg', CONDITION_BACKGROUNDS[0])
       document.getElementById('new-id').focus()
     } else {
       form.classList.remove('open')
-      ;['new-id','new-name'].forEach(id => { document.getElementById(id).value = '' })
+      ;['new-id','new-name','new-bg'].forEach(id => { document.getElementById(id).value = '' })
       document.getElementById('new-condition-error').style.display = 'none'
     }
   }
@@ -888,6 +945,7 @@
   async function saveNewCondition() {
     const id = document.getElementById('new-id').value.trim()
     const name = document.getElementById('new-name').value.trim()
+    const background = document.getElementById('new-bg').value || CONDITION_BACKGROUNDS[0]
     const errEl = document.getElementById('new-condition-error')
 
     const idPattern = /^[a-z0-9_-]+$/
@@ -907,7 +965,7 @@
       const res = await fetch('/api/conditions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, name, agents: [] })
+        body: JSON.stringify({ id, name, background, agents: [] })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
@@ -923,6 +981,7 @@
 
   async function saveConditionMeta(id) {
     const name = document.getElementById(`edit-name-${id}`).value.trim()
+    const background = document.getElementById(`edit-bg-${id}`).value
     const errEl = document.getElementById(`edit-cond-error-${id}`)
 
     if (!name) {
@@ -933,7 +992,7 @@
     errEl.style.display = 'none'
 
     const c = conditions.find(c => c.id === id)
-    await patchCondition(id, { name, agents: c ? c.agents : [] }, errEl)
+    await patchCondition(id, { name, background, agents: c ? c.agents : [] }, errEl)
   }
 
   async function saveAgent(conditionId, idx) {
@@ -1219,6 +1278,17 @@
   function toggleSilenceBotName() {
     const wrap = document.getElementById('silence-bot-name-wrap')
     if (wrap) wrap.style.display = document.getElementById('silence-bot-mode').value === 'specific' ? '' : 'none'
+  }
+
+  async function saveWozPresets() {
+    try {
+      const lines = document.getElementById('woz-presets').value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean)
+      await patchSettings({ wozPresets: lines })
+      toast('WoZ presets saved')
+    } catch (err) { toast(err.message, 'error') }
   }
 
   async function saveLlmSettings() {
