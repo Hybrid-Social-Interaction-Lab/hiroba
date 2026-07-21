@@ -44,6 +44,10 @@ COPY --from=builder /app/node_modules ./node_modules
 # アプリケーションファイルをコピー
 COPY . .
 
+# Build the docs site while we are still root; the runtime user has no
+# write access to /app, so it cannot regenerate the pages at startup.
+RUN node scripts/build-guides.js
+
 # ポート3000と3443を公開
 EXPOSE 3000 3443
 
@@ -56,5 +60,6 @@ RUN chown nextjs:nodejs /app
 
 USER nextjs
 
-# アプリケーションを起動
-CMD ["npm", "start"]
+# アプリケーションを起動 (guides are prebuilt above, so skip the npm start
+# pre-step that would try to write into the read-only /app)
+CMD ["node", "index.js"]
