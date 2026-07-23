@@ -236,7 +236,7 @@ function updateSelfMuteIcon(muted) {
   if (muted) {
     const wrap = document.createElement('span')
     wrap.className = 'mute-icon'
-    wrap.style.cssText = 'color:#ff4757;'
+    wrap.style.cssText = 'color:var(--danger);'
     wrap.appendChild(makeMuteIconSvg())
     label.appendChild(wrap)
   }
@@ -253,7 +253,7 @@ function updateParticipantMuteIcon(userId, muted) {
       if (muted) {
         const wrap = document.createElement('span')
         wrap.className = 'mute-icon'
-        wrap.style.cssText = 'color:#ff4757;'
+        wrap.style.cssText = 'color:var(--danger);'
         wrap.appendChild(makeMuteIconSvg())
         label.appendChild(wrap)
       }
