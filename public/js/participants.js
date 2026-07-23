@@ -1085,16 +1085,16 @@ function updateParticipantsUI() {
     } else {
       allParticipants.forEach(participant => {
         const row = document.createElement('div')
-        row.style.cssText = 'display:flex; align-items:center; gap:4px; padding:4px 0; border-bottom:1px solid #222;'
+        row.style.cssText = 'display:flex; align-items:center; gap:4px; padding:4px 0; border-bottom:1px solid var(--border);'
         const nameSpan = document.createElement('span')
-        nameSpan.style.cssText = 'flex:1; font-size:11px; color:#ddd; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;'
+        nameSpan.style.cssText = 'flex:1; font-size:11px; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;'
         nameSpan.textContent = participant.displayName
         row.appendChild(nameSpan)
         if (canControl) {
           const renameBtn = document.createElement('button')
           renameBtn.type = 'button'
           renameBtn.className = 'btn btn-sm'
-          renameBtn.style.cssText = 'font-size:9px; padding:1px 5px; background:#333; border:1px solid #555; color:#ccc;'
+          renameBtn.style.cssText = 'font-size:9px; padding:1px 5px; background:var(--bg-btn); border:1px solid var(--border-input); color:var(--text-secondary);'
           renameBtn.title = 'Rename'
           renameBtn.innerHTML = '<i data-lucide="pencil" style="width:10px;height:10px;display:inline-block;vertical-align:middle;"></i>'
           renameBtn.onclick = () => {

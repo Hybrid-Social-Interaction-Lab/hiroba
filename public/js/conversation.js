@@ -629,12 +629,12 @@ function updateWozQueueDisplay() {
     } else {
       list.style.display = 'block'
       list.innerHTML = window.wozSpeechQueue.map((item, i) =>
-        `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #222;">
-          <span style="color:#555;font-size:10px;flex-shrink:0;">${i + 1}.</span>
-          <span style="color:#888;font-size:10px;flex-shrink:0;">[${item.agentName}]</span>
-          <span style="color:#ccc;font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.text}</span>
+        `<div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--text-faint);font-size:10px;flex-shrink:0;">${i + 1}.</span>
+          <span style="color:var(--text-muted);font-size:10px;flex-shrink:0;">[${item.agentName}]</span>
+          <span style="color:var(--text-secondary);font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.text}</span>
           <button onclick="window.wozSpeechQueue.splice(${i},1);updateWozQueueDisplay()"
-            style="background:none;border:none;color:#555;cursor:pointer;font-size:11px;padding:0 2px;flex-shrink:0;" title="Remove">✕</button>
+            style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:11px;padding:0 2px;flex-shrink:0;" title="Remove">✕</button>
         </div>`
       ).join('')
     }
