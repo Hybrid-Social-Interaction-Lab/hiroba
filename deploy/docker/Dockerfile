@@ -18,6 +18,17 @@ RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
       npm ci --only=production; \
     fi
 
+# Dev stage — all dependencies (including devDependencies) so the source
+# volume mount gets a complete node_modules from the image layer.
+FROM node:18-alpine AS dev
+RUN apk add --no-cache curl python3 make g++
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+EXPOSE 3000 3443
+CMD ["npm", "start"]
+
 # Production stage
 FROM node:18-alpine AS production
 
@@ -33,6 +44,10 @@ COPY --from=builder /app/node_modules ./node_modules
 # アプリケーションファイルをコピー
 COPY . .
 
+# Build the docs site while we are still root; the runtime user has no
+# write access to /app, so it cannot regenerate the pages at startup.
+RUN node scripts/build-guides.js
+
 # ポート3000と3443を公開
 EXPOSE 3000 3443
 
@@ -45,5 +60,6 @@ RUN chown nextjs:nodejs /app
 
 USER nextjs
 
-# アプリケーションを起動
-CMD ["npm", "start"]
+# アプリケーションを起動 (guides are prebuilt above, so skip the npm start
+# pre-step that would try to write into the read-only /app)
+CMD ["node", "index.js"]

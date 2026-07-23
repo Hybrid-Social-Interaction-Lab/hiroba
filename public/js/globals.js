@@ -191,8 +191,10 @@ window.toggleToolbarMic = async function() {
 }
 
 window.toggleToolbarCamera = async function() {
+  console.log('[Toolbar] toggleToolbarCamera called — stream:', !!stream, 'ZoomVideo:', !!ZoomVideo, 'hasJoinedSession:', typeof hasJoinedSession !== 'undefined' ? hasJoinedSession : 'undefined')
   if (!stream || !ZoomVideo) {
-    console.warn('[Toolbar] Stream/ZoomVideo not available yet')
+    console.warn('[Toolbar] Stream/ZoomVideo not available yet — stream:', stream, 'ZoomVideo:', ZoomVideo)
+    if (typeof showTemporaryMessage === 'function') showTemporaryMessage('Join a session first', 'warning')
     return false
   }
   try {

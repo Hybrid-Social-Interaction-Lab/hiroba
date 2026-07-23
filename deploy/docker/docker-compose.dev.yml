@@ -5,6 +5,7 @@ services:
     build:
       context: ../../
       dockerfile: deploy/docker/Dockerfile
+      target: dev
     ports:
       - "3000:3000"
       - "3443:3443"
