@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>try{var t=localStorage.getItem('hiroba-theme');if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t}catch(e){}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="./css/theme.css" rel="stylesheet">
   <style>
+    /* Page accent palette (purple); neutrals live in css/theme.css */
+    :root {
+      --accent: #667eea;
+      --accent-2: #764ba2;
+      --link: #667eea;
+    }
+
+    [data-theme="light"] {
+      --link: #5563d6;
+    }
+
+    /* Light-mode fixes for elements whose dark values don't translate */
+    [data-theme="light"] .chip { background: #eceef8; border-color: #b4b9e0; color: #4c53c0; }
+    [data-theme="light"] .chip:hover { background: #dde1f5; border-color: #8d95d6; }
+    [data-theme="light"] .btn-danger { color: #c22032; border-color: #e3a3ab; }
+    [data-theme="light"] .btn-danger:hover { background: #7f1d1d1a; }
+
     body {
-      background: #1c1c1c;
+      background: var(--bg-app);
       font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #e0e0e0;
+      color: var(--text-primary);
       min-height: 100vh;
     }
 
@@ -18,7 +37,7 @@
     #auth-screen {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      background: var(--bg-gradient);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -30,48 +49,48 @@
       margin-bottom: 40px;
     }
     .auth-brand h1 {
-      color: #e0e0e0;
+      color: var(--text-primary);
       margin: 0;
       font-size: 48px;
       font-weight: 700;
       font-family: 'Rubik', sans-serif;
     }
     .auth-brand p {
-      color: #888;
+      color: var(--text-muted);
       margin: 8px 0 0 0;
       font-size: 22px;
       font-family: 'Rubik', sans-serif;
       font-weight: 300;
     }
     .auth-card {
-      background: #1e1e1e;
-      border: 1px solid #444;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
       border-radius: 12px;
       padding: 40px;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      color: #e0e0e0;
+      box-shadow: 0 8px 32px var(--shadow-card);
+      color: var(--text-primary);
     }
     .auth-card h2 {
       font-size: 18px;
       font-weight: 600;
       margin-bottom: 25px;
-      color: #e0e0e0;
+      color: var(--text-primary);
       text-align: center;
     }
     .auth-card .form-label {
-      color: #e0e0e0 !important;
+      color: var(--text-primary) !important;
       font-size: 14px !important;
       font-weight: 400 !important;
       margin-bottom: 6px !important;
       display: block !important;
     }
     .auth-card .form-control {
-      background-color: #2d2d2d !important;
-      border: 1px solid #444 !important;
+      background-color: var(--bg-surface-2) !important;
+      border: 1px solid var(--border-strong) !important;
       border-radius: 8px !important;
-      color: #e0e0e0 !important;
+      color: var(--text-primary) !important;
       padding: 10px 13px !important;
       font-size: 14px !important;
       width: 100% !important;
@@ -80,11 +99,11 @@
       font-family: inherit !important;
     }
     .auth-card .form-control:focus {
-      border-color: #667eea !important;
+      border-color: var(--accent) !important;
       box-shadow: none !important;
     }
     .auth-card .btn-unlock {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       border: none;
       border-radius: 8px;
       color: white;
@@ -106,13 +125,13 @@
     .keep-logged-in input[type="checkbox"] {
       width: 16px;
       height: 16px;
-      accent-color: #667eea;
+      accent-color: var(--accent);
       cursor: pointer;
       margin: 0;
       flex-shrink: 0;
     }
     .keep-logged-in label {
-      color: #aaa !important;
+      color: var(--text-secondary) !important;
       font-size: 13px !important;
       cursor: pointer;
       margin: 0 !important;
@@ -122,15 +141,15 @@
     /* ── Main layout ── */
     #admin-screen { display: none; }
     .topbar {
-      background: #111;
-      border-bottom: 1px solid #333;
+      background: var(--bg-deep);
+      border-bottom: 1px solid var(--border);
       padding: 14px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .topbar h1 { font-size: 18px; font-weight: 700; color: #fff; margin: 0; }
-    .topbar a { color: #667eea; font-size: 13px; text-decoration: none; }
+    .topbar h1 { font-size: 18px; font-weight: 700; color: var(--text-strong); margin: 0; }
+    .topbar a { color: var(--link); font-size: 13px; text-decoration: none; }
     .topbar a:hover { text-decoration: underline; }
 
     .container-main {
@@ -141,8 +160,8 @@
 
     /* ── Sections ── */
     .section {
-      background: #2a2a2a;
-      border: 1px solid #3a3a3a;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 28px;
       margin-bottom: 28px;
@@ -150,17 +169,17 @@
     .section h2 {
       font-size: 16px;
       font-weight: 600;
-      color: #fff;
+      color: var(--text-strong);
       margin-bottom: 20px;
       padding-bottom: 12px;
-      border-bottom: 1px solid #3a3a3a;
+      border-bottom: 1px solid var(--border);
     }
 
     /* ── Form controls ── */
     label {
       font-size: 12px;
       font-weight: 500;
-      color: #888;
+      color: var(--text-muted);
       margin-bottom: 5px;
       display: block;
     }
@@ -169,10 +188,10 @@
     input[type="number"],
     textarea,
     select {
-      background: #1c1c1c;
-      border: 1px solid #444;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #e0e0e0;
+      color: var(--text-primary);
       padding: 9px 13px;
       font-size: 13px;
       width: 100%;
@@ -180,13 +199,13 @@
       margin-bottom: 14px;
       font-family: inherit;
     }
-    input:focus, textarea:focus, select:focus { border-color: #667eea; }
-    select option { background: #2a2a2a; }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    select option { background: var(--bg-elevated); }
     textarea { resize: vertical; }
 
     /* ── Buttons ── */
     .btn-primary-custom {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       border: none;
       border-radius: 8px;
       color: white;
@@ -213,15 +232,15 @@
 
     .btn-ghost {
       background: transparent;
-      border: 1px solid #444;
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #aaa;
+      color: var(--text-secondary);
       padding: 9px 16px;
       font-size: 13px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
-    .btn-ghost:hover { border-color: #667eea; color: #667eea; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
     .btn-danger {
       background: transparent;
@@ -237,8 +256,8 @@
 
     /* ── Condition cards ── */
     .condition-card {
-      background: #1c1c1c;
-      border: 1px solid #3a3a3a;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 18px 20px;
       margin-bottom: 14px;
@@ -252,12 +271,12 @@
     .condition-card-header .name {
       font-size: 14px;
       font-weight: 600;
-      color: #fff;
+      color: var(--text-strong);
     }
     .condition-card-header .id-badge {
       font-size: 11px;
-      background: #333;
-      color: #aaa;
+      background: var(--bg-btn);
+      color: var(--text-secondary);
       padding: 2px 8px;
       border-radius: 4px;
       margin-left: 10px;
@@ -266,7 +285,7 @@
     .condition-card-actions { display: flex; gap: 8px; }
     .condition-meta {
       font-size: 12px;
-      color: #666;
+      color: var(--text-faint);
     }
     .condition-meta span { margin-right: 14px; }
 
@@ -274,7 +293,7 @@
     .edit-form {
       display: none;
       margin-top: 16px;
-      border-top: 1px solid #333;
+      border-top: 1px solid var(--border);
       padding-top: 16px;
     }
     .edit-form.open { display: block; }
@@ -284,8 +303,8 @@
     /* ── New condition form ── */
     #new-condition-form {
       display: none;
-      background: #1c1c1c;
-      border: 1px dashed #444;
+      background: var(--bg-deep);
+      border: 1px dashed var(--border-strong);
       border-radius: 10px;
       padding: 20px;
       margin-bottom: 16px;
@@ -308,14 +327,14 @@
       object-fit: cover;
       transition: border-color 0.15s;
     }
-    .bg-picker-thumb.selected { border-color: #667eea; }
+    .bg-picker-thumb.selected { border-color: var(--accent); }
     @media (max-width: 600px) { .bg-picker { grid-template-columns: repeat(3, 1fr); } }
 
     /* ── Agent sub-list ── */
     .agents-list { margin: 10px 0; }
     .agent-row {
-      background: #252525;
-      border: 1px solid #3a3a3a;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px 14px;
       margin-bottom: 8px;
@@ -326,10 +345,10 @@
       justify-content: space-between;
       margin-bottom: 6px;
     }
-    .agent-row-header .agent-name { font-size: 13px; font-weight: 600; color: #e0e0e0; }
-    .agent-row-header .agent-model { font-size: 11px; color: #666; margin-left: 8px; }
+    .agent-row-header .agent-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .agent-row-header .agent-model { font-size: 11px; color: var(--text-faint); margin-left: 8px; }
     .agent-row-actions { display: flex; gap: 6px; }
-    .agent-edit-form { display: none; margin-top: 12px; border-top: 1px solid #333; padding-top: 12px; }
+    .agent-edit-form { display: none; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
     .agent-edit-form.open { display: block; }
     .btn-sm { font-size: 11px; padding: 4px 10px; }
 
@@ -367,7 +386,7 @@
       right: 12px;
       top: 50%;
       transform: translateY(-60%);
-      color: #666;
+      color: var(--text-faint);
       pointer-events: none;
     }
   </style>
@@ -376,6 +395,7 @@
 
 <!-- Auth screen -->
 <div id="auth-screen">
+  <button class="theme-toggle" data-theme-toggle style="position: absolute; top: 16px; right: 16px;"></button>
   <div class="auth-brand">
     <h1>HIROBA</h1>
   </div>
@@ -396,7 +416,10 @@
 <div id="admin-screen">
   <div class="topbar">
     <h1>Admin</h1>
-    <a href="/">← Back to lobby</a>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <a href="/">← Back to lobby</a>
+      <button class="theme-toggle" data-theme-toggle></button>
+    </div>
   </div>
 
   <div class="container-main">
@@ -406,13 +429,13 @@
       <h2>Conditions</h2>
 
       <div id="conditions-list">
-        <p style="color:#666; font-size:13px" id="conditions-loading">Loading…</p>
+        <p style="color:var(--text-faint); font-size:13px" id="conditions-loading">Loading…</p>
       </div>
 
       <div id="new-condition-form">
         <div class="form-row">
           <div>
-            <label>ID <span style="color:#555">(URL-safe, no spaces)</span></label>
+            <label>ID <span style="color:var(--text-faint)">(URL-safe, no spaces)</span></label>
             <input type="text" id="new-id" placeholder="e.g. condition-a">
           </div>
           <div>
@@ -682,15 +705,15 @@
     list.querySelectorAll('.condition-card').forEach(el => el.remove())
 
     if (conditions.length === 0) {
-      list.insertAdjacentHTML('beforeend', '<p style="color:#666;font-size:13px">No conditions yet. Add one below.</p>')
+      list.insertAdjacentHTML('beforeend', '<p style="color:var(--text-faint);font-size:13px">No conditions yet. Add one below.</p>')
       return
     }
 
     conditions.forEach(c => {
       const agents = Array.isArray(c.agents) ? c.agents : []
       const agentsSummary = agents.length === 0
-        ? '<span style="color:#555;font-size:12px">No agents</span>'
-        : agents.map(a => `<span style="font-size:12px;color:#aaa">${escHtml(a.name)}</span>`).join('<span style="color:#555"> · </span>')
+        ? '<span style="color:var(--text-faint);font-size:12px">No agents</span>'
+        : agents.map(a => `<span style="font-size:12px;color:var(--text-secondary)">${escHtml(a.name)}</span>`).join('<span style="color:var(--text-faint)"> · </span>')
 
       const card = document.createElement('div')
       card.className = 'condition-card'
@@ -723,7 +746,7 @@
           </div>
 
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <label style="margin:0;font-size:13px;color:#ccc">Agents</label>
+            <label style="margin:0;font-size:13px;color:var(--text-secondary)">Agents</label>
             <button class="btn-ghost btn-sm" onclick="openAddAgent('${escHtml(c.id)}')">+ Add Agent</button>
           </div>
           <div class="agents-list" id="agents-list-${escHtml(c.id)}"></div>
@@ -740,7 +763,7 @@
     container.innerHTML = ''
 
     if (agents.length === 0) {
-      container.innerHTML = '<p style="color:#555;font-size:12px;margin:4px 0 10px">No agents yet.</p>'
+      container.innerHTML = '<p style="color:var(--text-faint);font-size:12px;margin:4px 0 10px">No agents yet.</p>'
     }
 
     agents.forEach((agent, idx) => {
@@ -759,7 +782,7 @@
             <button class="btn-danger btn-sm" onclick="removeAgent('${escHtml(conditionId)}', ${idx})">Remove</button>
           </div>
         </div>
-        <div style="font-size:11px;color:#555">Keywords: ${agent.triggerKeywords && agent.triggerKeywords.length > 0 ? escHtml(agent.triggerKeywords.join(', ')) : '<span style="color:#4ade80">always responds</span>'}</div>
+        <div style="font-size:11px;color:var(--text-faint)">Keywords: ${agent.triggerKeywords && agent.triggerKeywords.length > 0 ? escHtml(agent.triggerKeywords.join(', ')) : '<span style="color:#4ade80">always responds</span>'}</div>
         <div class="agent-edit-form" id="agent-edit-${escHtml(conditionId)}-${idx}">
           <div class="form-row">
             <div>
@@ -789,7 +812,7 @@
           </div>
           <label>AI System Prompt</label>
           <textarea id="ae-prompt-${escHtml(conditionId)}-${idx}" rows="4">${escHtml(agent.prompt || '')}</textarea>
-          <label>Trigger Keywords <span style="color:#555">(comma-separated; leave empty to respond to every message)</span></label>
+          <label>Trigger Keywords <span style="color:var(--text-faint)">(comma-separated; leave empty to respond to every message)</span></label>
           <input type="text" id="ae-keywords-${escHtml(conditionId)}-${idx}" value="${escHtml((agent.triggerKeywords || []).join(', '))}">
           <div class="form-error" id="ae-error-${escHtml(conditionId)}-${idx}"></div>
           <div style="display:flex;gap:10px">
@@ -808,7 +831,7 @@
     addForm.className = 'agent-row'
     addForm.style.display = 'none'
     addForm.innerHTML = `
-      <div style="font-size:13px;font-weight:600;color:#ccc;margin-bottom:10px">New Agent</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">New Agent</div>
       <div class="form-row">
         <div>
           <label>Name</label>
@@ -837,7 +860,7 @@
       </div>
       <label>AI System Prompt</label>
       <textarea id="na-prompt-${escHtml(conditionId)}" rows="4" placeholder="Describe how this agent should behave…"></textarea>
-      <label>Trigger Keywords <span style="color:#555">(comma-separated; leave empty to respond to every message)</span></label>
+      <label>Trigger Keywords <span style="color:var(--text-faint)">(comma-separated; leave empty to respond to every message)</span></label>
       <input type="text" id="na-keywords-${escHtml(conditionId)}" placeholder="e.g. alex, assistant — or leave blank to always respond">
       <div class="form-error" id="na-error-${escHtml(conditionId)}"></div>
       <div style="display:flex;gap:10px">
@@ -1244,5 +1267,6 @@
       .replace(/'/g, '&#39;')
   }
 </script>
+<script src="./js/theme.js"></script>
 </body>
 </html>
