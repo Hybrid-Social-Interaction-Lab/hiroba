@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script>try{var t=localStorage.getItem('hiroba-theme');if(!t)t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t}catch(e){}</script>
     <meta charset="utf-8">
     <title>HIROBA</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="./css/theme.css" rel="stylesheet">
     <style>
+      /* Page accent palette (blue); neutrals live in css/theme.css */
+      :root {
+        --accent: #0066cc;
+        --accent-hover: #0052a3;
+        --accent-focus-ring: rgba(0, 102, 204, 0.25);
+        --link: #66b3ff;
+        --link-hover: #99ccff;
+      }
+
+      [data-theme="light"] {
+        --link: #0b5ed7;
+        --link-hover: #094db1;
+      }
+
       body {
         margin: 0;
         font-family: 'Rubik', sans-serif;
@@ -72,9 +88,9 @@
         padding: 50px 15px 15px 15px;
         box-sizing: border-box;
         overflow-y: auto;
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-        border-right: 1px solid #333;
+        background-color: var(--bg-surface);
+        color: var(--text-primary);
+        border-right: 1px solid var(--border);
         transition: margin-left 0.3s ease, opacity 0.3s ease;
         position: relative;
       }
@@ -85,7 +101,7 @@
         right: 10px;
         background: none;
         border: none;
-        color: #e0e0e0;
+        color: var(--text-primary);
         cursor: pointer;
         padding: 4px;
         display: flex;
@@ -96,103 +112,103 @@
       }
 
       #settings-close-btn:hover {
-        color: #fff;
+        color: var(--text-strong);
       }
 
       .input-forms .form-label {
-        color: #e0e0e0;
+        color: var(--text-primary);
       }
 
       .input-forms .form-control,
       .input-forms .form-select {
-        background-color: #2d2d2d;
-        border-color: #444;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2);
+        border-color: var(--border-strong);
+        color: var(--text-primary);
       }
 
       .input-forms .form-control:focus,
       .input-forms .form-select:focus {
-        background-color: #2d2d2d;
-        border-color: #0066cc;
-        color: #e0e0e0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        background-color: var(--bg-surface-2);
+        border-color: var(--accent);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 0.2rem var(--accent-focus-ring);
       }
 
       .input-forms .btn {
-        background-color: #3d3d3d;
-        border-color: #555;
-        color: #e0e0e0;
+        background-color: var(--bg-btn);
+        border-color: var(--border-input);
+        color: var(--text-primary);
       }
 
       .input-forms .btn:hover {
-        background-color: #4d4d4d;
-        border-color: #666;
+        background-color: var(--bg-btn-hover);
+        border-color: var(--border-input);
       }
 
       .input-forms .btn-primary {
-        background-color: #0066cc;
-        border-color: #0066cc;
+        background-color: var(--accent);
+        border-color: var(--accent);
         color: #fff;
       }
 
       .input-forms .btn-primary:hover {
-        background-color: #0052a3;
-        border-color: #0052a3;
+        background-color: var(--accent-hover);
+        border-color: var(--accent-hover);
       }
 
       .input-forms .alert {
-        background-color: #2d2d2d;
-        color: #e0e0e0;
-        border-color: #444;
+        background-color: var(--bg-surface-2);
+        color: var(--text-primary);
+        border-color: var(--border-strong);
       }
 
       .input-forms .form-text {
-        color: #aaa;
+        color: var(--text-secondary);
       }
 
       .input-forms textarea {
-        background-color: #2d2d2d;
-        border-color: #444;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2);
+        border-color: var(--border-strong);
+        color: var(--text-primary);
       }
 
       .input-forms textarea:focus {
-        background-color: #2d2d2d;
-        border-color: #0066cc;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2);
+        border-color: var(--accent);
+        color: var(--text-primary);
       }
 
       /* Dark mode for bordered sections */
       .input-forms > div[style*="border"] {
-        background-color: #2d2d2d !important;
-        border-color: #444 !important;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2) !important;
+        border-color: var(--border-strong) !important;
+        color: var(--text-primary);
       }
 
       .input-forms .mb-2[style*="border"],
       .input-forms .mb-3[style*="border"] {
-        background-color: #2d2d2d !important;
-        border-color: #444 !important;
+        background-color: var(--bg-surface-2) !important;
+        border-color: var(--border-strong) !important;
       }
 
       .input-forms .progress {
-        background-color: #1a1a1a;
+        background-color: var(--bg-deep);
       }
 
       .input-forms .form-check-label {
-        color: #e0e0e0;
+        color: var(--text-primary);
       }
 
       .input-forms small {
-        color: #aaa;
+        color: var(--text-secondary);
       }
 
       .input-forms strong {
-        color: #e0e0e0;
+        color: var(--text-primary);
       }
 
       .input-forms .badge {
-        background-color: #0066cc;
+        background-color: var(--accent);
       }
 
       .input-forms.hidden {
@@ -204,7 +220,7 @@
         display: flex;
         gap: 2px;
         margin-bottom: 12px;
-        background: #111;
+        background: var(--bg-deep);
         border-radius: 6px;
         padding: 3px;
       }
@@ -216,7 +232,7 @@
         border: none;
         border-radius: 4px;
         background: transparent;
-        color: #888;
+        color: var(--text-muted);
         cursor: pointer;
         transition: background 0.15s, color 0.15s;
         display: flex;
@@ -226,11 +242,11 @@
         white-space: nowrap;
       }
       .host-tab-btn.active {
-        background: #2d2d2d;
-        color: #e0e0e0;
+        background: var(--bg-surface-2);
+        color: var(--text-primary);
       }
       .host-tab-btn:hover:not(.active) {
-        color: #bbb;
+        color: var(--text-secondary);
       }
       .host-tab-pane {
         display: none;
@@ -241,10 +257,10 @@
 
       /* Host panel section cards */
       .host-card {
-        border: 1px solid #383838;
+        border: 1px solid var(--border);
         border-radius: 6px;
         padding: 10px;
-        background: #252525;
+        background: var(--bg-elevated);
         margin-bottom: 10px;
       }
       .host-card-header {
@@ -256,20 +272,20 @@
       .host-card-title {
         font-size: 12px;
         font-weight: 600;
-        color: #ccc;
+        color: var(--text-secondary);
         display: flex;
         align-items: center;
         gap: 5px;
       }
       .host-card .form-control,
       .host-card .form-select {
-        background: #1a1a1a;
-        border-color: #444;
-        color: #e0e0e0;
+        background: var(--bg-deep);
+        border-color: var(--border-strong);
+        color: var(--text-primary);
         font-size: 11px;
       }
       .host-card small {
-        color: #777;
+        color: var(--text-muted);
       }
       .woz-btn {
         font-size: 11px;
@@ -286,7 +302,7 @@
         transition: width 0.3s ease;
         overflow-y: auto;
         overflow-x: hidden;
-        background: #1c1c1c;
+        background: var(--bg-app);
         display: flex;
         flex-direction: column;
       }
@@ -334,7 +350,7 @@
         padding: 12px;
         box-sizing: border-box;
         width: 100%;
-        background: #1c1c1c;
+        background: var(--bg-stage);
         flex: 1;
         overflow-y: auto;
         align-content: center;
@@ -458,9 +474,9 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: #242424;
+        background: var(--bg-surface);
         height: 64px;
-        border-top: 1px solid #333;
+        border-top: 1px solid var(--border);
         z-index: 50;
         flex-shrink: 0;
         padding: 0 20px;
@@ -481,7 +497,7 @@
         gap: 6px;
         background: none;
         border: none;
-        color: #e0e0e0;
+        color: var(--text-primary);
         cursor: pointer;
         font-size: 13px;
         transition: background 0.2s ease, opacity 0.2s ease;
@@ -504,19 +520,19 @@
 
       .toolbar-button .button-label {
         font-size: 13px;
-        color: #aaa;
+        color: var(--text-secondary);
       }
 
       .toolbar-button:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--hover-overlay);
       }
 
       .toolbar-button.active {
-        color: #e0e0e0;
+        color: var(--text-primary);
       }
 
       .toolbar-button.active .button-label {
-        color: #e0e0e0;
+        color: var(--text-primary);
       }
 
       .toolbar-button:not(.active) .button-label {
@@ -525,11 +541,11 @@
 
       .toolbar-button.danger {
         background: rgba(196, 28, 59, 0.15);
-        color: #ff4757;
+        color: var(--danger);
       }
 
       .toolbar-button.danger .button-label {
-        color: #ff4757;
+        color: var(--danger);
       }
 
       .toolbar-button.danger:hover {
@@ -554,54 +570,54 @@
 
       /* Dark mode for Bootstrap modals */
       .modal-content {
-        background-color: #1e1e1e !important;
-        border-color: #444 !important;
-        color: #e0e0e0 !important;
+        background-color: var(--bg-surface) !important;
+        border-color: var(--border-strong) !important;
+        color: var(--text-primary) !important;
       }
 
       .modal-header {
-        border-color: #444 !important;
+        border-color: var(--border-strong) !important;
       }
 
       .modal-footer {
-        border-color: #444 !important;
+        border-color: var(--border-strong) !important;
       }
 
       .modal-title {
-        color: #e0e0e0 !important;
+        color: var(--text-primary) !important;
       }
 
       .modal-body {
-        color: #e0e0e0 !important;
+        color: var(--text-primary) !important;
       }
 
       .modal-body .form-label,
       .modal-body .form-text {
-        color: #e0e0e0 !important;
+        color: var(--text-primary) !important;
       }
 
       .modal-body .form-control,
       .modal-body .form-select,
       .modal-body textarea {
-        background-color: #2d2d2d;
-        border-color: #444;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2);
+        border-color: var(--border-strong);
+        color: var(--text-primary);
       }
 
       .modal-body .form-control:focus,
       .modal-body .form-select:focus,
       .modal-body textarea:focus {
-        background-color: #2d2d2d;
-        border-color: #0066cc;
-        color: #e0e0e0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        background-color: var(--bg-surface-2);
+        border-color: var(--accent);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 0.2rem var(--accent-focus-ring);
       }
 
       /* Dark mode for conversation log */
       #conversation-log {
-        background-color: #2d2d2d !important;
-        border-color: #444 !important;
-        color: #e0e0e0;
+        background-color: var(--bg-surface-2) !important;
+        border-color: var(--border-strong) !important;
+        color: var(--text-primary);
       }
 
       /* Scrollbar styling */
@@ -610,48 +626,48 @@
       }
 
       ::-webkit-scrollbar-track {
-        background: #1c1c1c;
+        background: var(--bg-app);
       }
 
       ::-webkit-scrollbar-thumb {
-        background: #444;
+        background: var(--border-strong);
         border-radius: 4px;
       }
 
       ::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        background: var(--border-input);
       }
 
       /* Custom checkbox/radio styling for dark mode */
       .input-forms .form-check-input {
-        background-color: #2d2d2d;
-        border-color: #555;
+        background-color: var(--bg-surface-2);
+        border-color: var(--border-input);
       }
 
       .input-forms .form-check-input:checked {
-        background-color: #0066cc;
-        border-color: #0066cc;
+        background-color: var(--accent);
+        border-color: var(--accent);
       }
 
       .input-forms .form-check-input:focus {
-        border-color: #0066cc;
-        box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.25);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.25rem var(--accent-focus-ring);
       }
 
       /* Fix for conversion panel styling */
       .input-forms #conversation-log {
-        background: #2d2d2d;
-        border: 1px solid #444;
-        color: #e0e0e0;
+        background: var(--bg-surface-2);
+        border: 1px solid var(--border-strong);
+        color: var(--text-primary);
       }
 
       /* Link styling in dark mode */
       .input-forms a {
-        color: #66b3ff;
+        color: var(--link);
       }
 
       .input-forms a:hover {
-        color: #99ccff;
+        color: var(--link-hover);
       }
 
       /* Rubik typography */
@@ -755,68 +771,69 @@
 
   <body>
     <!-- Lobby Screen - Pre-join overlay -->
-    <div id="lobby-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
+    <div id="lobby-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-gradient); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
+      <button class="theme-toggle" data-theme-toggle style="position: absolute; top: 16px; right: 16px;"></button>
       <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="color: #e0e0e0; margin: 0; font-size: 48px; font-weight: 700; font-family: 'Rubik';">HIROBA</h1>
+        <h1 style="color: var(--text-primary); margin: 0; font-size: 48px; font-weight: 700; font-family: 'Rubik';">HIROBA</h1>
       </div>
       <div style="display: flex; gap: 30px; max-width: 900px; width: 100%; flex-wrap: wrap; justify-content: center;">
         <!-- Create New Session Box -->
-        <div style="background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; border: 1px solid #444;">
-          <h3 style="color: #e0e0e0; text-align: center; margin-bottom: 25px; font-size: 18px; font-weight: 600;">Create Session</h3>
+        <div style="background: var(--bg-surface); padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px var(--shadow-card); width: 100%; max-width: 400px; border: 1px solid var(--border-strong);">
+          <h3 style="color: var(--text-primary); text-align: center; margin-bottom: 25px; font-size: 18px; font-weight: 600;">Create Session</h3>
 
           <div class="mb-3">
-            <label for="lobby-create-session-name" class="form-label" style="color: #e0e0e0;">Session Name</label>
-            <input type="text" class="form-control" id="lobby-create-session-name" placeholder="Enter session name" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <label for="lobby-create-session-name" class="form-label" style="color: var(--text-primary);">Session Name</label>
+            <input type="text" class="form-control" id="lobby-create-session-name" placeholder="Enter session name" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
           </div>
 
           <div class="mb-3">
-            <label for="lobby-create-password" class="form-label" style="color: #e0e0e0;">
-              Password <span style="color: #aaa; font-size: 12px;">(Optional)</span>
+            <label for="lobby-create-password" class="form-label" style="color: var(--text-primary);">
+              Password <span style="color: var(--text-secondary); font-size: 12px;">(Optional)</span>
               <button type="button" class="btn btn-link" style="padding: 0; margin-left: 4px; vertical-align: middle; border: none; background: none; cursor: help;" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="If left empty, anyone can join this session without a password.">
-                <span data-lucide="info" style="color: #66b3ff; width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></span>
+                <span data-lucide="info" style="color: var(--link); width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></span>
               </button>
             </label>
-            <input type="password" class="form-control" id="lobby-create-password" placeholder="Leave empty for an open session" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <input type="password" class="form-control" id="lobby-create-password" placeholder="Leave empty for an open session" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
           </div>
 
           <div class="mb-3">
-            <label for="lobby-create-condition" class="form-label" style="color: #e0e0e0;">Condition</label>
-            <select class="form-control" id="lobby-create-condition" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <label for="lobby-create-condition" class="form-label" style="color: var(--text-primary);">Condition</label>
+            <select class="form-control" id="lobby-create-condition" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
               <option value="">Loading conditions…</option>
             </select>
           </div>
 
           <div class="mb-3">
-            <label for="lobby-create-display-name" class="form-label" style="color: #e0e0e0;">Display Name <span style="color: #aaa; font-size: 12px;">(Optional)</span></label>
-            <input type="text" class="form-control" id="lobby-create-display-name" placeholder="Your name (optional)" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <label for="lobby-create-display-name" class="form-label" style="color: var(--text-primary);">Display Name <span style="color: var(--text-secondary); font-size: 12px;">(Optional)</span></label>
+            <input type="text" class="form-control" id="lobby-create-display-name" placeholder="Your name (optional)" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
           </div>
 
           <button type="button" class="btn btn-primary w-100" id="lobby-create-btn" style="padding: 12px; font-size: 16px; font-weight: 600; margin-top: 20px;">Create & Join</button>
         </div>
 
         <!-- Join Existing Session Box -->
-        <div style="background: #1e1e1e; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); width: 100%; max-width: 400px; border: 1px solid #444;">
-          <h3 style="color: #e0e0e0; text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 600;">Join Session</h3>
+        <div style="background: var(--bg-surface); padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px var(--shadow-card); width: 100%; max-width: 400px; border: 1px solid var(--border-strong);">
+          <h3 style="color: var(--text-primary); text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 600;">Join Session</h3>
 
           <div class="mb-3">
-            <label for="lobby-join-session-name" class="form-label" style="color: #e0e0e0;">Select Session</label>
+            <label for="lobby-join-session-name" class="form-label" style="color: var(--text-primary);">Select Session</label>
             <div style="position: relative;">
-              <select class="form-control" id="lobby-join-session-name" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px; cursor: pointer;">
+              <select class="form-control" id="lobby-join-session-name" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px; cursor: pointer;">
                 <option value="">-- Choose a session --</option>
               </select>
             </div>
-            <small style="color: #aaa; margin-top: 5px; display: block;">Select from active sessions</small>
+            <small style="color: var(--text-secondary); margin-top: 5px; display: block;">Select from active sessions</small>
           </div>
 
           <div class="mb-3" id="join-password-wrapper">
-            <label for="lobby-join-password" class="form-label" style="color: #e0e0e0;">Password</label>
-            <input type="password" class="form-control" id="lobby-join-password" placeholder="Enter password" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
-            <small id="join-password-helper" style="color: #aaa; margin-top: 5px; display: none;">This session is open — no password required</small>
+            <label for="lobby-join-password" class="form-label" style="color: var(--text-primary);">Password</label>
+            <input type="password" class="form-control" id="lobby-join-password" placeholder="Enter password" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
+            <small id="join-password-helper" style="color: var(--text-secondary); margin-top: 5px; display: none;">This session is open — no password required</small>
           </div>
 
           <div class="mb-3">
-            <label for="lobby-join-display-name" class="form-label" style="color: #e0e0e0;">Display Name <span style="color: #aaa; font-size: 12px;">(Optional)</span></label>
-            <input type="text" class="form-control" id="lobby-join-display-name" placeholder="Your name (optional)" style="background-color: #2d2d2d; border-color: #444; color: #e0e0e0; padding: 10px;">
+            <label for="lobby-join-display-name" class="form-label" style="color: var(--text-primary);">Display Name <span style="color: var(--text-secondary); font-size: 12px;">(Optional)</span></label>
+            <input type="text" class="form-control" id="lobby-join-display-name" placeholder="Your name (optional)" style="background-color: var(--bg-surface-2); border-color: var(--border-strong); color: var(--text-primary); padding: 10px;">
           </div>
 
           <button type="button" class="btn btn-success w-100" id="lobby-join-btn" style="padding: 12px; font-size: 16px; font-weight: 600; margin-top: 20px;">Join Session</button>
@@ -825,27 +842,27 @@
 
       <!-- Info Section Below Cards -->
       <div style="margin-top: 60px; text-align: center; max-width: 800px;">
-        <p style="color: #bbb; font-size: 14px; line-height: 1.6; margin-bottom: 20px; font-family: 'Rubik';">
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 20px; font-family: 'Rubik';">
           HIROBA is an AI-powered video conferencing system with intelligent avatars, real-time transcription, and advanced conversation management. Create or join sessions to experience seamless collaboration with AI-enhanced moderation and interaction.
         </p>
 
         <div style="display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 20px;">
           <!-- GitHub Link -->
           <a href="https://github.com/aztkp/moderator-ai" target="_blank" rel="noopener noreferrer"
-             style="display: inline-flex; align-items: center; gap: 8px; color: #66b3ff; text-decoration: none; font-family: 'Rubik'; transition: color 0.2s ease;"
-             onmouseover="this.style.color='#99ccff'" onmouseout="this.style.color='#66b3ff'">
+             style="display: inline-flex; align-items: center; gap: 8px; color: var(--link); text-decoration: none; font-family: 'Rubik'; transition: color 0.2s ease;"
+             onmouseover="this.style.color='var(--link-hover)'" onmouseout="this.style.color='var(--link)'">
             <i data-lucide="github" style="width: 20px; height: 20px;"></i>
             <span style="font-weight: 500;">GitHub Repository</span>
           </a>
 
           <!-- Lab Link -->
-          <div style="color: #888; font-size: 14px; font-family: 'Rubik';">
+          <div style="color: var(--text-muted); font-size: 14px; font-family: 'Rubik';">
             <a href="https://www.hybrid-social-interaction-lab.com/" target="_blank" rel="noopener noreferrer"
-               style="color: #66b3ff; text-decoration: none; transition: color 0.2s ease;"
-               onmouseover="this.style.color='#99ccff'" onmouseout="this.style.color='#66b3ff'">
+               style="color: var(--link); text-decoration: none; transition: color 0.2s ease;"
+               onmouseover="this.style.color='var(--link-hover)'" onmouseout="this.style.color='var(--link)'">
               Hybrid Social Interaction Lab
             </a>
-            <span style="color: #666; margin-left: 4px;">— University of Tsukuba, Japan</span>
+            <span style="color: var(--text-faint); margin-left: 4px;">— University of Tsukuba, Japan</span>
           </div>
 
         </div>
@@ -892,9 +909,9 @@
 
       <!-- Panel header -->
       <div style="margin-bottom: 12px;">
-        <div style="font-size: 13px; font-weight: 600; color: #ccc; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <i data-lucide="monitor" style="width: 15px; height: 15px;"></i>Session Host Panel
-          <span id="session-status" style="margin-left: auto; font-size: 11px; font-weight: 400; color: #888;">
+          <span id="session-status" style="margin-left: auto; font-size: 11px; font-weight: 400; color: var(--text-muted);">
             <i data-lucide="tv" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i>0/2 participants
           </span>
         </div>
@@ -962,9 +979,9 @@
           <div class="host-card" id="agent-status-card">
             <div class="host-card-header">
               <span class="host-card-title"><i data-lucide="activity" style="width: 13px; height: 13px;"></i>Live Agents</span>
-              <span id="agent-status-count" style="font-size: 10px; color: #666;">—</span>
+              <span id="agent-status-count" style="font-size: 10px; color: var(--text-faint);">—</span>
             </div>
-            <div id="agent-status-list" style="font-size: 11px; color: #777;">Loading…</div>
+            <div id="agent-status-list" style="font-size: 11px; color: var(--text-muted);">Loading…</div>
           </div>
 
           <!-- Silence Detection -->
@@ -975,14 +992,14 @@
                 <input class="form-check-input agent-setting-control" type="checkbox" id="silence-detection-toggle" checked>
               </div>
             </div>
-            <div style="font-size: 11px; color: #888; margin-bottom: 4px;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">
               Next response in: <span id="silence-countdown" style="font-weight: bold; color: #dc3545;">10</span>s
             </div>
-            <div class="progress" style="height: 3px; background: #111; margin-bottom: 8px;">
+            <div class="progress" style="height: 3px; background: var(--bg-deep); margin-bottom: 8px;">
               <div class="progress-bar bg-danger" id="silence-progress" role="progressbar" style="width: 0%"></div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <label style="font-size: 11px; color: #888; white-space: nowrap; margin: 0;">Threshold (s):</label>
+              <label style="font-size: 11px; color: var(--text-muted); white-space: nowrap; margin: 0;">Threshold (s):</label>
               <input type="number" id="silence-threshold-input" class="form-control form-control-sm agent-setting-control"
                      value="10" min="5" max="1000" step="5" disabled style="width: 80px; font-size: 11px;">
               <button type="button" id="apply-silence-threshold" class="btn btn-sm btn-outline-secondary agent-setting-control"
@@ -1018,14 +1035,14 @@
                 <input class="form-check-input agent-setting-control" type="checkbox" id="periodic-speech-toggle" checked>
               </div>
             </div>
-            <div style="font-size: 11px; color: #888; margin-bottom: 4px;">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">
               Next in: <span id="periodic-countdown" style="font-weight: bold; color: #4a9eff;">180</span>s
             </div>
-            <div class="progress" style="height: 3px; background: #111; margin-bottom: 8px;">
+            <div class="progress" style="height: 3px; background: var(--bg-deep); margin-bottom: 8px;">
               <div class="progress-bar bg-primary" id="periodic-progress" role="progressbar" style="width: 0%"></div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <label style="font-size: 11px; color: #888; white-space: nowrap; margin: 0;">Interval (s):</label>
+              <label style="font-size: 11px; color: var(--text-muted); white-space: nowrap; margin: 0;">Interval (s):</label>
               <input type="number" id="periodic-interval-input" class="form-control form-control-sm agent-setting-control"
                      value="180" min="30" max="600" step="30" disabled style="width: 80px; font-size: 11px;">
               <button type="button" id="apply-periodic-interval" class="btn btn-sm btn-outline-secondary agent-setting-control"
@@ -1055,15 +1072,15 @@
             <div class="host-card-header" style="margin-bottom:4px;">
               <span class="host-card-title"><i data-lucide="list" style="width:13px;height:13px;"></i>Speech Queue</span>
               <button onclick="window.wozSpeechQueue=[];updateWozQueueDisplay()"
-                style="background:none;border:none;color:#555;cursor:pointer;font-size:10px;padding:0;" title="Clear queue">Clear</button>
+                style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:10px;padding:0;" title="Clear queue">Clear</button>
             </div>
             <div id="woz-queue-list" style="display:none;"></div>
-            <div id="woz-queue-empty" style="font-size:10px;color:#444;">Queue is empty</div>
+            <div id="woz-queue-empty" style="font-size:10px;color:var(--text-faint);">Queue is empty</div>
           </div>
 
           <!-- Per-bot manual controls -->
           <div id="woz-bot-controls">
-            <div style="font-size: 11px; color: #555; text-align: center; padding: 12px 0;">No agents loaded</div>
+            <div style="font-size: 11px; color: var(--text-faint); text-align: center; padding: 12px 0;">No agents loaded</div>
           </div>
 
           <!-- Hidden legacy button preserved for JS compatibility -->
@@ -1092,22 +1109,22 @@
           <div class="host-card-header">
             <span class="host-card-title"><i data-lucide="link" style="width: 13px; height: 13px;"></i>Session Invite</span>
           </div>
-          <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Share this link with participants:</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Share this link with participants:</div>
           <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 10px;">
-            <input type="text" id="session-invite-link" readonly style="flex:1; background:#1a1a1a; border:1px solid #333; color:#ccc; font-size:10px; padding:4px 6px; border-radius:4px; cursor:pointer;" onclick="this.select()" placeholder="Join the session first">
+            <input type="text" id="session-invite-link" readonly style="flex:1; background:var(--bg-deep); border:1px solid var(--border); color:var(--text-secondary); font-size:10px; padding:4px 6px; border-radius:4px; cursor:pointer;" onclick="this.select()" placeholder="Join the session first">
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="copySessionInviteLink()" style="font-size:10px; padding:3px 7px; white-space:nowrap;">
               <i data-lucide="copy" style="width:11px; height:11px; display:inline-block; vertical-align:middle;"></i>
             </button>
           </div>
 
-          <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Session password:</div>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Session password:</div>
           <div style="display: flex; gap: 4px; align-items: center; margin-bottom: 8px;">
-            <input type="text" id="session-password-display" style="flex:1; background:#1a1a1a; border:1px solid #333; color:#e0e0e0; font-size:11px; padding:4px 6px; border-radius:4px;" placeholder="No password set">
+            <input type="text" id="session-password-display" style="flex:1; background:var(--bg-deep); border:1px solid var(--border); color:var(--text-primary); font-size:11px; padding:4px 6px; border-radius:4px;" placeholder="No password set">
             <button type="button" class="btn btn-sm btn-outline-primary agent-setting-control" onclick="updateSessionPassword()" style="font-size:10px; padding:3px 7px; white-space:nowrap;">Set</button>
           </div>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid #2a2a2a;">
-            <span style="font-size: 11px; color: #aaa;"><i data-lucide="door-open" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:3px;"></i>Allow new participants to join</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid var(--border);">
+            <span style="font-size: 11px; color: var(--text-secondary);"><i data-lucide="door-open" style="width:12px; height:12px; display:inline-block; vertical-align:middle; margin-right:3px;"></i>Allow new participants to join</span>
             <div class="form-check form-switch" style="margin:0;">
               <input class="form-check-input agent-setting-control" type="checkbox" id="join-enabled-toggle" checked>
             </div>
@@ -1119,7 +1136,7 @@
           <div class="host-card-header">
             <span class="host-card-title"><i data-lucide="users" style="width: 13px; height: 13px;"></i>Connected Participants</span>
           </div>
-          <div id="participant-buttons" style="font-size: 12px; color: #777; min-height: 40px;">
+          <div id="participant-buttons" style="font-size: 12px; color: var(--text-muted); min-height: 40px;">
             <p class="text-muted" style="font-size: 12px; margin: 0;">No remote participants yet</p>
           </div>
         </div>
@@ -1156,7 +1173,7 @@
               </ul>
             </div>
           </div>
-          <div id="conversation-log" style="height: 420px; overflow-y: auto; overflow-x: auto; border: 1px solid #383838; border-radius: 4px; padding: 8px; background-color: #161616; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4; white-space: nowrap;"></div>
+          <div id="conversation-log" style="height: 420px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--border); border-radius: 4px; padding: 8px; background-color: var(--bg-surface-2); font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4; white-space: nowrap;"></div>
         </div>
 
       </div><!-- /tab-conversation -->
@@ -1196,6 +1213,7 @@
           <button class="toolbar-button" id="toolbar-settings" title="Settings">
             <i data-lucide="settings" class="button-icon"></i>
           </button>
+          <button class="theme-toggle" data-theme-toggle></button>
           <button class="toolbar-button active" id="toolbar-mic" title="Mute/Unmute (M)">
             <i data-lucide="mic" class="button-icon"></i>
             <span class="button-label">Mute</span>
@@ -1205,8 +1223,8 @@
             <span class="button-label">Video</span>
           </button>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px; color: #aaa; font-size: 13px;">
-          <span id="toolbar-session-name" style="background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 4px; color: #e0e0e0; font-weight: 500; font-family: 'Rubik';">HIROBA</span>
+        <div style="display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-size: 13px;">
+          <span id="toolbar-session-name" style="background: var(--hover-overlay); padding: 6px 12px; border-radius: 4px; color: var(--text-primary); font-weight: 500; font-family: 'Rubik';">HIROBA</span>
         </div>
         <button class="toolbar-button danger" id="toolbar-leave" title="Leave Call">
           <i data-lucide="phone" class="button-icon"></i>
@@ -1217,6 +1235,7 @@
 
     <!-- Zoom SDK -->
     <script src="https://source.zoom.us/videosdk/zoom-video-1.12.10.min.js"></script>
+    <script src="./js/theme.js"></script>
     <script src="./js/modal-system.js"></script>
     <script src="./js/confirm-helper.js"></script>
     <script src="./js/agent-behavior.js"></script>
@@ -1270,7 +1289,7 @@
 
       const avatars = window.FBXAvatarSystem && window.FBXAvatarSystem.avatars;
       if (!avatars || avatars.length === 0) {
-        list.innerHTML = '<span style="color:#555;">No agents loaded</span>';
+        list.innerHTML = '<span style="color:var(--text-faint);">No agents loaded</span>';
         if (count) count.textContent = '0 agents';
         return;
       }
@@ -1279,12 +1298,12 @@
 
       list.innerHTML = avatars.map((avatar, i) => {
         const isSpeaking = avatar.isSpeaking;
-        const dotColor = isSpeaking ? '#28a745' : '#555';
+        const dotColor = isSpeaking ? '#28a745' : 'var(--text-faint)';
         const status = isSpeaking ? 'Speaking' : 'Idle';
         const name = (avatar.config && avatar.config.name) || `Agent ${i + 1}`;
-        return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #333;">
+        return `<div style="display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--border);">
           <span style="width:8px;height:8px;border-radius:50%;background:${dotColor};flex-shrink:0;"></span>
-          <span style="flex:1;color:#ccc;">${name}</span>
+          <span style="flex:1;color:var(--text-secondary);">${name}</span>
           <span style="color:${dotColor};font-size:10px;">${status}</span>
         </div>`;
       }).join('');
@@ -1297,7 +1316,7 @@
       if (!container) return;
 
       if (!avatars || avatars.length === 0) {
-        container.innerHTML = '<div style="font-size:11px;color:#555;text-align:center;padding:12px 0;">No agents loaded</div>';
+        container.innerHTML = '<div style="font-size:11px;color:var(--text-faint);text-align:center;padding:12px 0;">No agents loaded</div>';
         return;
       }
 
@@ -1328,7 +1347,7 @@
               <i data-lucide="zap" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:3px;"></i>AI Trigger
             </button>
             <select id="woz-preset-${safeId}" class="form-select form-select-sm woz-bot-btn"
-              style="font-size:10px;background:#1a1a1a;color:#ccc;border-color:#333;margin-bottom:4px;">
+              style="font-size:10px;background:var(--bg-deep);color:var(--text-secondary);border-color:var(--border);margin-bottom:4px;">
               <option value="">— select a preset line —</option>
               ${presetsOptions}
             </select>
@@ -1340,7 +1359,7 @@
             </button>
             <div style="display:flex;gap:4px;">
               <input type="text" id="woz-custom-${safeId}" class="form-control form-control-sm woz-bot-btn"
-                placeholder="Custom line…" style="font-size:10px;background:#1a1a1a;color:#ccc;border-color:#333;flex:1;"
+                placeholder="Custom line…" style="font-size:10px;background:var(--bg-deep);color:var(--text-secondary);border-color:var(--border);flex:1;"
                 onkeydown="if(event.key==='Enter'){var v=this.value;if(v&&typeof sayTextAsBot==='function'){sayTextAsBot('${name}',v);this.value='';}}">
               <button type="button"
                 class="btn btn-sm btn-outline-info woz-bot-btn"

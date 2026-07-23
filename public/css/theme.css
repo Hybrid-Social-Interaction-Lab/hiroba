@@ -1,0 +1,74 @@
+/* Theme variables shared by index.html and admin.html.
+   Dark is the base palette; [data-theme="light"] overrides it.
+   Page-specific accent variables are defined in each page's own <style> block. */
+:root {
+  --bg-app: #1c1c1c;
+  --bg-surface: #1e1e1e;
+  --bg-surface-2: #2d2d2d;
+  --bg-elevated: #2a2a2a;
+  --bg-deep: #111;
+  --bg-btn: #3d3d3d;
+  --bg-btn-hover: #4d4d4d;
+  --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  --text-primary: #e0e0e0;
+  --text-strong: #fff;
+  --text-secondary: #aaa;
+  --text-muted: #888;
+  --text-faint: #666;
+  --border: #333;
+  --border-strong: #444;
+  --border-input: #555;
+  --shadow-card: rgba(0, 0, 0, 0.5);
+  --hover-overlay: rgba(255, 255, 255, 0.1);
+  --danger: #ff4757;
+  /* Video/avatar stage stays dark in both themes (not overridden below) */
+  --bg-stage: #1c1c1c;
+}
+
+[data-theme="light"] {
+  --bg-app: #f4f5f7;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #f1f3f5;
+  --bg-elevated: #ffffff;
+  --bg-deep: #e4e6ea;
+  --bg-btn: #e9ecef;
+  --bg-btn-hover: #dde0e4;
+  --bg-gradient: linear-gradient(135deg, #f0f1f4 0%, #dde2ea 100%);
+  --text-primary: #1f2328;
+  --text-strong: #111;
+  --text-secondary: #5a6067;
+  --text-muted: #767d85;
+  --text-faint: #9aa0a6;
+  --border: #d8dbe0;
+  --border-strong: #c6cad0;
+  --border-input: #b4bac1;
+  --shadow-card: rgba(0, 0, 0, 0.12);
+  --hover-overlay: rgba(0, 0, 0, 0.07);
+  --danger: #d6293e;
+}
+
+/* Shared theme toggle button */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--hover-overlay);
+  color: var(--text-primary);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
