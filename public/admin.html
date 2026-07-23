@@ -993,6 +993,7 @@
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
       conditions.push(data)
+      settings.conditions = conditions
       renderConditions()
       toggleNewForm(false)
       toast('Condition created — open it to add agents')
@@ -1176,6 +1177,7 @@
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
       const idx = conditions.findIndex(c => c.id === id)
       if (idx >= 0) conditions[idx] = data
+      settings.conditions = conditions
       renderConditions()
       // Re-open the edit form after re-render and scroll agents list into view
       const form = document.getElementById(`edit-form-${id}`)
@@ -1198,6 +1200,7 @@
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
       conditions = conditions.filter(c => c.id !== id)
+      settings.conditions = conditions
       renderConditions()
       toast('Condition deleted')
     } catch (err) {
@@ -1207,7 +1210,12 @@
 
   // ── Settings saves ───────────────────────────────────────
   async function patchSettings(patch) {
-    const updated = { ...settings, ...patch }
+    // Never send `conditions` in a settings save: our in-memory `settings`
+    // still holds the conditions snapshot from page load, which is stale the
+    // moment any condition is created/edited. The server ignores conditions
+    // here too, but stripping client-side keeps intent explicit.
+    const { conditions: _c, ...base } = settings
+    const updated = { ...base, ...patch }
     const res = await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
