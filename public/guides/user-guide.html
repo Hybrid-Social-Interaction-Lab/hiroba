@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Guide · HIROBA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.408.0"></script>
+  <style>
+    :root {
+      --bg: #1c1c1c;
+      --bg-elev-1: #1e1e1e;
+      --bg-elev-2: #252525;
+      --bg-elev-3: #2a2a2a;
+      --border: #333;
+      --border-soft: #2a2a2a;
+      --text: #e0e0e0;
+      --text-dim: #aaa;
+      --text-muted: #888;
+      --accent: #66b3ff;
+      --accent-hover: #99ccff;
+      --accent-soft: #667eea;
+      --accent-grad-end: #764ba2;
+      --code-bg: #161616;
+      --warning: #f0b429;
+      --danger: #f87171;
+      --success: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+    a:hover { color: var(--accent-hover); }
+
+    /* ─── Top bar ─── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 17, 17, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .topbar-brand .brand-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-elev-3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .topbar-links {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .topbar-links a {
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topbar-links a:hover { color: var(--text); }
+    .topbar-links .icon { width: 15px; height: 15px; }
+
+    /* ─── Layout ─── */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 220px;
+      max-width: 1280px;
+      margin: 0 auto;
+      gap: 40px;
+      padding: 32px 28px 80px;
+    }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 220px minmax(0, 1fr); }
+      .page-toc-wrapper { display: none; }
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; gap: 24px; padding: 20px 18px 60px; }
+      .sidebar-wrapper { position: static; }
+    }
+
+    /* ─── Sidebar nav ─── */
+    .sidebar-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-section {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 12px 6px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-link:hover {
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .sidebar-link.active {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.18), rgba(118, 75, 162, 0.12));
+      color: var(--text);
+      border-left: 2px solid var(--accent-soft);
+      padding-left: 10px;
+    }
+    .sidebar-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ─── Content ─── */
+    .content {
+      min-width: 0;
+      max-width: 760px;
+    }
+    .content h1, .content h2, .content h3, .content h4 {
+      font-family: 'Rubik', sans-serif;
+      color: #fff;
+      line-height: 1.25;
+      margin: 1.8em 0 0.6em;
+      scroll-margin-top: 90px;
+      position: relative;
+    }
+    .content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 0.4em;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      padding-top: 8px;
+    }
+    .content h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #e8e8e8;
+    }
+    .content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .content p { margin: 0.9em 0; color: var(--text); }
+    .content ul, .content ol { padding-left: 1.4em; margin: 0.8em 0; }
+    .content li { margin: 0.35em 0; }
+    .content li > p { margin: 0.4em 0; }
+    .content strong { color: #fff; font-weight: 600; }
+    .content em { color: var(--text); }
+    .content blockquote {
+      border-left: 3px solid var(--accent-soft);
+      background: rgba(102, 126, 234, 0.06);
+      padding: 12px 18px;
+      margin: 1.2em 0;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dim);
+    }
+    .content blockquote p { margin: 0.3em 0; }
+    .content hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 2em 0;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2em 0;
+      font-size: 13px;
+      background: var(--bg-elev-1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .content th, .content td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .content th {
+      background: var(--bg-elev-3);
+      color: #fff;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+    .content tr:last-child td { border-bottom: none; }
+    .content figure {
+      margin: 1.4em 0;
+      text-align: center;
+    }
+    .content figure img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: inline-block;
+    }
+    .content figcaption {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .content img {
+      max-width: 100%;
+      max-height: 35rem;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 1em 0;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Heading anchor */
+    .heading-anchor {
+      position: absolute;
+      left: -22px;
+      color: var(--text-muted);
+      opacity: 0;
+      font-weight: 400;
+      transition: opacity 0.15s;
+    }
+    .content h1:hover .heading-anchor,
+    .content h2:hover .heading-anchor,
+    .content h3:hover .heading-anchor,
+    .content h4:hover .heading-anchor { opacity: 1; }
+
+    /* Inline + block code */
+    .content code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.88em;
+      background: var(--bg-elev-3);
+      color: #f0d090;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-soft);
+    }
+    .content pre.code-block {
+      position: relative;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      margin: 1.2em 0;
+    }
+    .content pre.code-block code {
+      background: none;
+      border: none;
+      color: #d4d4d4;
+      font-size: 13px;
+      padding: 0;
+      line-height: 1.55;
+    }
+    .content pre.code-block::before {
+      content: attr(data-lang);
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: 'Rubik', sans-serif;
+    }
+
+    /* Callout boxes (rendered from blockquotes that start with [!NOTE], [!WARNING], [!TIP]) */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 1.2em 0;
+      border: 1px solid;
+    }
+    .callout-note { background: rgba(102, 179, 255, 0.08); border-color: rgba(102, 179, 255, 0.3); color: var(--text); }
+    .callout-warning { background: rgba(240, 180, 41, 0.08); border-color: rgba(240, 180, 41, 0.35); color: var(--text); }
+    .callout-tip { background: rgba(74, 222, 128, 0.08); border-color: rgba(74, 222, 128, 0.3); color: var(--text); }
+    .callout-danger { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.35); color: var(--text); }
+    .callout-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
+    .callout-note .callout-icon { color: var(--accent); }
+    .callout-warning .callout-icon { color: var(--warning); }
+    .callout-tip .callout-icon { color: var(--success); }
+    .callout-danger .callout-icon { color: var(--danger); }
+    .callout-body { flex: 1; }
+    .callout-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .callout-note .callout-title { color: var(--accent); }
+    .callout-warning .callout-title { color: var(--warning); }
+    .callout-tip .callout-title { color: var(--success); }
+    .callout-danger .callout-title { color: var(--danger); }
+    .callout-body p { margin: 0.2em 0; }
+
+    /* Screenshot placeholder */
+    .screenshot-placeholder {
+      border: 2px dashed #4a4a6a;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 1.2em 0;
+      color: var(--text-dim);
+      font-size: 13px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .screenshot-placeholder .ph-icon {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-soft);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .screenshot-placeholder .ph-label {
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Right-side page TOC ─── */
+    .page-toc-wrapper {
+      position: sticky;
+      top: 80px;
+      align-self: start;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .page-toc-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      padding-left: 12px;
+    }
+    .page-toc {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-left: 1px solid var(--border);
+    }
+    .page-toc li { margin: 0; }
+    .page-toc li a {
+      display: block;
+      padding: 4px 12px;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      border-left: 2px solid transparent;
+      margin-left: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .page-toc li a:hover { color: var(--text); }
+    .page-toc li a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .page-toc .toc-l3 a { padding-left: 24px; font-size: 12px; }
+
+    /* Contents grid */
+    .contents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 1.4em 0;
+    }
+    .contents-grid a {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elev-1);
+      color: var(--text-dim);
+      font-size: 13px;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      text-decoration: none;
+    }
+    .contents-grid a:hover {
+      border-color: var(--accent-soft);
+      background: var(--bg-elev-2);
+      color: var(--text);
+    }
+    .contents-grid .cg-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-soft);
+      line-height: 1;
+      min-width: 16px;
+      padding-top: 1px;
+    }
+    .contents-grid .cg-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: var(--accent-soft);
+      margin-top: 1px;
+    }
+    .contents-grid .cg-body { flex: 1; min-width: 0; }
+    .contents-grid .cg-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+      font-size: 13px;
+    }
+    .contents-grid .cg-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Guide meta line */
+    .guide-meta {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: -0.2em 0 1.4em;
+      padding: 8px 14px;
+      background: var(--bg-elev-2);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-soft);
+    }
+
+    /* Step flow bar */
+    .section-steps {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 1em 0 1.4em;
+      padding: 14px 16px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .ss-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ss-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ss-label { font-size: 13px; color: var(--text); }
+    .ss-sep { color: var(--text-muted); display: flex; }
+    .ss-sep svg { width: 14px; height: 14px; }
+
+    /* Toolbar icon grid */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+      margin: 1em 0;
+    }
+    .ig-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px 12px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .ig-item--danger { border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+    .ig-icon { width: 24px; height: 24px; color: var(--accent-soft); }
+    .ig-item--danger .ig-icon { color: var(--danger); }
+    .ig-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .ig-desc { font-size: 11px; color: var(--text-muted); }
+    .ig-label kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: var(--bg-elev-3);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 4px;
+      color: var(--text-dim);
+    }
+
+    /* Trigger grid */
+    .trigger-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tg-item {
+      padding: 14px 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tg-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tg-head svg { width: 15px; height: 15px; color: var(--accent-soft); }
+    .tg-body { font-size: 12.5px; color: var(--text-dim); line-height: 1.45; }
+
+    /* Tips grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .tip-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .tip-icon { width: 20px; height: 20px; color: var(--accent-soft); flex-shrink: 0; margin-top: 1px; }
+    .tip-body { font-size: 13px; color: var(--text-dim); line-height: 1.45; }
+    .tip-body strong { color: var(--text); }
+
+    /* Example setup grid */
+    .example-setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 0.8em 0 1.2em;
+    }
+    .esg-item {
+      padding: 14px;
+      background: var(--bg-elev-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .esg-item--wide { grid-column: 1 / -1; }
+    .esg-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-soft);
+      margin-bottom: 6px;
+    }
+    .esg-body { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+    .esg-body strong { color: var(--text); }
+    .esg-body em { color: var(--text-dim); font-style: italic; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    /* Footer */
+    .doc-footer {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <a href="/" class="topbar-brand" style="color:#fff">
+      HIROBA
+      <span class="brand-tag">Docs</span>
+    </a>
+    <div class="topbar-links">
+      <a href="/"><i data-lucide="arrow-left" class="icon"></i>Back to App</a>
+      <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">
+        <i data-lucide="github" class="icon"></i>GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- Left sidebar -->
+    <aside class="sidebar-wrapper">
+      <nav class="sidebar">
+        <div class="sidebar-section">Guides</div>
+        <a href="/guides/" class="sidebar-link" data-slug="index">
+      <i data-lucide="book-open" class="sidebar-icon"></i>
+      <span>Overview</span>
+    </a>
+<a href="/guides/user-guide" class="sidebar-link active" data-slug="user-guide">
+      <i data-lucide="user" class="sidebar-icon"></i>
+      <span>User Guide</span>
+    </a>
+<a href="/guides/researcher-guide" class="sidebar-link" data-slug="researcher-guide">
+      <i data-lucide="flask-conical" class="sidebar-icon"></i>
+      <span>Researcher Guide</span>
+    </a>
+<a href="/guides/developer-guide" class="sidebar-link" data-slug="developer-guide">
+      <i data-lucide="code-2" class="sidebar-icon"></i>
+      <span>Developer Guide</span>
+    </a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="content">
+      <h1 id="user-guide"><a class="heading-anchor" href="#user-guide" aria-label="Link to User Guide">#</a>User Guide</h1>
+<div class="guide-meta">For <strong>participants</strong> joining a session. Running an experiment? See the <a href="/guides/researcher-guide">Researcher Guide</a>.</div>
+
+<div class="contents-grid">
+  <a href="#what-hiroba-is"><span class="cg-num">1</span><i data-lucide="info" class="cg-icon"></i><div class="cg-body"><div class="cg-title">What HIROBA is</div><div class="cg-desc">Overview and what you'll need</div></div></a>
+  <a href="#joining-a-session"><span class="cg-num">2</span><i data-lucide="log-in" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Joining a session</div><div class="cg-desc">Lobby, password, and camera setup</div></div></a>
+  <a href="#the-call-screen"><span class="cg-num">3</span><i data-lucide="monitor" class="cg-icon"></i><div class="cg-body"><div class="cg-title">The call screen</div><div class="cg-desc">Video grid, controls, and agents</div></div></a>
+  <a href="#how-the-ai-agents-work"><span class="cg-num">4</span><i data-lucide="bot" class="cg-icon"></i><div class="cg-body"><div class="cg-title">How AI agents work</div><div class="cg-desc">Transcription, replies, and voices</div></div></a>
+  <a href="#practical-tips"><span class="cg-num">5</span><i data-lucide="lightbulb" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Practical tips</div><div class="cg-desc">Getting the best experience</div></div></a>
+  <a href="#troubleshooting"><span class="cg-num">6</span><i data-lucide="triangle-alert" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Troubleshooting</div><div class="cg-desc">Common issues and fixes</div></div></a>
+  <a href="#leaving"><span class="cg-num">7</span><i data-lucide="log-out" class="cg-icon"></i><div class="cg-body"><div class="cg-title">Leaving</div><div class="cg-desc">How to end your session</div></div></a>
+</div>
+
+<h2 id="what-hiroba-is"><a class="heading-anchor" href="#what-hiroba-is" aria-label="Link to What HIROBA is">#</a>What HIROBA is</h2>
+<p>HIROBA is a video conferencing room with one or more <strong>AI agents</strong> in it. The agents appear as 3D animated characters next to the human participants&#39; video tiles, listen to the conversation through real-time transcription, and reply with synthesized speech. A session is created by a host (the researcher running the study), and you join by selecting that session from the lobby and entering a password if one was set.</p>
+<p>You will need:</p>
+<ul>
+<li>A modern browser (Chrome, Edge, or Safari — recent versions)</li>
+<li>A working microphone and webcam</li>
+<li>Permission to grant camera + mic access to the site</li>
+</ul>
+<blockquote>
+<p>[!NOTE]
+HIROBA only works on <code>https://</code> URLs (or <code>http://localhost</code> in dev). If the browser does not show a camera/mic permission prompt, the page is probably being served over plain <code>http://</code> from a non-localhost address — let the host know.</p>
+</blockquote>
+<h2 id="joining-a-session"><a class="heading-anchor" href="#joining-a-session" aria-label="Link to Joining a session">#</a>Joining a session</h2>
+<div class="section-steps">
+  <div class="ss-step"><span class="ss-num">1</span><span class="ss-label">Open the URL your host shared</span></div>
+  <div class="ss-sep"><i data-lucide="arrow-right"></i></div>
+  <div class="ss-step"><span class="ss-num">2</span><span class="ss-label">Pick the session from the dropdown</span></div>
+  <div class="ss-sep"><i data-lucide="arrow-right"></i></div>
+  <div class="ss-step"><span class="ss-num">3</span><span class="ss-label">Enter password if required</span></div>
+  <div class="ss-sep"><i data-lucide="arrow-right"></i></div>
+  <div class="ss-step"><span class="ss-num">4</span><span class="ss-label">Allow camera & mic, click Join</span></div>
+</div>
+
+<p>When you open the HIROBA URL the host shared with you, you arrive at the <strong>lobby</strong>.</p>
+<p>[Screenshot: the lobby landing page, showing the two side-by-side panels titled &quot;Create Session&quot; and &quot;Join Session&quot;, with the HIROBA logo at the top and the footer links along the bottom.]</p>
+<p>The lobby has two panels. As a participant, you almost always want the <strong>Join Session</strong> panel on the right.</p>
+<h3 id="join-session-panel"><a class="heading-anchor" href="#join-session-panel" aria-label="Link to Join Session panel">#</a>Join Session panel</h3>
+<ol>
+<li><strong>Select Session</strong> — open the dropdown and pick the session name your host gave you. The list only shows sessions that have already been created by a host. If you don&#39;t see the session, the host hasn&#39;t started it yet, or new joins are temporarily disabled.</li>
+<li><strong>Password</strong> — if the session is locked, type the password here. If it is an open session, the field will say &quot;This session is open — no password required&quot; and you can leave it blank.</li>
+<li><strong>Display Name</strong> <em>(optional)</em> — this is the name shown above your video tile to everyone else in the room. If you leave it blank, you&#39;ll appear as a generic participant name.</li>
+<li>Click <strong>Join Session</strong>.</li>
+</ol>
+<p>The first time you join, the browser will prompt for camera and microphone permissions. <strong>You must accept both</strong> for the session to work properly.</p>
+<p>[Screenshot: the browser&#39;s permission prompt showing the Allow / Block buttons for camera and microphone.]</p>
+<h3 id="what-if-my-host-gave-me-an-invite-link"><a class="heading-anchor" href="#what-if-my-host-gave-me-an-invite-link" aria-label="Link to What if my host gave me an invite link?">#</a>What if my host gave me an invite link?</h3>
+<p>If the host sent you a URL with a session and password already embedded (something like <code>https://hiroba.example.com/?session=...&amp;password=...</code>), opening that link drops you straight into the call after you type a display name and accept camera/mic. No need to use the dropdown.</p>
+<h2 id="the-call-screen"><a class="heading-anchor" href="#the-call-screen" aria-label="Link to The call screen">#</a>The call screen</h2>
+<p>Once you&#39;ve joined, the lobby disappears and you see the call view.</p>
+<p>[Screenshot: the in-call view showing two or more video tiles arranged in a grid — at least one AI agent tile (a 3D character against a soft background) and your own video tile in the corner with a blue border. The bottom toolbar is visible.]</p>
+<p>The layout has three regions:</p>
+<ul>
+<li><strong>Video grid</strong> (centre/top): every participant — human and AI — gets a tile. AI tiles render a 3D avatar against a chosen background; human tiles show webcam video. Your own video has a blue outline.</li>
+<li><strong>Call toolbar</strong> (bottom): mic, camera, settings, and leave controls.</li>
+<li><strong>Session host panel</strong> (left, sliding panel): only the host sees this — as a participant you can usually ignore it. You may see a &quot;view-only&quot; version if your host has opened it for you.</li>
+</ul>
+<h3 id="the-toolbar"><a class="heading-anchor" href="#the-toolbar" aria-label="Link to The toolbar">#</a>The toolbar</h3>
+<div class="icon-grid">
+  <div class="ig-item"><div class="ig-icon"><i data-lucide="settings"></i></div><div class="ig-label">Settings</div><div class="ig-desc">Open / close side panel</div></div>
+  <div class="ig-item"><div class="ig-icon"><i data-lucide="mic"></i></div><div class="ig-label">Mute <kbd>M</kbd></div><div class="ig-desc">Toggle microphone</div></div>
+  <div class="ig-item"><div class="ig-icon"><i data-lucide="video"></i></div><div class="ig-label">Video <kbd>V</kbd></div><div class="ig-desc">Toggle webcam</div></div>
+  <div class="ig-item ig-item--danger"><div class="ig-icon"><i data-lucide="phone-off"></i></div><div class="ig-label">Leave</div><div class="ig-desc">Return to lobby</div></div>
+</div>
+
+<p>The session name appears in the middle of the toolbar so you can confirm which session you&#39;re in.</p>
+<h3 id="who-is-speaking"><a class="heading-anchor" href="#who-is-speaking" aria-label="Link to Who is speaking">#</a>Who is speaking</h3>
+<p>When someone — human or AI — is talking, their tile gets a bright green pulsing outline. This includes the AI agents, so you can see which agent is responding when there are several.</p>
+<h3 id="subtitles"><a class="heading-anchor" href="#subtitles" aria-label="Link to Subtitles">#</a>Subtitles</h3>
+<p>If subtitles are enabled by the host, a translucent black bar appears near the bottom of the video area, showing the current speaker&#39;s name and what was just said.</p>
+<p>[Screenshot: the live subtitle bar, with a small grey label above (&quot;Alex&quot;) and the transcribed line below.]</p>
+<h2 id="how-the-ai-agents-work"><a class="heading-anchor" href="#how-the-ai-agents-work" aria-label="Link to How the AI agents work">#</a>How the AI agents work</h2>
+<p>The AI agents are not on a fixed script — they listen to the live transcript and reply when a reply seems wanted. There are three triggers:</p>
+<div class="trigger-grid">
+  <div class="tg-item"><div class="tg-head"><i data-lucide="at-sign"></i> Direct address</div><div class="tg-body">Say an agent's name (e.g. <em>"Alex, what do you think?"</em>) and it replies immediately.</div></div>
+  <div class="tg-item"><div class="tg-head"><i data-lucide="timer"></i> Silence detection</div><div class="tg-body">If nobody speaks for a configured interval (often 5–30 s), an agent jumps in to keep the conversation going.</div></div>
+  <div class="tg-item"><div class="tg-head"><i data-lucide="clock"></i> Periodic prompts</div><div class="tg-body">On a longer timer (often 1–10 min), an agent volunteers a thought to introduce a new topic.</div></div>
+</div>
+
+<p>The host can tune these timers in real time during the session, and may also speak <em>as</em> an agent through a Wizard-of-Oz interface — meaning some agent responses are written or chosen by a human in the background, not the language model. From your perspective it looks the same either way.</p>
+<blockquote>
+<p>[!TIP]
+If you&#39;d like an agent to respond to something specific, just say its name. The agent names are usually visible as labels at the bottom of each AI tile.</p>
+</blockquote>
+<h2 id="practical-tips"><a class="heading-anchor" href="#practical-tips" aria-label="Link to Practical tips">#</a>Practical tips</h2>
+<div class="tips-grid">
+  <div class="tip-item"><div class="tip-icon"><i data-lucide="headphones"></i></div><div class="tip-body"><strong>Use headphones</strong> — agent voices bleeding into your mic cause echo loops where the agent "talks to itself".</div></div>
+  <div class="tip-item"><div class="tip-icon"><i data-lucide="message-square"></i></div><div class="tip-body"><strong>Speak in complete sentences</strong> — short fragments reduce transcription accuracy and the agent may miss your meaning.</div></div>
+  <div class="tip-item"><div class="tip-icon"><i data-lucide="pause-circle"></i></div><div class="tip-body"><strong>Pause after finishing a thought</strong> — silence detection only fires during true silence; if everyone keeps talking the agent won't interject.</div></div>
+  <div class="tip-item"><div class="tip-icon"><i data-lucide="flask-conical"></i></div><div class="tip-body"><strong>The condition name is for the host</strong> — it controls which agents are present. You don't need to know the details.</div></div>
+</div>
+
+<h2 id="troubleshooting"><a class="heading-anchor" href="#troubleshooting" aria-label="Link to Troubleshooting">#</a>Troubleshooting</h2>
+<p><strong>The Join button does nothing / I see &quot;Cannot join — joining is disabled&quot;.</strong>
+The host has paused new joins (a control on the host&#39;s panel). Ask them to re-enable it.</p>
+<p><strong>No audio / my mic doesn&#39;t seem to work.</strong>
+Check the mic button on the toolbar — make sure it&#39;s not muted (no slash through the icon). Then check your OS-level mic settings. The browser&#39;s site-settings panel (usually a little camera/mic icon in the address bar) lets you re-grant permission if you blocked it the first time.</p>
+<p><strong>The 3D agents look black or aren&#39;t loading.</strong>
+Refresh the page. The 3D models load over the network on first join and occasionally a request fails; a reload fixes it.</p>
+<p><strong>I got disconnected.</strong>
+Just rejoin from the lobby. Your conversation history doesn&#39;t follow you — the session log is owned by the host — but you can re-enter the same session.</p>
+<p><strong>I see &quot;view-only&quot; badges next to controls on the host panel.</strong>
+That&#39;s expected — you are not the host. The settings are visible so you understand what&#39;s running, but you can&#39;t change them.</p>
+<h2 id="leaving"><a class="heading-anchor" href="#leaving" aria-label="Link to Leaving">#</a>Leaving</h2>
+<p>Click the red <strong>Leave</strong> button on the toolbar. You&#39;ll be returned to the lobby and your tile will disappear from everyone else&#39;s view. The session itself stays open for the remaining participants until the host ends it.</p>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="page-toc-wrapper">
+      <div class="page-toc-label">On this page</div>
+      <ul class="page-toc"><li class="toc-l2"><a href="#what-hiroba-is">What HIROBA is</a></li>
+<li class="toc-l2"><a href="#joining-a-session">Joining a session</a></li>
+<li class="toc-l3"><a href="#join-session-panel">Join Session panel</a></li>
+<li class="toc-l3"><a href="#what-if-my-host-gave-me-an-invite-link">What if my host gave me an invite link?</a></li>
+<li class="toc-l2"><a href="#the-call-screen">The call screen</a></li>
+<li class="toc-l3"><a href="#the-toolbar">The toolbar</a></li>
+<li class="toc-l3"><a href="#who-is-speaking">Who is speaking</a></li>
+<li class="toc-l3"><a href="#subtitles">Subtitles</a></li>
+<li class="toc-l2"><a href="#how-the-ai-agents-work">How the AI agents work</a></li>
+<li class="toc-l2"><a href="#practical-tips">Practical tips</a></li>
+<li class="toc-l2"><a href="#troubleshooting">Troubleshooting</a></li>
+<li class="toc-l2"><a href="#leaving">Leaving</a></li></ul>
+    </aside>
+  </div>
+
+  <footer class="doc-footer">
+    <div>© 2026 HIROBA · Hybrid Social Interaction Lab, University of Tsukuba</div>
+    <div><a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba" target="_blank" rel="noopener">View on GitHub</a></div>
+  </footer>
+
+  <script>
+    // Transform GitHub-style callouts: blockquotes starting with [!NOTE], [!WARNING], [!TIP], [!DANGER]
+    (function transformCallouts() {
+      const types = {
+        '[!NOTE]':    { cls: 'callout-note',    icon: 'info',           title: 'Note' },
+        '[!TIP]':     { cls: 'callout-tip',     icon: 'lightbulb',      title: 'Tip' },
+        '[!WARNING]': { cls: 'callout-warning', icon: 'alert-triangle', title: 'Warning' },
+        '[!DANGER]':  { cls: 'callout-danger',  icon: 'octagon-alert',  title: 'Danger' }
+      };
+      document.querySelectorAll('.content blockquote').forEach(bq => {
+        const firstP = bq.querySelector('p');
+        if (!firstP) return;
+        const txt = firstP.textContent.trim();
+        for (const key in types) {
+          if (txt.startsWith(key)) {
+            const info = types[key];
+            firstP.innerHTML = firstP.innerHTML.replace(key, '').trim();
+            if (!firstP.textContent.trim()) firstP.remove();
+            const div = document.createElement('div');
+            div.className = 'callout ' + info.cls;
+            div.innerHTML = `
+              <i data-lucide="${info.icon}" class="callout-icon"></i>
+              <div class="callout-body">
+                <div class="callout-title">${info.title}</div>
+                ${bq.innerHTML}
+              </div>`;
+            bq.replaceWith(div);
+            return;
+          }
+        }
+      });
+    })();
+
+    // Transform [Screenshot: ...] placeholders
+    (function transformScreenshots() {
+      document.querySelectorAll('.content p').forEach(p => {
+        const m = p.textContent.match(/^\[Screenshot:\s*(.+?)\]\s*$/);
+        if (!m) return;
+        const div = document.createElement('div');
+        div.className = 'screenshot-placeholder';
+        div.innerHTML = `
+          <i data-lucide="image" class="ph-icon"></i>
+          <div>
+            <div class="ph-label">Screenshot needed</div>
+            <div>${m[1]}</div>
+          </div>`;
+        p.replaceWith(div);
+      });
+    })();
+
+    // Wrap content images in <figure> with alt as caption
+    document.querySelectorAll('.content img').forEach(img => {
+      const alt = img.getAttribute('alt')
+      if (!alt) return
+      const figure = document.createElement('figure')
+      const caption = document.createElement('figcaption')
+      caption.textContent = alt
+      img.replaceWith(figure)
+      figure.appendChild(img)
+      figure.appendChild(caption)
+    })
+
+    // Initialize Lucide icons
+    if (window.lucide) lucide.createIcons();
+
+    // Scrollspy for right-side TOC
+    (function scrollspy() {
+      const tocLinks = document.querySelectorAll('.page-toc a');
+      if (tocLinks.length === 0) return;
+      const headings = Array.from(document.querySelectorAll('.content h2[id], .content h3[id]'));
+      if (headings.length === 0) return;
+      function update() {
+        const scrollY = window.scrollY + 120;
+        let current = headings[0].id;
+        for (const h of headings) {
+          if (h.offsetTop <= scrollY) current = h.id;
+        }
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+  </script>
+</body>
+</html>

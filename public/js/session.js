@@ -515,20 +515,36 @@ async function joinSession() {
   const topic    = document.getElementById('session_topic').value
   const userName = document.getElementById('user_name').value
   const password = document.getElementById('session_pwd').value
-  const token    = await getSignature(topic, password)
+  let token
+  try {
+    token = await getSignature(topic, password)
+  } catch (e) {
+    alert(`Cannot start session: ${e.message}`)
+    return
+  }
 
   try {
     await client.join(topic, token, userName, password)
     hasJoinedSession = true
     stream = client.getMediaStream()
+    console.log('[JOIN] getMediaStream result:', stream, 'type:', typeof stream)
+    if (!stream) {
+      console.error('[ERROR] getMediaStream returned null — retrying in 1s')
+      await new Promise(r => setTimeout(r, 1000))
+      stream = client.getMediaStream()
+    }
 
     // Zoom SDK から実際の displayName を取得して使用（他のユーザーと統一）
     const currentUserInfo = client.getCurrentUserInfo()
     const actualDisplayName = currentUserInfo?.displayName || userName
     document.getElementById('self-user-label').textContent = actualDisplayName
-    
-    cameraStartStop()   // 自動でカメラ ON
-    audioStart()        // 自動でマイク ON
+
+    if (stream) {
+      cameraStartStop()   // 自動でカメラ ON
+      audioStart()        // 自動でマイク ON
+    } else {
+      console.error('[ERROR] stream still null after retry — camera/audio skipped')
+    }
     
     // 自動でライブトランスクリプトを開始
     setTimeout(() => {
@@ -1206,7 +1222,11 @@ async function cameraStartStop() {
   if (!window.localVideoTrack) {
     window.localVideoTrack = ZoomVideo.createLocalVideoTrack()
   }
-  toggleSelfVideo(stream, window.localVideoTrack, userId, !isOn)
+  try {
+    await toggleSelfVideo(stream, window.localVideoTrack, userId, !isOn)
+  } catch (e) {
+    console.error('[Camera] toggleSelfVideo failed:', e)
+  }
 }
 
 /* --- Self Video (video tag) ------------------------------------------ */

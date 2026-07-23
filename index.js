@@ -52,7 +52,11 @@ app.use(function(req, res, next) {
   res.header("Cross-Origin-Opener-Policy", "same-origin")
   next()
 })
-app.use(express.static(path.join(__dirname, 'public')))
+// Disable redirect on `/dir` → `/dir/` so explicit page routes (e.g. /guides)
+// can answer before the static middleware tries to serve the directory index.
+app.use(express.static(path.join(__dirname, 'public'), { redirect: false }))
+// Serve guide screenshots directly from source so edits don't need a rebuild
+app.use('/guides/screenshots', express.static(path.join(__dirname, 'docs', 'guides', 'site', 'screenshots')))
 app.use(express.json())
 app.use(cors())
 
@@ -66,6 +70,7 @@ const wsManager = new WebSocketManager(server, sessionManager, logger, {
   settingsManager,
   apiClients
 })
+
 
 // Register routes
 new PageRoutes(app, path.join(__dirname, 'public')).register()

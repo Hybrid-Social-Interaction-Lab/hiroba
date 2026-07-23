@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
   }
 
+  // Check service status and block join if required services are missing
+  checkServiceStatus()
+
   // Load active sessions for dropdown on page load
   loadSessionsList()
 

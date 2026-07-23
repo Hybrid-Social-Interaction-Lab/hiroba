@@ -616,5 +616,9 @@ function applySettings(settings) {
 
   }
 
+  if (Array.isArray(settings.wozPresets) && settings.wozPresets.length > 0 && typeof window.applyWozPresets === 'function') {
+    window.applyWozPresets(settings.wozPresets)
+  }
+
 }
 

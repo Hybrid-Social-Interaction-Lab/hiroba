@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node index.js"
+        "build:guides": "node scripts/build-guides.js",
+        "start": "node scripts/build-guides.js && node index.js"
     },
     "author": "",
     "license": "ISC",
@@ -21,6 +22,7 @@
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "jsrsasign": "^11.1.0",
+        "marked": "^12.0.2",
         "openai": "^4.24.0",
         "three": "^0.175.0",
         "ws": "^8.18.0"

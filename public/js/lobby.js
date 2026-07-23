@@ -293,6 +293,57 @@ function ensureCleanState() {
 // Store session protection status
 const sessionProtectionStatus = new Map()
 
+async function checkServiceStatus() {
+  try {
+    const res = await fetch('/api/status')
+    const { checks } = await res.json()
+    const failed = checks.filter(c => !c.ok && c.required)
+    const warnings = checks.filter(c => !c.ok && !c.required)
+
+    // Remove any existing banner
+    const existing = document.getElementById('lobby-status-banner')
+    if (existing) existing.remove()
+
+    if (failed.length === 0 && warnings.length === 0) return
+
+    const banner = document.createElement('div')
+    banner.id = 'lobby-status-banner'
+    banner.style.cssText = 'width:100%;max-width:860px;margin-bottom:20px;display:flex;flex-direction:column;gap:6px;'
+
+    const icon = (name) => `<i data-lucide="${name}" style="width:16px;height:16px;flex-shrink:0;"></i>`
+
+    failed.forEach(c => {
+      const el = document.createElement('div')
+      el.style.cssText = 'background:#2e1a1a;border:1px solid #6a1f1f;border-radius:8px;padding:12px 16px;color:#f44336;font-size:13px;display:flex;align-items:center;gap:10px;'
+      el.innerHTML = `${icon('x-circle')}<div><strong>${c.label} is not configured</strong> — sessions cannot be started. ${c.detail || ''} <a href="/admin" style="color:#ff6b6b;text-decoration:underline;">Fix in Admin</a></div>`
+      banner.appendChild(el)
+    })
+
+    warnings.forEach(c => {
+      const el = document.createElement('div')
+      el.style.cssText = 'background:#2e2a10;border:1px solid #5a4a00;border-radius:8px;padding:10px 16px;color:#ffb300;font-size:13px;display:flex;align-items:center;gap:10px;'
+      el.innerHTML = `${icon('alert-triangle')}<div><strong>${c.label}:</strong> ${c.detail || 'not configured'}</div>`
+      banner.appendChild(el)
+    })
+
+    // Insert banner above the session cards
+    const lobbyCards = document.querySelector('#lobby-screen > div:nth-child(2)')
+    if (lobbyCards) lobbyCards.before(banner)
+    else document.getElementById('lobby-screen').prepend(banner)
+    if (window.lucide) lucide.createIcons()
+
+    // Disable create/join buttons if required services are missing
+    if (failed.length > 0) {
+      const createBtn = document.getElementById('lobby-create-btn')
+      const joinBtn = document.getElementById('lobby-join-btn')
+      if (createBtn) { createBtn.disabled = true; createBtn.title = 'Zoom SDK not configured' }
+      if (joinBtn) { joinBtn.disabled = true; joinBtn.title = 'Zoom SDK not configured' }
+    }
+  } catch (err) {
+    console.warn('[Lobby] Could not check service status:', err)
+  }
+}
+
 async function loadSessionsList() {
   try {
     const response = await fetch('/api/sessions')
