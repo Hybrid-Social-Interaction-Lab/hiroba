@@ -9,7 +9,7 @@
         "start": "node scripts/build-guides.js && node index.js"
     },
     "author": "",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.470.0",
         "@aws-sdk/client-polly": "^3.470.0",

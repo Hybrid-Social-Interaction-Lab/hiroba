@@ -251,4 +251,4 @@ sudo docker compose -f /opt/hiroba/deploy/docker/docker-compose.caddy.yml logs -
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
