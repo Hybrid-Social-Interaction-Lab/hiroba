@@ -690,7 +690,7 @@
 <p>HIROBA is a single Node.js app fronted by Caddy (for HTTPS) when deployed. It uses:</p>
 <ul>
 <li><strong>Zoom Video SDK</strong> for the actual audio/video transport and the per-participant raw audio used for transcription.</li>
-<li><strong>OpenAI</strong> <em>(optional)</em> for generating agent replies. Without an API key, agents fall back to canned lines from the settings file — usable for development but not for studies.</li>
+<li><strong>OpenAI</strong> <em>(optional)</em> for generating agent replies. Without an API key, single-agent conditions fall back to a small set of hardcoded generic phrases (e.g. <em>&quot;Thank you for sharing that!&quot;</em>) and multi-agent conditions produce <strong>no</strong> agent speech at all — usable for UI smoke-testing but not for studies.</li>
 <li><strong>Amazon Polly</strong> <em>(optional)</em> for high-quality voice synthesis. Falls back to browser TTS if not configured.</li>
 <li><strong>SpeechGen.io</strong> <em>(optional)</em> for a third neutral voice option.</li>
 </ul>
@@ -714,7 +714,7 @@ node index.js</code></pre>
 <p>Then open <code>http://localhost:3000/</code> (lobby) and <code>http://localhost:3000/admin/</code> (admin).</p>
 <p>For auto-reload during development:</p>
 <pre class="code-block" data-lang="bash"><code>docker compose -f deploy/docker/docker-compose.dev.yml up</code></pre>
-<p>This mounts the source tree into the container so edits to <code>public/</code>, <code>lib/</code>, and <code>docs/guides/site/</code> show up live without rebuilding the image. (Guides specifically: run <code>npm run build:guides</code> from the host to recompile after editing markdown.)</p>
+<p>This mounts the source tree into the container so edits to <code>public/</code>, <code>lib/</code>, and <code>docs/guides/site/</code> show up live without rebuilding the image. The <code>/guides/...</code> routes render markdown fresh on every request, so guide edits are visible on the next page load — no build step needed.</p>
 <h3 id="2b-sakura-vps-recommended-for-japan-billed-studies"><a class="heading-anchor" href="#2b-sakura-vps-recommended-for-japan-billed-studies" aria-label="Link to 2b. Sakura VPS (recommended for Japan-billed studies)">#</a>2b. Sakura VPS (recommended for Japan-billed studies)</h3>
 <p>Sakura VPS is the lab&#39;s standard host for Japan-billed deployments. The README in the repository root has the full step-by-step, but the headline shape is:</p>
 <ol>
@@ -790,7 +790,7 @@ bash deploy/scripts/ec2-deploy.sh</code></pre>
 <p>The admin panel shows a <strong>System Status</strong> panel at the top confirming which services are configured — green for active, red for missing.</p>
 <p><img src="screenshots/system_status.jpg" alt="System Status panel showing green checkmarks for Zoom Video SDK, OpenAI, AWS Polly, and SpeechGen"></p>
 <h3 id="settings-persistence"><a class="heading-anchor" href="#settings-persistence" aria-label="Link to Settings persistence">#</a>Settings persistence</h3>
-<p>By default, <code>data/settings.json</code> lives on the container&#39;s mounted host volume and survives restarts. If you want centralised settings across multiple instances:</p>
+<p>By default, <code>data/settings.json</code> lives on the container&#39;s mounted host volume and survives restarts. If you&#39;re running multiple app instances (e.g. behind a Fargate + ALB setup) and need them all to see the same conditions/agents, switch to DynamoDB:</p>
 <pre class="code-block" data-lang="bash"><code>SETTINGS_BACKEND=dynamodb
 SETTINGS_DDB_TABLE=hiroba-settings
 SETTINGS_DDB_REGION=ap-northeast-1</code></pre>
@@ -807,7 +807,7 @@ SESSION_LOG_S3_PREFIX=hiroba/sessions</code></pre>
 <ul>
 <li>An <strong>ID</strong> (URL-safe, e.g. <code>condition-a</code>) — used internally, never shown to participants.</li>
 <li>A <strong>display name</strong> (e.g. <code>Condition A — One Female Agent</code>) — shown to the host in the lobby.</li>
-<li>A <strong>background image</strong> (one of six built-in scenes) used behind the 3D avatars.</li>
+<li>A <strong>background image</strong> (one of six built-in scenes) used behind the 3D avatars. <em>(Currently editable only by hand-editing <code>data/settings.json</code>; the picker is not yet exposed in the admin UI.)</em></li>
 <li>A list of <strong>agents</strong>, each with their own name, 3D model, voice gender, system prompt, and optional trigger keywords.</li>
 </ul>
 <p>The host picks a condition when creating a session. That choice locks in which agents the room contains and how they speak.</p>
@@ -827,15 +827,15 @@ SESSION_LOG_S3_PREFIX=hiroba/sessions</code></pre>
 <li><strong>Avatar Model</strong> — one of the bundled FBX models: <code>female.fbx</code>, <code>male.fbx</code>, <code>female_old.fbx</code>, <code>man_new_idle.fbx</code>, <code>man_new_idle2.fbx</code>, <code>neutral.fbx</code>.</li>
 <li><strong>Voice Gender</strong> — Auto (inferred from model), Female, Male, or Neutral. The Test button plays one line through whichever voice would be used.</li>
 <li><strong>AI System Prompt</strong> — the agent&#39;s persona / instructions. This is injected as <code>%bot_prompt%</code> in the global template.</li>
-<li><strong>Trigger Keywords</strong> — comma-separated names that the agent answers to. Leave blank if you want the agent to potentially respond to every message. Multiple agents can match the same message; the system picks one.</li>
+<li><strong>Trigger Keywords</strong> — comma-separated names that the agent answers to. Leave blank to have the agent respond to <em>every</em> message. <strong>Every triggered agent replies</strong> — multiple agents can speak in response to a single message, in randomised order. Scope the keywords if you want each agent to only respond when addressed by name.</li>
 </ul>
 </li>
-<li>Click <strong>Save Agent</strong>.</li>
+<li>Click <strong>Add Agent</strong> (or <strong>Save Agent</strong> when editing an existing one).</li>
 </ol>
 <p><img src="screenshots/agent_customisation.jpg" alt="Agent customisation form showing name, avatar model, voice gender, system prompt, and trigger keyword fields"></p>
 <blockquote>
 <p>[!TIP]
-Trigger keywords are what makes multi-agent rooms work. If you have <strong>Alex</strong> and <strong>Jordan</strong> in the same condition and want them to take turns based on direct address, set Alex&#39;s keywords to <code>Alex, Alexa</code> and Jordan&#39;s to <code>Jordan, Jord</code>. With both lists empty, every message is a candidate for either agent — useful for studies of unsolicited agent intervention.</p>
+Trigger keywords are what scopes a multi-agent room. If you have <strong>Alex</strong> and <strong>Jordan</strong> in the same condition and want each to respond only when addressed by name, set Alex&#39;s keywords to <code>Alex, Alexa</code> and Jordan&#39;s to <code>Jordan, Jord</code>. With both lists empty, <strong>both agents reply to every message</strong> (in randomised order) — useful for studies of unsolicited or competing agent intervention, but expect a lot of cross-talk.</p>
 </blockquote>
 <h3 id="prompt-template"><a class="heading-anchor" href="#prompt-template" aria-label="Link to Prompt Template">#</a>Prompt Template</h3>
 <p>The global prompt template controls <strong>what the LLM sees</strong> for every agent reply. It is shared across all conditions — each agent&#39;s individual system prompt is injected into it via <code>%bot_prompt%</code>. This separation lets you keep the structural scaffolding (conversation history, participant list, date/time) consistent while varying only the agent&#39;s persona per condition.</p>
@@ -872,11 +872,11 @@ Recent conversation:
 </tr>
 <tr>
 <td><code>%date%</code></td>
-<td>Server&#39;s current date (YYYY-MM-DD).</td>
+<td>Server&#39;s current date in US long form (e.g. <code>May 26, 2026</code>).</td>
 </tr>
 <tr>
 <td><code>%time%</code></td>
-<td>Server&#39;s current time (HH:MM, 24-hour).</td>
+<td>Server&#39;s current time (<code>HH:MM</code>, 24-hour).</td>
 </tr>
 <tr>
 <td><code>%user_list%</code></td>
@@ -1000,7 +1000,7 @@ Recent conversation:
 <li><strong>Host Visibility</strong> — when off, you are completely hidden: not in anyone&#39;s video grid, not in their participants list, your mic is silent to them. Use this to act as an invisible observer. Even hidden, you still hear and see the room.</li>
 <li><strong>Live Agents</strong> — a real-time list of which agents are loaded into the room and whether each one is currently speaking (green dot) or idle.</li>
 <li><strong>Silence Detection</strong> — live toggle and threshold. The card shows a countdown (<code>Next response in: NN s</code>) plus a progress bar so you can see when an intervention is about to fire. Change the threshold by typing in the box and clicking <strong>Apply</strong>.</li>
-<li><strong>Periodic Speech</strong> — same UI shape, on the longer interval. Countdown and threshold both live.</li>
+<li><strong>Periodic Speech</strong> — same UI shape, on the longer cadence. Countdown and interval both live.</li>
 </ul>
 <p>Settings changed here are broadcast to all connected clients over WebSocket — so if you raise the silence threshold from 10 s to 30 s mid-session, every participant&#39;s client immediately reflects the new timing. The change is also persisted to <code>data/settings.json</code>.</p>
 <blockquote>
@@ -1037,10 +1037,10 @@ Inputs on participant clients show as <code>view only</code>. Only the host (the
 <li><strong>Clear</strong> — wipes the visible log. ⚠️ This does not delete the server-side log — that lives in <code>logs/sessions/</code> and is preserved. But it does throw away what&#39;s on screen, so don&#39;t use it unless you mean to start fresh.</li>
 </ul>
 <h3 id="co-hosting"><a class="heading-anchor" href="#co-hosting" aria-label="Link to Co-hosting">#</a>Co-hosting</h3>
-<p>There is no &quot;promote to co-host&quot; button. The session&#39;s host is whoever <strong>created</strong> it; everyone else joins as a participant with view-only host panel. If you need a second researcher to operate the WoZ tab or change settings while you run the study from the outside, two options:</p>
+<p>There is no &quot;promote to co-host&quot; button. Host status is bound to the <strong>first regular user to join</strong> the room — everyone else joins as a participant with a view-only host panel. Two practical workarounds:</p>
 <ol>
-<li>Have them create the session and you join as participant. They&#39;ll have the host panel.</li>
-<li>Run two instances of the admin/host (e.g. two browser tabs from the same host machine). The host&#39;s powers are tied to the host&#39;s WebSocket session, not their browser tab.</li>
+<li><strong>Have the colleague create the session and you join as a participant.</strong> They&#39;ll keep the host panel, you&#39;ll just be a regular participant.</li>
+<li><strong>Rely on automatic host reassignment.</strong> When the current host disconnects, a remaining participant is promoted to host automatically (whichever one the server picks first). So if you create the session, hand off, then close your tab, the next person on the participant list takes over. Be aware this is one-way and order-dependent — not a clean co-host model.</li>
 </ol>
 <h3 id="ending-the-session"><a class="heading-anchor" href="#ending-the-session" aria-label="Link to Ending the session">#</a>Ending the session</h3>
 <p>There is no &quot;end session for everyone&quot; button. To wrap up:</p>
@@ -1052,25 +1052,68 @@ Inputs on participant clients show as <code>view only</code>. Only the host (the
 <p>The session record remains in <code>logs/sessions/</code> for export.</p>
 <hr>
 <h2 id="5-collect-data"><a class="heading-anchor" href="#5-collect-data" aria-label="Link to 5. Collect data">#</a>5. Collect data</h2>
-<p>Every session writes a per-session folder on the server under <code>logs/sessions/&lt;session-id&gt;/</code>. The structure:</p>
+<p>HIROBA produces two kinds of output for each session — a <strong>server-side log file</strong> (every event, plaintext) and a <strong>client-side CSV export</strong> (utterances only). They live in different places and have different formats; you usually want both.</p>
+<h3 id="server-side-log-file"><a class="heading-anchor" href="#server-side-log-file" aria-label="Link to Server-side log file">#</a>Server-side log file</h3>
+<p>Every session writes a single flat log file directly under <code>logs/sessions/</code>:</p>
 <pre class="code-block" data-lang="text"><code>logs/sessions/
-  pilot-2026-05-22__&lt;uuid&gt;/
-    transcript.json    — full event log with timestamps, speakers, utterances
-    transcript.csv     — CSV export of the same
-    metadata.json      — session name, condition ID, host display name, start/end times</code></pre>
-<p>You can either:</p>
+  session-&lt;sessionId&gt;-&lt;ISO-timestamp&gt;[_conditionId].log</code></pre>
+<p>For example: <code>session-pilot-2026-05-22-2026-05-22T14-03-08_condition-a.log</code>. Forbidden filename characters in the session ID are replaced with <code>_</code>, and the condition ID (if the host picked one) is appended as a suffix.</p>
+<p>Content is one log line per event:</p>
+<pre class="code-block" data-lang="text"><code>[2026-05-22T14:03:11.420Z] [INFO] [USER-JOIN] User joined: Daniel | Data: {"userId":"abc","isHost":true,"roomSize":1}
+[2026-05-22T14:03:14.108Z] [INFO] [AI-RESPONSE] Alex: Yes, loud and clear. Good to meet you. | Data: {"agent":"Alex","conditionId":"condition-a"}
+[2026-05-22T14:03:42.001Z] [INFO] [SETTINGS] silence threshold updated: 10s → 30s | Data: {...}</code></pre>
+<p>This is the <strong>complete</strong> record — every join/leave, every utterance (human and agent), every settings change, every error. Use it when you need ground truth.</p>
+<p>If <code>SESSION_LOG_UPLOAD_BACKEND=s3</code> is configured, the file is uploaded to your S3 bucket after the session ends — see <code>SESSION_LOG_S3_BUCKET</code> and <code>SESSION_LOG_S3_PREFIX</code>.</p>
+<h3 id="client-side-csv-export"><a class="heading-anchor" href="#client-side-csv-export" aria-label="Link to Client-side CSV export">#</a>Client-side CSV export</h3>
+<p>The Log tab → kebab menu → <strong>Export CSV</strong> downloads a CSV built in the browser from the conversation history shown on screen. Filename: <code>conversation_log_&lt;timestamp&gt;[_&lt;conditionId&gt;].csv</code>. Columns:</p>
+<pre class="code-block" data-lang="text"><code>Timestamp,Speaker ID,Utterance,Word Count,Trigger Event,Agent Type,Silence Before Speaking
+2026-05-22T14:03:11Z,Daniel,"Hi everyone, can you hear me?",5,,Human,
+2026-05-22T14:03:14Z,Agent,"Yes, loud and clear. Good to meet you.",8,silence_detection,Agent,12.3</code></pre>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Timestamp</code></td>
+<td>ISO timestamp of the utterance.</td>
+</tr>
+<tr>
+<td><code>Speaker ID</code></td>
+<td>The human&#39;s display name, or <code>Agent</code> for any AI agent, or <code>System</code> for system events (filtered out of the export).</td>
+</tr>
+<tr>
+<td><code>Utterance</code></td>
+<td>The spoken / generated text.</td>
+</tr>
+<tr>
+<td><code>Word Count</code></td>
+<td>Whitespace-split word count of the utterance.</td>
+</tr>
+<tr>
+<td><code>Trigger Event</code></td>
+<td><code>silence_detection</code>, <code>periodic_speech</code>, <code>name_mentioned</code>, or empty.</td>
+</tr>
+<tr>
+<td><code>Agent Type</code></td>
+<td><code>Human</code> or <code>Agent</code>.</td>
+</tr>
+<tr>
+<td><code>Silence Before Speaking</code></td>
+<td>Seconds of silence preceding this utterance (only set for agent-initiated speech).</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>System events are NOT included in the exported CSV.</strong> Threshold changes, host visibility toggles, join/leave events — none of that makes it into the CSV. If you need those for analysis, parse them out of the server-side <code>.log</code> file (the lines with <code>[SETTINGS]</code>, <code>[USER-JOIN]</code>, <code>[USER-LEAVE]</code>, etc.).</p>
+</blockquote>
+<h3 id="getting-the-files-off-the-server"><a class="heading-anchor" href="#getting-the-files-off-the-server" aria-label="Link to Getting the files off the server">#</a>Getting the files off the server</h3>
 <ul>
-<li><strong>Export from the host panel live</strong> via the Log tab → Export CSV. This gives you the same CSV the server writes, downloadable in one click without server access.</li>
-<li><strong>Pull from the server</strong> with <code>scp</code> / <code>aws s3 cp</code> (if S3 backend) once the study is done.</li>
+<li><strong>CSV (utterances only):</strong> Log tab → Export CSV during the session. Works without server access.</li>
+<li><strong>Server log (full event record):</strong> <code>scp &lt;user&gt;@&lt;server&gt;:/opt/hiroba/logs/sessions/*.log .</code>, or <code>aws s3 cp s3://your-bucket/logs/sessions/ . --recursive</code> if the S3 backend is enabled.</li>
 </ul>
-<p>If <code>SESSION_LOG_UPLOAD_BACKEND=s3</code> is configured, every session is uploaded to your S3 bucket after it ends — see <code>SESSION_LOG_S3_BUCKET</code> and <code>SESSION_LOG_S3_PREFIX</code>.</p>
-<h3 id="what-each-event-looks-like"><a class="heading-anchor" href="#what-each-event-looks-like" aria-label="Link to What each event looks like">#</a>What each event looks like</h3>
-<p>A typical row in <code>transcript.csv</code>:</p>
-<pre class="code-block" data-lang="text"><code>timestamp,speaker,role,text,agent_name,condition_id
-2026-05-22T14:03:11.420Z,Daniel,human,"Hi everyone, can you hear me?",,condition-a
-2026-05-22T14:03:14.108Z,Alex,agent,"Yes, loud and clear. Good to meet you.",Alex,condition-a
-2026-05-22T14:03:42.001Z,SYSTEM,system,"silence_threshold_changed: 10s -&gt; 30s",,condition-a</code></pre>
-<p>System rows record state changes (host visibility toggles, threshold changes, participants joining/leaving). They are useful as ground truth when you reconcile a session log against your experimental notes.</p>
 <hr>
 <hr>
 <h2 id="6-example-study-setups"><a class="heading-anchor" href="#6-example-study-setups" aria-label="Link to 6. Example study setups">#</a>6. Example study setups</h2>
@@ -1121,11 +1164,11 @@ Inputs on participant clients show as <code>view only</code>. Only the host (the
 
 <p><strong>Preparation:</strong></p>
 <ol>
-<li>Write a script of ~10 intervention lines and load them as preset lines in <code>data/settings.json</code> under <code>periodicSpeech.messages</code>. They&#39;ll appear in the WoZ preset dropdown.</li>
+<li>Write a script of ~10 intervention lines. The WoZ preset dropdown currently pulls from a hardcoded list in <a href="https://github.com/Hybrid-Social-Interaction-Lab/hiroba/blob/main/public/js/conversation.js"><code>public/js/conversation.js</code></a> (search for <code>wozPresetLines</code>) — edit that array to add your study-specific lines, then redeploy. Custom lines you don&#39;t want pre-baked can be typed directly into the per-agent <strong>Custom line</strong> field at runtime.</li>
 <li>Set <strong>Periodic Speech → Enabled: No</strong> and <strong>Silence Detection → Enabled: No</strong> — all speech is researcher-driven.</li>
 <li>Use <strong>Host Visibility → off</strong> so the researcher&#39;s own video tile doesn&#39;t appear.</li>
 </ol>
-<p><strong>Post-session:</strong> System rows in the CSV log record every WoZ action with a timestamp, so you can align researcher interventions with participant responses precisely.</p>
+<p><strong>Post-session:</strong> The server-side <code>.log</code> file under <code>logs/sessions/</code> records every WoZ action (look for <code>[WOZ-*]</code> and <code>[AI-RESPONSE]</code> lines) with a timestamp, so you can align researcher interventions with participant responses precisely. The browser-exported CSV won&#39;t include those system events (see §5).</p>
 <hr>
 <h3 id="setup-c-floor-management-timing-manipulation"><a class="heading-anchor" href="#setup-c-floor-management-timing-manipulation" aria-label="Link to Setup C — Floor-management timing manipulation">#</a>Setup C — Floor-management timing manipulation</h3>
 <p><strong>Research question:</strong> How does the latency and frequency of AI interjection affect perceived conversational naturalness and participant satisfaction?</p>
@@ -1182,7 +1225,7 @@ sudo docker compose -f /opt/hiroba/deploy/docker/docker-compose.caddy.yml logs -
 <hr>
 <h2 id="8-troubleshooting"><a class="heading-anchor" href="#8-troubleshooting" aria-label="Link to 8. Troubleshooting">#</a>8. Troubleshooting</h2>
 <p><strong>Participants see the lobby but the session doesn&#39;t appear in the Join dropdown.</strong>
-The session is only visible while the host is connected. Make sure your host browser tab is still open. If you closed it by accident, recreate the session with the same name.</p>
+Sessions exist only while at least one client is connected — when the last participant leaves, the server deletes the room. If the dropdown is empty, no one (including you) is currently in the session. Recreate it. (Note: if the original host leaves but other participants remain, the session stays alive and one of the remaining participants is auto-promoted to host.)</p>
 <p><strong>An agent&#39;s voice sounds wrong / robotic.</strong>
 Check that <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> are set on the server. Without Polly, the system falls back to the participant&#39;s browser TTS, which is much lower quality. SpeechGen is a third option for neutral voices.</p>
 <p><strong>LLM replies are empty or generic.</strong>
@@ -1226,7 +1269,9 @@ The transcription path depends on per-user audio access from the Zoom SDK. The m
 <li class="toc-l3"><a href="#co-hosting">Co-hosting</a></li>
 <li class="toc-l3"><a href="#ending-the-session">Ending the session</a></li>
 <li class="toc-l2"><a href="#5-collect-data">5. Collect data</a></li>
-<li class="toc-l3"><a href="#what-each-event-looks-like">What each event looks like</a></li>
+<li class="toc-l3"><a href="#server-side-log-file">Server-side log file</a></li>
+<li class="toc-l3"><a href="#client-side-csv-export">Client-side CSV export</a></li>
+<li class="toc-l3"><a href="#getting-the-files-off-the-server">Getting the files off the server</a></li>
 <li class="toc-l2"><a href="#6-example-study-setups">6. Example study setups</a></li>
 <li class="toc-l3"><a href="#setup-a-agent-presence-count-comparison">Setup A — Agent presence / count comparison</a></li>
 <li class="toc-l3"><a href="#setup-b-wizard-of-oz-confederate-agent">Setup B — Wizard-of-Oz confederate agent</a></li>
@@ -1331,5 +1376,6 @@ The transcription path depends on per-user audio access from the Zoom SDK. The m
       update();
     })();
   </script>
+  <script src="../js/survey-qr.js"></script>
 </body>
 </html>
